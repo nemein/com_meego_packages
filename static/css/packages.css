@@ -18,6 +18,11 @@ padding:2px;
 width:180px;
 }
 
+.package_instance
+{
+width:560px;
+}
+
 .package_instance .summary
 {
 font-style: italic;
