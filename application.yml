@@ -4,9 +4,9 @@ providers_hierarchy: configuration
 development_mode: true
 components:
     midgardmvc_core:
-        git: git://github.com/midgardproject/midgardmvc_core.git
+        git: https://github.com/midgardproject/midgardmvc_core.git
     com_meego_packages:
-        git: git://github.com/nemein/com_meego_packages.git
+        git: https://github.com/nemein/com_meego_packages.git
 nodes:
     title: MeeGo Community Applications
     content: <p>Welcome MeeGo</p>

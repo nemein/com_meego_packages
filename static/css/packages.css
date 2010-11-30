@@ -1,0 +1,19 @@
+.splash {
+background:url("http://meego.com/sites/all/themes/meego/images/splash-garage.png") no-repeat scroll right bottom transparent;
+height: 140px;
+}
+
+#drupal_content .section{
+margin-left:200px;
+margin-right:-760px;
+width:560px;
+float: left;
+}
+
+#drupal_content .region .section {
+float: left;
+border:1px solid #CCCCCC;
+margin:1px;
+padding:2px;
+width:180px;
+}
