@@ -23,13 +23,21 @@ routes:
 #        path: /repository/{$repository}/latest
 #    search:
 #        path: /search
-#    package:
-#        path: /package/{$package}
-#    package_repository:
-#        path: /package/{$package}/{$repository}
+    package:
+        path: /package/{$package}
+        controller: com_meego_packages_controllers_package
+        action: package
+        template_aliases:
+            content: cmp-show-package
+    package_repository:
+        path: /package/{$package}/{$repository}
+        controller: com_meego_packages_controllers_package
+        action: repository
+        template_aliases:
+            content: cmp-show-package_repository
     package_instance:
         path: /package/{$package}/{$repository}/{$version}
         controller: com_meego_packages_controllers_package
         action: instance
         template_aliases:
-            content: cmp-show-package
+            content: cmp-show-package_instance
