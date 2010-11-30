@@ -61,6 +61,11 @@ class com_meego_packages_controllers_repository
         $packages = $qb->execute();
         foreach ($packages as $package)
         {
+            if (empty($package->title))
+            {
+                $package->title = $package->name;
+            }
+
             $package->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
             (
                 'package_instance',
