@@ -1,7 +1,7 @@
 version: 0.0.1
 requires:
     com_meego_obsconnector:
-        git: git://github.com/nemein/com_meego_obsconnector.git
+        git: https://github.com/nemein/com_meego_obsconnector.git
 routes:
     index:
         path: /
@@ -21,11 +21,27 @@ routes:
             content: cmp-show-repository
 #    repository_latest:
 #        path: /repository/{$repository}/latest
-#    search:
-#        path: /search
-#    package:
-#        path: /package/{$package}
-#    package_repository:
-#        path: /package/{$package}/{$repository}
-#    package_instance:
-#        path: /package/{$package}/{$repository}/{$version}
+    search:
+        path: /search
+        controller: com_meego_packages_controllers_package
+        action: search
+        template_aliases:
+            content: cmp-show-search
+    package:
+        path: /package/{$package}
+        controller: com_meego_packages_controllers_package
+        action: package
+        template_aliases:
+            content: cmp-show-package
+    package_repository:
+        path: /package/{$package}/{$repository}
+        controller: com_meego_packages_controllers_package
+        action: repository
+        template_aliases:
+            content: cmp-show-package_repository
+    package_instance:
+        path: /package/{$package}/{$repository}/{$version}
+        controller: com_meego_packages_controllers_package
+        action: instance
+        template_aliases:
+            content: cmp-show-package_instance

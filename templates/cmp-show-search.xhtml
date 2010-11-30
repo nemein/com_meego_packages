@@ -1,0 +1,21 @@
+<h1>Search MeeGo packages</h1>
+
+<form method="get">
+    <input type="search" name="q" placeholder="Search for package names or descriptions" tal:attributes="value com_meego_packages/search" autofocus="autofocus" />
+    <input type="submit" value="Go" />
+</form>
+
+<ul tal:condition="exists: com_meego_packages/packages">
+    <li tal:repeat="package com_meego_packages/packages">
+        <a tal:attributes="href package/localurl">
+            <span class="name" tal:content="package/title">Chromium</span>
+            <span class="version" tal:content="package/version">1.0</span>
+        </a>
+    </li>
+</ul>
+
+<tal:block tal:condition="exists: com_meego_packages/packages">
+    <div tal:condition="not: com_meego_packages/packages">
+        No results found for <em tal:content="com_meego_packages/search">foo</em>.
+    </div>
+</tal:block>
