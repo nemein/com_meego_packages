@@ -477,3 +477,7 @@ input#openid_submit {
 display: block;
 margin: 1.3em 0 0 0;
 }
+
+.splash {
+background:url("http://meego.com/sites/all/themes/meego/images/splash-garage.png") no-repeat scroll right bottom transparent;
+}
