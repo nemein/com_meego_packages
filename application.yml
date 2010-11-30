@@ -7,7 +7,14 @@ components:
         git: https://github.com/midgardproject/midgardmvc_core.git
     com_meego_packages:
         git: https://github.com/nemein/com_meego_packages.git
+    com_meego_downloads:
+        git: https://github.com/nemein/com_meego_downloads.git
 nodes:
     title: MeeGo Community Applications
     content: <p>Welcome MeeGo</p>
-    component: com_meego_packages
+    component: com_meego_downloads
+    children:
+        packages:
+            title: MeeGo Community Packages
+            content: <p>Welcome MeeGo</p>
+            component: com_meego_packages
