@@ -114,4 +114,68 @@ class com_meego_packages_controllers_package
             $this->data['package']->title = $this->data['package']->name;
         }
     }
+
+    private function search_packages($query)
+    {
+        $qb = com_meego_package::new_query_builder();
+        if (isset($query['q']))
+        {
+            // Text search
+            $qb->begin_group('OR');
+            $qb->add_constraint('name', 'LIKE', $query['q'] . '%');
+            $qb->add_constraint('title', 'LIKE', $query['q'] . '%');
+            $qb->add_constraint('summary', 'LIKE', $query['q'] . '%');
+            $qb->end_group();
+        }
+
+        return $qb->execute();
+    }
+
+    public function get_search(array $args)
+    {
+        $this->data['search'] = '';
+
+        $query = $this->request->get_query();
+        if (isset($query['q']))
+        {
+            $this->data['search'] = $query['q'];
+            $this->data['packages'] = array();
+            $packages = $this->search_packages($query);
+            if (count($packages) == 1)
+            {
+                // Relocate to package directly
+                midgardmvc_core::get_instance()->head->relocate
+                (
+                    midgardmvc_core::get_instance()->dispatcher->generate_url
+                    (
+                        'package',
+                        array
+                        (
+                            'package' => $package->name,
+                        ),
+                        $this->request
+                    )
+                );
+            }
+
+            foreach ($packages as $package)
+            {
+                if (empty($package->title))
+                {
+                    $package->title = $package->name;
+                }
+
+                $package->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
+                (
+                    'package',
+                    array
+                    (
+                        'package' => $package->name,
+                    ),
+                    $this->request
+                );
+                $this->data['packages'][] = $package;
+            }
+        }
+    }
 }

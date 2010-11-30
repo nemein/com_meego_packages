@@ -21,8 +21,12 @@ routes:
             content: cmp-show-repository
 #    repository_latest:
 #        path: /repository/{$repository}/latest
-#    search:
-#        path: /search
+    search:
+        path: /search
+        controller: com_meego_packages_controllers_package
+        action: search
+        template_aliases:
+            content: cmp-show-search
     package:
         path: /package/{$package}
         controller: com_meego_packages_controllers_package
