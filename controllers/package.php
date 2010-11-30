@@ -114,6 +114,29 @@ class com_meego_packages_controllers_package
             $this->data['package']->title = $this->data['package']->name;
         }
         $this->data['package']->description = nl2br($this->data['package']->description);
+
+        $qb = com_meego_package_category::new_query_builder();
+        $qb->add_constraint('id', '=', $this->data['package']->category);
+        $categories = $qb->execute();
+        if (count($categories) == 0)
+        {
+            throw new midgardmvc_exception_notfound("Package category not found");
+        }
+
+        $this->data['package']->category_name = $categories[0]->name;
+
+        while ($categories[0]->up != 0)
+        {
+            $qb = com_meego_package_category::new_query_builder();
+            $qb->add_constraint('id', '=', $categories[0]->up);
+            $categories = $qb->execute();
+            if (count($categories) == 0)
+            {
+                throw new midgardmvc_exception_notfound("Package category not found");
+            }
+
+            $this->data['package']->category_name = $categories[0]->name . "/" . $this->data['package']->category_name;
+        }
     }
 
     private function search_packages($query)
