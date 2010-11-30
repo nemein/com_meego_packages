@@ -54,5 +54,25 @@ class com_meego_packages_controllers_repository
             throw new midgardmvc_exception_notfound("Repository not found");
         }
         $this->data['repository'] = $repositories[0];
+
+        $this->data['packages'] = array();
+        $qb = com_meego_package::new_query_builder();
+        $qb->add_constraint('repository', '=', $this->data['repository']->id);
+        $packages = $qb->execute();
+        foreach ($packages as $package)
+        {
+            $package->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
+            (
+                'package_instance',
+                array
+                (
+                    'package' => $package->name,
+                    'version' => $package->version,
+                    'repository' => $this->data['repository']->name,
+                ),
+                $this->request
+            );
+            $this->data['packages'][] = $package;
+        }
     }
 }

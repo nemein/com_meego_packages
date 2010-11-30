@@ -27,5 +27,9 @@ routes:
 #        path: /package/{$package}
 #    package_repository:
 #        path: /package/{$package}/{$repository}
-#    package_instance:
-#        path: /package/{$package}/{$repository}/{$version}
+    package_instance:
+        path: /package/{$package}/{$repository}/{$version}
+        controller: com_meego_packages_controllers_package
+        action: instance
+        template_aliases:
+            content: cmp-show-package
