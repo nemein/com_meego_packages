@@ -1,0 +1,11 @@
+services_dispatcher: appserv
+providers_component: midgardmvc
+providers_hierarchy: configuration
+development_mode: true
+components:
+    midgardmvc_core: foo
+    com_meego_packages: foo
+nodes:
+    title: MeeGo Community Applications
+    content: <p>Welcome MeeGo</p>
+    component: com_meego_packages
