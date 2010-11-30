@@ -146,10 +146,24 @@ class com_meego_packages_controllers_package
         {
             // Text search
             $qb->begin_group('OR');
-            $qb->add_constraint('name', 'LIKE', $query['q'] . '%');
-            $qb->add_constraint('title', 'LIKE', $query['q'] . '%');
-            $qb->add_constraint('summary', 'LIKE', $query['q'] . '%');
+            $qb->add_constraint('name', 'LIKE', '%' . $query['q'] . '%');
+            $qb->add_constraint('title', 'LIKE', '%' . $query['q'] . '%');
+            $qb->add_constraint('summary', 'LIKE', '%' . $query['q'] . '%');
             $qb->end_group();
+        }
+
+        //if repository is specified for search
+        if (isset($query['repository']))
+        {
+            $qb2 = com_meego_repository::new_query_builder();
+            $qb2->add_constraint('name', '=', $query['repository']);
+            $repository = $qb2->execute();
+            if (count($repository) == 0)
+            {
+                throw new midgardmvc_exception_notfound("Package category not found");
+            }
+            $qb->add_constraint('repository', '=', $repository[0]->id);
+
         }
 
         return $qb->execute();
@@ -205,6 +219,15 @@ class com_meego_packages_controllers_package
                 );
                 $this->data['packages'][$package->name] = $package;
             }
+        }
+
+        $qb = com_meego_repository::new_query_builder();
+        //TODO: add constraints for arch or release.
+        $repositories = $qb->execute();
+
+        if (count($repositories) == 0)
+        {
+            $this->data['repositories'] = $repositories;
         }
     }
 }
