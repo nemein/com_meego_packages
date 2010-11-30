@@ -1,3 +1,4 @@
+<div class="package_instance">
 <h1>
     <span class="title" tal:content="com_meego_packages/package/title">Chromium</span>
     <span class="version" tal:content="com_meego_packages/package/version">1.0</span>
@@ -5,10 +6,16 @@
 
     <div class="summary" tal:content="com_meego_packages/package/summary">It does cool things</div>
 
-    <span class="description" tal:content="com_meego_packages/package/description">Longer description of how cool it is</span>
+    <div class="description" tal:content="structure com_meego_packages/package/description">Longer description of how cool it is</div>
 
     <h2><span class="category" tal:content="com_meego_packages/package/category">Application/Browser</span></h2>
 
-    <span class="url" tal:condition="com_meego_packages/package/url" tal:content="com_meego_packages/package/url">http://example.com</span>
+    <div tal:condition="com_meego_packages/package/url" class="homepage">
+      <a class="url" tal:attributes="href com_meego_packages/package/url">Homepage</a>
+    </div>
 
-    <span class="license" tal:content="com_meego_packages/package/license">GPL</span>
+    <div tal:condition="com_meego_packages/package/url" class="license">
+      <span class="label">License: </span>
+      <span class="license" tal:content="com_meego_packages/package/license">GPL</span>
+    </div>
+</div>

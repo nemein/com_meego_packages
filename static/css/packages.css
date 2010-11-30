@@ -17,3 +17,13 @@ margin:1px;
 padding:2px;
 width:180px;
 }
+
+.package_instance .summary
+{
+font-style: italic;
+}
+
+.package_instance div
+{
+margin-bottom: 10px;
+}
