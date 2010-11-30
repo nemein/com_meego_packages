@@ -160,6 +160,11 @@ class com_meego_packages_controllers_package
 
             foreach ($packages as $package)
             {
+                if (isset($this->data['packages'][$package->name]))
+                {
+                    continue;
+                }
+
                 if (empty($package->title))
                 {
                     $package->title = $package->name;
@@ -174,7 +179,7 @@ class com_meego_packages_controllers_package
                     ),
                     $this->request
                 );
-                $this->data['packages'][] = $package;
+                $this->data['packages'][$package->name] = $package;
             }
         }
     }
