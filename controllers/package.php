@@ -113,6 +113,7 @@ class com_meego_packages_controllers_package
         {
             $this->data['package']->title = $this->data['package']->name;
         }
+        $this->data['package']->description = nl2br($this->data['package']->description);
     }
 
     private function search_packages($query)
