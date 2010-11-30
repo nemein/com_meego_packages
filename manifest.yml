@@ -5,10 +5,22 @@ requires:
 routes:
     index:
         path: /
-        controller: com_meego_packages_controllers_index
+        controller: com_meego_packages_controllers_repository
+        action: redirect
+    repositories:
+        path: /repository
+        controller: com_meego_packages_controllers_repository
         action: index
         template_aliases:
             content: cmp-show-index
+    repository:
+        path: /repository/{$repository}
+        controller: com_meego_packages_controllers_repository
+        action: repository
+        template_aliases:
+            content: cmp-show-repository
+#    repository_latest:
+#        path: /repository/{$repository}/latest
 #    search:
 #        path: /search
 #    package:
@@ -17,9 +29,3 @@ routes:
 #        path: /package/{$package}/{$repository}
 #    package_instance:
 #        path: /package/{$package}/{$repository}/{$version}
-#    repositories:
-#        path: /repository
-#    repository:
-#        path: /repository/{$repository}
-#    repository_latest:
-#        path: /repository/{$repository}/latest
