@@ -51,6 +51,16 @@ class com_meego_packages_controllers_package
                 ),
                 $this->request
             );
+
+            $package->repositoryobject->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
+            (
+                'repository',
+                array
+                (
+                    'repository' => $repositories[$package->repository]->name,
+                ),
+                $this->request
+            );
             $this->data['packages'][] = $package;
         }
     }
