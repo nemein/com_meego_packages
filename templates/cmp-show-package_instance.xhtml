@@ -23,4 +23,6 @@
       <span class="label">Requires: </span>
       <span class="requires" tal:content="com_meego_packages/package/requires">glibc</span>
     </div> -->
+
+    <div class="comments" tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_comments', 'list_comments', array('to' => com_meego_packages['package'].guid))"></div>
 </div>

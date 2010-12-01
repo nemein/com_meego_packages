@@ -9,6 +9,8 @@ components:
         git: https://github.com/nemein/com_meego_packages.git
     com_meego_downloads:
         git: https://github.com/nemein/com_meego_downloads.git
+    com_meego_comments:
+        git: https://github.com/nemein/com_meego_comments.git
 nodes:
     title: MeeGo Community Applications
     content: <p>Welcome MeeGo</p>
@@ -18,3 +20,7 @@ nodes:
             title: MeeGo Community Packages
             content: <p>Welcome MeeGo</p>
             component: com_meego_packages
+        comments:
+            title: Package comments
+            content: <p>Welcome MeeGo</p>
+            component: com_meego_comments
