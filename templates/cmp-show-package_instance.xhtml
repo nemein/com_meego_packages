@@ -1,6 +1,6 @@
 <div class="package_instance">
 <h1>
-    <span class="title" tal:content="com_meego_packages/package/title">Chromium</span>
+    <a tal:attributes="href com_meego_packages/package/localurl" title="See what other versions are available for this package."><span class="title" tal:content="com_meego_packages/package/title">Chromium</span></a>
     <span class="version" tal:content="com_meego_packages/package/version">1.0</span>
 </h1>
 
@@ -18,4 +18,9 @@
       <span class="label">License: </span>
       <span class="license" tal:content="com_meego_packages/package/license">GPL</span>
     </div>
+
+    <!-- <div>
+      <span class="label">Requires: </span>
+      <span class="requires" tal:content="com_meego_packages/package/requires">glibc</span>
+    </div> -->
 </div>

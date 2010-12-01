@@ -137,6 +137,16 @@ class com_meego_packages_controllers_package
 
             $this->data['package']->category_name = $categories[0]->name . "/" . $this->data['package']->category_name;
         }
+
+        $this->data['package']->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
+        (
+            'package',
+            array
+            (
+                'package' => $this->data['package']->name,
+            ),
+            $this->request
+        );
     }
 
     private function search_packages($query)
