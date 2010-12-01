@@ -25,17 +25,17 @@ list-style:none;
 padding-left:5px;
 }
 
-.package_instance
+.package_instance, .package
 {
 width:560px;
 }
 
-.package_instance .summary
+.package_instance .summary, .package .summary
 {
 font-style: italic;
 }
 
-.package_instance div
+.package_instance div, .package div
 {
 margin-bottom: 10px;
 }
