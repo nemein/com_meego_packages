@@ -161,33 +161,37 @@ class com_meego_packages_controllers_package
 
     private function search_packages($query)
     {
-        $qb = com_meego_package::new_query_builder();
-        if (isset($query['q']))
+        if (isset($query['q'])
+            && !empty($query['q']))
         {
-            // Text search
-            $qb->begin_group('OR');
-            $qb->add_constraint('name', 'LIKE', '%' . $query['q'] . '%');
-            $qb->add_constraint('title', 'LIKE', '%' . $query['q'] . '%');
-            $qb->add_constraint('summary', 'LIKE', '%' . $query['q'] . '%');
-            $qb->end_group();
-        }
-
-        //if repository is specified for search
-        if (   isset($query['repository'])
-            && !empty($query['repository']))
-        {
-            $qb2 = com_meego_repository::new_query_builder();
-            $qb2->add_constraint('name', '=', $query['repository']);
-            $repository = $qb2->execute();
-            if (count($repository) == 0)
+            $qb = com_meego_package::new_query_builder();
+            if (isset($query['q']))
             {
-                throw new midgardmvc_exception_notfound("Repository not found");
+                // Text search
+                $qb->begin_group('OR');
+                $qb->add_constraint('name', 'LIKE', '%' . $query['q'] . '%');
+                $qb->add_constraint('title', 'LIKE', '%' . $query['q'] . '%');
+                $qb->add_constraint('summary', 'LIKE', '%' . $query['q'] . '%');
+                $qb->end_group();
             }
-            $qb->add_constraint('repository', '=', $repository[0]->id);
 
+            //if repository is specified for search
+            if (   isset($query['repository'])
+                && !empty($query['repository']))
+            {
+                $qb2 = com_meego_repository::new_query_builder();
+                $qb2->add_constraint('name', '=', $query['repository']);
+                $repository = $qb2->execute();
+                if (count($repository) == 0)
+                {
+                    throw new midgardmvc_exception_notfound("Repository not found");
+                }
+                $qb->add_constraint('repository', '=', $repository[0]->id);
+
+            }
+
+            return $qb->execute();
         }
-
-        return $qb->execute();
     }
 
     public function get_search(array $args)
@@ -216,29 +220,31 @@ class com_meego_packages_controllers_package
                     )
                 );
             }
-
-            foreach ($packages as $package)
+            if (count($packages) > 1)
             {
-                if (isset($this->data['packages'][$package->name]))
+                foreach ($packages as $package)
                 {
-                    continue;
-                }
+                    if (isset($this->data['packages'][$package->name]))
+                    {
+                        continue;
+                    }
 
-                if (empty($package->title))
-                {
-                    $package->title = $package->name;
-                }
+                    if (empty($package->title))
+                    {
+                        $package->title = $package->name;
+                    }
 
-                $package->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
-                (
-                    'package',
-                    array
+                    $package->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
                     (
-                        'package' => $package->name,
-                    ),
-                    $this->request
-                );
-                $this->data['packages'][$package->name] = $package;
+                        'package',
+                        array
+                        (
+                            'package' => $package->name,
+                        ),
+                        $this->request
+                    );
+                    $this->data['packages'][$package->name] = $package;
+                }
             }
         }
 
@@ -246,4 +252,5 @@ class com_meego_packages_controllers_package
         //TODO: add constraints for arch or release.
         $this->data['repositories'] = $qb->execute();
     }
+
 }
