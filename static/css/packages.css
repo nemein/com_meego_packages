@@ -39,3 +39,13 @@ font-style: italic;
 {
 margin-bottom: 10px;
 }
+
+.package_instance .screenshot
+{
+border:2px solid #CCCCCC;
+width:250px;
+height:250px;
+float:right;
+margin-left: 10px;
+margin-bottom: 10px;
+}

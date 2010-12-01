@@ -4,6 +4,7 @@
     <span class="version" tal:content="com_meego_packages/package/version">1.0</span>
 </h1>
 
+    <div class="screenshot">screenshot here :)</div>
     <div class="summary" tal:content="com_meego_packages/package/summary">It does cool things</div>
 
     <div class="description" tal:content="structure com_meego_packages/package/description">Longer description of how cool it is</div>
@@ -16,7 +17,7 @@
 
     <div tal:condition="com_meego_packages/package/url" class="license">
       <span class="label">Repository: </span>
-<!--     <a class="url" tal:attributes="href com_meego_packages/repositoryobject/localurl"><span class="repository" tal:content="com_meego_packages/repository/title">MeeGo 1.1 Netbook</span></a> -->
+     <a class="url" tal:attributes="href com_meego_packages/package/repositoryobject/localurl"><span class="repository" tal:content="com_meego_packages/package/repositoryobject/title">MeeGo 1.1 Netbook</span></a>
     </div>
 
     <div tal:condition="com_meego_packages/package/url" class="license">

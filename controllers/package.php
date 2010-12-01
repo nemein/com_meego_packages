@@ -123,7 +123,7 @@ class com_meego_packages_controllers_package
         {
             $this->data['package']->title = $this->data['package']->name;
         }
-        $this->data['package']->description = nl2br($this->data['package']->description);
+        $this->data['package']->description = str_replace("\n\n","<br /><br />",($this->data['package']->description));
 
         $qb = com_meego_package_category::new_query_builder();
         $qb->add_constraint('id', '=', $this->data['package']->category);
@@ -163,7 +163,7 @@ class com_meego_packages_controllers_package
             'repository',
             array
             (
-                'repository' => $this->data['repository']->name,
+                'repository' => $this->data['package']->repositoryobject->name,
             ),
             $this->request
         );
