@@ -3,7 +3,8 @@
 <form method="get">
     <input type="search" name="q" placeholder="Search for package names or descriptions" tal:attributes="value com_meego_packages/search" autofocus="autofocus" />
     <select name="repository">
-        <!-- <option tal:repeat="repository com_meego_packages/repositories" tal:attributes="value repository/name">meego_1.0_core</option> -->
+        <option value="">Any</option>
+        <option tal:repeat="repository com_meego_packages/repositories" tal:attributes="value repository/name" tal:content="repository/title">meego_1.0_core</option>
     </select>
 
     <input type="submit" value="Go" />
