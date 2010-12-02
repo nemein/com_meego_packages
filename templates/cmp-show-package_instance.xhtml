@@ -1,17 +1,17 @@
-<div class="package_instance">
+<div class="package_instance" xmlns:v="http://rdf.data-vocabulary.org/#" typeof="v:Product">
 <h1>
-    <a tal:attributes="href com_meego_packages/package/localurl" title="See what other versions are available for this package."><span class="title" tal:content="com_meego_packages/package/title">Chromium</span></a>
+    <a tal:attributes="href com_meego_packages/package/localurl" title="See what other versions are available for this package."><span class="title" tal:content="com_meego_packages/package/title" property="v:name">Chromium</span></a>
     <span class="version" tal:content="com_meego_packages/package/version">1.0</span>
 </h1>
 
     <div class="screenshot" tal:condition="exists: com_meego_packages/package/screenshoturl">
-        <img tal:attributes="src com_meego_packages/package/screenshoturl" />
+        <img tal:attributes="src com_meego_packages/package/screenshoturl" property="v:image" />
     </div>
     <div class="summary" tal:content="com_meego_packages/package/summary">It does cool things</div>
 
-    <div class="description" tal:content="structure com_meego_packages/package/description">Longer description of how cool it is</div>
+    <div class="description" tal:content="structure com_meego_packages/package/description" property="v:description">Longer description of how cool it is</div>
 
-    <h2><span class="category" tal:content="com_meego_packages/package/category_name">Application/Browser</span></h2>
+    <h2><span class="category" tal:content="com_meego_packages/package/category_name" property="v:category" content="Software &gt; Computer Software">Application/Browser</span></h2>
 
     <div tal:condition="com_meego_packages/package/url" class="homepage">
       <a class="url" tal:attributes="href com_meego_packages/package/url">Homepage</a>
