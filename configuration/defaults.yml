@@ -1,0 +1,5 @@
+attachmentserver_variants:
+    sidesquare:
+        croppedThumbnail:
+            width: 250
+            height: 250

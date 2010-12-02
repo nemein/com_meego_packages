@@ -4,7 +4,9 @@
     <span class="version" tal:content="com_meego_packages/package/version">1.0</span>
 </h1>
 
-    <div class="screenshot">screenshot here :)</div>
+    <div class="screenshot" tal:condition="exists: com_meego_packages/package/screenshoturl">
+        <img tal:attributes="src com_meego_packages/package/screenshoturl" />
+    </div>
     <div class="summary" tal:content="com_meego_packages/package/summary">It does cool things</div>
 
     <div class="description" tal:content="structure com_meego_packages/package/description">Longer description of how cool it is</div>

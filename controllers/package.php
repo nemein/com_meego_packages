@@ -167,6 +167,23 @@ class com_meego_packages_controllers_package
             ),
             $this->request
         );
+
+        $attachments = $this->data['package']->list_attachments();
+        foreach ($attachments as $attachment)
+        {
+            $this->data['package']->screenshoturl = midgardmvc_core::get_instance()->dispatcher->generate_url
+            (
+                'attachmentserver_variant',
+                array
+                (
+                    'guid' => $attachment->guid,
+                    'variant' => 'sidesquare',
+                    'filename' => $attachment->name,
+                ),
+                '/'
+            );
+            break;
+        }
     }
 
     private function search_packages($query)
