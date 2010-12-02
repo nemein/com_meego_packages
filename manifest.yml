@@ -1,7 +1,7 @@
 version: 0.0.1
 requires:
     com_meego_obsconnector:
-        git: https://github.com/nemein/com_meego_obsconnector.git
+        - {type: github, user: nemein, repository: com_meego_obsconnector, branch: master}
 routes:
     index:
         path: /
