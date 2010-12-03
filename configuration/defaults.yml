@@ -3,3 +3,7 @@ attachmentserver_variants:
         croppedThumbnail:
             width: 250
             height: 250
+    thumbnail
+        croppedThumbnail:
+            width: 100
+            height: 100
