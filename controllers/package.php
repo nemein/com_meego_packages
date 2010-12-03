@@ -157,7 +157,7 @@ class com_meego_packages_controllers_package
             ),
             $this->request
         );
-        $this->data['package']->repositoryobject = new com_meego_repository($this->data['package']->id);
+        $this->data['package']->repositoryobject = new com_meego_repository($this->data['package']->repository);
         $this->data['package']->repositoryobject->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
         (
             'repository',
@@ -229,7 +229,6 @@ class com_meego_packages_controllers_package
         }
 
         unset($relations, $_title, $typemap);
-
     }
 
     private function search_packages($query)
