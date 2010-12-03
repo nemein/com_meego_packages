@@ -184,6 +184,52 @@ class com_meego_packages_controllers_package
             );
             break;
         }
+
+        $storage = new midgard_query_storage('com_meego_package_relation');
+        $q = new midgard_query_select($storage);
+
+        $q->set_constraint(new midgard_query_constraint(
+            new midgard_query_property('from', $storage),
+            '=',
+            new midgard_query_value($this->data['package']->id)
+        ));
+
+        $res = $q->execute();
+        if ($res != 'MGD_ERR_OK')
+        {
+            $_mc = midgard_connection::get_instance();
+            echo "Error received from midgard_connection: " . $_mc->get_error_string() . "\n";
+            return;
+        }
+
+        $relations = $q->list_objects();
+
+        /* maps relation types to human parsable names */
+        $typemap = array(
+            'requires' => 'Requires',
+            'buildrequires' => 'Build requires',
+            'obsoletes' => 'Obsoletes',
+            'conflicts' => 'Conflicts',
+            'provides' => 'Provides'
+        );
+
+        $this->data['relations'] = array();
+
+        foreach ($relations as $relation) {
+            if ( ! array_key_exists($relation->relation, $this->data['relations'])) {
+                $_title = $relation->relation;
+                if (array_key_exists($relation->relation, $typemap)) {
+                    $_title = $typemap[$relation->relation] . ':';
+                }
+
+                $this->data['relations'][$relation->relation] = array('title' => $_title);
+                $this->data['relations'][$relation->relation]['packages'] = array();
+            }
+            array_push($this->data['relations'][$relation->relation]['packages'], $relation);
+        }
+
+        unset($relations, $_title, $typemap);
+
     }
 
     private function search_packages($query)
