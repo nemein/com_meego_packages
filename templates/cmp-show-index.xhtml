@@ -2,6 +2,15 @@
 
 <div class="splash"></div>
 
+<div class="warning">
+    This site serves as a demo site. It contains some data imported from the 
+<a href="http://build.pub.meego.com">MeeGo Community OBS</a>. As we don't 
+have any packages in the Extras repositories, some packages were imported
+from user home projects. The interface shown here is intended for MeeGo 
+community application developers and serves as a starting point for the
+community QA process for apps. This is NOT the Apps area for end-users.
+</div>
+
 <ul>
     <li tal:repeat="repository com_meego_packages/repositories">
         <a tal:attributes="href repository/localurl" tal:content="repository/title">MeeGo 1.2 Netbook</a>
