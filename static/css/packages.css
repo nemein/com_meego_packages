@@ -49,3 +49,50 @@ float:right;
 margin-left: 10px;
 margin-bottom: 10px;
 }
+
+ul.uxes {
+list-style: none;
+}
+
+ul.uxes li {
+display: inline-block;
+margin: 10px;
+}
+
+li.ux a div {
+width: 60px;
+height: 60px;
+background-repeat: no-repeat;
+}
+
+li.ux a div.core {
+background-image: url(/midgardmvc-static/com_meego_packages/images/osgroup-core.png);
+}
+
+li.ux a div.extras {
+background-image: url(/midgardmvc-static/com_meego_packages/images/osgroup-extras.png);
+}
+
+li.ux a div.surrounds {
+background-image: url(/midgardmvc-static/com_meego_packages/images/osgroup-surrounds.png);
+}
+
+li.ux a div.core.handset,
+li.ux a div.handset {
+background-image: url(/midgardmvc-static/com_meego_packages/images/device-handsets.png);
+}
+
+li.ux a div.core.netbook,
+li.ux a div.netbook {
+background-image: url(/midgardmvc-static/com_meego_packages/images/device-netbooks.png);
+}
+
+li.ux a div.core.tv,
+li.ux a div.tv {
+background-image: url(/midgardmvc-static/com_meego_packages/images/device-tv.png);
+}
+
+li.ux a div.core.ivi,
+li.ux a div.ivi {
+background-image: url(/midgardmvc-static/com_meego_packages/images/device-automotive.png);
+}
