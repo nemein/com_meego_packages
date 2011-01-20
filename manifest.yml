@@ -19,6 +19,12 @@ routes:
         action: repository
         template_aliases:
             content: cmp-show-repository
+    repository_os_version:
+        path: /repository/{$os}/{$version}/{$ux}
+        controller: com_meego_packages_controllers_repository
+        action: repository_os_version
+        template_aliases:
+            content: cmp-show-repository-os-version
     repository_latest:
         path: /repository/{$repository}/latest
         controller: com_meego_packages_controllers_repository
