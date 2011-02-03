@@ -4,6 +4,8 @@ requires:
         - {type: github, user: nemein, repository: com_meego_obsconnector, branch: master}
     midgardmvc_helper_workflow:
         - {type: github, user: bergie, repository: midgardmvc_helper_workflow, branch: master}
+    midgardmvc_ui_forms:
+        - {type: github, user: bergie, repository: midgardmvc_ui_forms, branch: master}
 routes:
     index:
         path: /
