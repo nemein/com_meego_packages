@@ -229,6 +229,28 @@ class com_meego_packages_controllers_package
         }
 
         unset($relations, $_title, $typemap);
+
+        $list_of_workflows = midgardmvc_helper_workflow_utils::get_workflows_for_object($this->data['package']);
+        $this->data['workflows'] = array();
+        foreach ($list_of_workflows as $workflow => $workflow_data)
+        {
+            $this->data['workflows'][] = array
+            (
+                'label' => $workflow_data['label'],
+                'url' => midgardmvc_core::get_instance()->dispatcher->generate_url
+                (
+                    'package_instance_workflow_start',
+                    array
+                    (
+                        'package' => $this->data['package']->name,
+                        'version' => $this->data['package']->version,
+                        'repository' => $args['repository'],
+                        'workflow' => $workflow,
+                    ),
+                    $this->request
+                )
+            );
+        }
     }
 
     private function search_packages($query)

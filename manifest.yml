@@ -2,6 +2,8 @@ version: 0.0.1
 requires:
     com_meego_obsconnector:
         - {type: github, user: nemein, repository: com_meego_obsconnector, branch: master}
+    midgardmvc_helper_workflow:
+        - {type: github, user: bergie, repository: midgardmvc_helper_workflow, branch: master}
 routes:
     index:
         path: /
@@ -61,3 +63,15 @@ routes:
         action: instance
         template_aliases:
             content: cmp-show-package_instance
+    package_instance_workflow_start:
+        path: /package/{$package}/{$repository}/{$version}/workflow/{$workflow}
+        controller: com_meego_packages_controllers_workflow
+        action: start_package_instance
+        template_aliases:
+            content: cmp-show-package_instance_workflow
+    package_instance_workflow_resume:
+        path: /package/{$package}/{$repository}/{$version}/workflow/{$workflow}/{$execution}
+        controller: com_meego_packages_controllers_workflow
+        action: resume_package_instance
+        template_aliases:
+            content: cmp-show-package_instance_workflow

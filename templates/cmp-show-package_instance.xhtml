@@ -30,6 +30,12 @@
 
   <mgd:include>cmp-show-package_relations</mgd:include>
 
+  <div class="workflow_bar" tal:condition="com_meego_packages/workflows">
+    <form tal:repeat="workflow com_meego_packages/workflows" method="post" tal:attributes="action workflow/url">
+        <input type="submit" tal:attributes="value workflow/label" />
+    </form>
+  </div>
+
   <!--div class="comments" tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_comments', 'list_comments', array('to' => com_meego_packages['package'].guid))"></div-->
   <div class="ratings" tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_ratings', 'list_ratings', array('to' => com_meego_packages['package'].guid))"></div>
 </div>
