@@ -5,7 +5,7 @@
     <tal:block tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_ratings', 'get_average', array('to' => com_meego_packages['package'].guid))">Rating stars</tal:block>
   </h1>
 
-  <div class="screenshot" tal:condition="exists: com_meego_packages/package/screenshoturl">
+  <div class="screenshot" tal:condition="com_meego_packages/package/screenshoturl">
     <img tal:attributes="src com_meego_packages/package/screenshoturl" property="v:image" />
   </div>
   <div class="summary" tal:content="com_meego_packages/package/summary">It does cool things</div>
