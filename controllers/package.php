@@ -294,7 +294,8 @@ class com_meego_packages_controllers_package
         $this->data['search'] = '';
 
         $query = $this->request->get_query();
-        if (isset($query['q']))
+        if (   isset($query['q'])
+            && !empty($query['q']))
         {
             $this->data['search'] = $query['q'];
             $this->data['packages'] = array();
@@ -309,13 +310,13 @@ class com_meego_packages_controllers_package
                         'package',
                         array
                         (
-                            'package' => $package->name,
+                            'package' => $packages[0]->name,
                         ),
                         $this->request
                     )
                 );
             }
-            if (count($packages) > 1)
+            else if (count($packages) > 1)
             {
                 foreach ($packages as $package)
                 {
