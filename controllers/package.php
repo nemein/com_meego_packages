@@ -168,7 +168,7 @@ class com_meego_packages_controllers_package
             $this->request
         );
 
-        $this->data['package']->screenshoturl = '';
+        $this->data['package']->screenshoturl = false;
         $attachments = $this->data['package']->list_attachments();
         foreach ($attachments as $attachment)
         {
