@@ -5,25 +5,27 @@
     <tal:block tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_ratings', 'get_average', array('to' => com_meego_packages['package'].guid))">Rating stars</tal:block>
   </h1>
 
+<!--
   <div class="screenshot" tal:condition="com_meego_packages/package/screenshoturl">
     <img tal:attributes="src com_meego_packages/package/screenshoturl" property="v:image" />
   </div>
+-->
   <div class="summary" tal:content="com_meego_packages/package/summary">It does cool things</div>
 
   <div class="description" tal:content="structure com_meego_packages/package/description" property="v:description">Longer description of how cool it is</div>
 
   <h2><span class="category" tal:content="com_meego_packages/package/category_name" property="v:category" content="Software &gt; Computer Software">Application/Browser</span></h2>
 
-  <div tal:condition="com_meego_packages/package/url" class="homepage">
-    <a class="url" tal:attributes="href com_meego_packages/package/url">Homepage</a>
+  <div tal:condition="com_meego_packages/package/homepageurl" class="homepage">
+    <a class="url" tal:attributes="href com_meego_packages/package/homepageurl">Homepage</a>
   </div>
 
-  <div tal:condition="com_meego_packages/package/url" class="license">
+  <div tal:condition="com_meego_packages/package/repository" class="repository">
     <span class="label">Repository: </span>
     <a class="url" tal:attributes="href com_meego_packages/package/repositoryobject/localurl"><span class="repository" tal:content="com_meego_packages/package/repositoryobject/title">MeeGo 1.1 Netbook</span></a>
   </div>
 
-  <div tal:condition="com_meego_packages/package/url" class="license">
+  <div tal:condition="com_meego_packages/package/license" class="license">
     <span class="label">License: </span>
     <span class="license" tal:content="com_meego_packages/package/license">GPL</span>
   </div>
