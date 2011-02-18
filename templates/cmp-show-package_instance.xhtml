@@ -14,10 +14,18 @@
 
   <div class="description" tal:content="structure com_meego_packages/package/description" property="v:description">Longer description of how cool it is</div>
 
-  <h2><span class="category" tal:content="com_meego_packages/package/category_name" property="v:category" content="Software &gt; Computer Software">Application/Browser</span></h2>
+  <div class="category" tal:content="com_meego_packages/package/category_name" property="v:category" content="Software &gt; Computer Software">Application/Browser</div>
 
   <div tal:condition="com_meego_packages/package/homepageurl" class="homepage">
     <a class="url" tal:attributes="href com_meego_packages/package/homepageurl">Homepage</a>
+  </div>
+
+  <div class="downloadurl" tal:condition="com_meego_packages/package/downloadurl">
+    <a class="url" tal:attributes="href com_meego_packages/package/downloadurl">Direct download URL</a>
+  </div>
+
+  <div class="installfileurl" tal:condition="com_meego_packages/package/installfileurl">
+    <a class="url" tal:attributes="href com_meego_packages/package/installfileurl">Install file URL</a>
   </div>
 
   <div tal:condition="com_meego_packages/package/repository" class="repository">

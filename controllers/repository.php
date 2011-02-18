@@ -77,7 +77,7 @@ class com_meego_packages_controllers_repository
                 'package_instance',
                 array
                 (
-                    'package' => $package->name,
+                    'package' => $package->title,
                     'version' => $package->version,
                     'repository' => $this->data['repository']->name,
                 ),

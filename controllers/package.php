@@ -9,7 +9,7 @@ class com_meego_packages_controllers_package
     public function get_package(array $args)
     {
         $qb = com_meego_package::new_query_builder();
-        $qb->add_constraint('name', '=', $args['package']);
+        $qb->add_constraint('title', '=', $args['package']);
         $packages = $qb->execute();
         if (count($packages) == 0)
         {
@@ -26,6 +26,12 @@ class com_meego_packages_controllers_package
         $this->data['packages'] = array();
         foreach ($packages as $package)
         {
+            // if user is not logged in then don't show the installfileurl link
+            if ( ! midgardmvc_core::get_instance()->authentication->is_user() )
+            {
+                $package->installfileurl = false;
+            }
+
             if (empty($package->title))
             {
                 $package->title = $package->name;
@@ -45,7 +51,7 @@ class com_meego_packages_controllers_package
                 'package_instance',
                 array
                 (
-                    'package' => $package->name,
+                    'package' => $package->title,
                     'version' => $package->version,
                     'repository' => $repositories[$package->repository]->name,
                 ),
@@ -68,7 +74,7 @@ class com_meego_packages_controllers_package
     public function get_repository(array $args)
     {
         $qb = com_meego_package::new_query_builder();
-        $qb->add_constraint('name', '=', $args['package']);
+        $qb->add_constraint('title', '=', $args['package']);
         $qb->add_constraint('repository.name', '=', $args['repository']);
         $packages = $qb->execute();
         if (count($packages) == 0)
@@ -96,7 +102,7 @@ class com_meego_packages_controllers_package
                 'package_instance',
                 array
                 (
-                    'package' => $package->name,
+                    'package' => $package->title,
                     'version' => $package->version,
                     'repository' => $args['repository'],
                 ),
@@ -109,7 +115,7 @@ class com_meego_packages_controllers_package
     public function get_instance(array $args)
     {
         $qb = com_meego_package::new_query_builder();
-        $qb->add_constraint('name', '=', $args['package']);
+        $qb->add_constraint('title', '=', $args['package']);
         $qb->add_constraint('version', '=', $args['version']);
         $qb->add_constraint('repository.name', '=', $args['repository']);
         $packages = $qb->execute();
@@ -124,6 +130,12 @@ class com_meego_packages_controllers_package
             $this->data['package']->title = $this->data['package']->name;
         }
         $this->data['package']->description = str_replace("\n\n","<br /><br />",($this->data['package']->description));
+
+        // if user is not logged in then don't show the installfileurl link
+        if ( ! midgardmvc_core::get_instance()->authentication->is_user() )
+        {
+            $this->data['package']->installfileurl = false;
+        }
 
         $qb = com_meego_package_category::new_query_builder();
         $qb->add_constraint('id', '=', $this->data['package']->category);
@@ -153,7 +165,7 @@ class com_meego_packages_controllers_package
             'package',
             array
             (
-                'package' => $this->data['package']->name,
+                'package' => $this->data['package']->title,
             ),
             $this->request
         );
@@ -206,7 +218,8 @@ class com_meego_packages_controllers_package
         $relations = $q->list_objects();
 
         /* maps relation types to human parsable names */
-        $typemap = array(
+        $typemap = array
+        (
             'requires' => 'Requires',
             'buildrequires' => 'Build requires',
             'obsoletes' => 'Obsoletes',
@@ -216,10 +229,14 @@ class com_meego_packages_controllers_package
 
         $this->data['relations'] = array();
 
-        foreach ($relations as $relation) {
-            if ( ! array_key_exists($relation->relation, $this->data['relations'])) {
+        foreach ($relations as $relation)
+        {
+            if ( ! array_key_exists($relation->relation, $this->data['relations']))
+            {
                 $_title = $relation->relation;
-                if (array_key_exists($relation->relation, $typemap)) {
+
+                if (array_key_exists($relation->relation, $typemap))
+                {
                     $_title = $typemap[$relation->relation] . ':';
                 }
 
