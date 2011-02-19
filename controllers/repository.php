@@ -172,4 +172,69 @@ class com_meego_packages_controllers_repository
             $this->data['repositories'][] = $repository;
         }
     }
+
+    /**
+     * Show latest apps in repository
+     */
+    public function get_repository_latest(array $args)
+    {
+        $this->data['repository'] = array();
+        $storage = new midgard_query_storage('com_meego_repository');
+        $q = new midgard_query_select($storage);
+        $q->set_constraint(new midgard_query_constraint(
+            new midgard_query_property('name', $storage),
+            '=',
+            new midgard_query_value($args['repository'])
+	    ));
+        $q->execute();
+	    $repositories = $q->list_objects();
+	    if (count($repositories) > 0)
+	    {
+	        $this->data['repository'] = $repositories[0];
+	    }
+        else
+        {
+            throw new midgardmvc_exception_notfound("Repository not found");
+       }
+        $storage = new midgard_query_storage('com_meego_package');
+
+        $q = new midgard_query_select($storage);
+        $q->set_constraint(new midgard_query_constraint(
+            new midgard_query_property('repository', $storage),
+            '=',
+            new midgard_query_value($this->data['repository']->id)
+        ));
+
+        $q->add_order(new midgard_query_property('metadata.created', $storage), SORT_DESC);
+
+        if (isset($args['amount']))
+        {
+            $q->set_limit((int)$args['amount']);
+        }  
+
+        $q->execute();
+
+        $packages = $q->list_objects();
+        foreach ($packages as $package)
+        {
+            if (empty($package->title))
+            {
+                $package->title = $package->name;
+            }
+
+            $package->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
+            (
+                'package_instance',
+                array
+                (
+                    'package' => $package->title,
+                    'version' => $package->version,
+                    'repository' => $this->data['repository']->name,
+                ),
+                $this->request
+            );
+            $this->data['packages'][] = $package;
+        }
+    }
+
 }
