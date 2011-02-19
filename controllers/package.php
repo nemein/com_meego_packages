@@ -10,6 +10,7 @@ class com_meego_packages_controllers_package
     {
         $qb = com_meego_package::new_query_builder();
         $qb->add_constraint('title', '=', $args['package']);
+        $qb->add_order('repository.name', 'ASC');
         $packages = $qb->execute();
         if (count($packages) == 0)
         {
