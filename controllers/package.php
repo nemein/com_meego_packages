@@ -137,27 +137,35 @@ class com_meego_packages_controllers_package
             $this->data['package']->installfileurl = false;
         }
 
-        $qb = com_meego_package_category::new_query_builder();
-        $qb->add_constraint('id', '=', $this->data['package']->category);
-        $categories = $qb->execute();
-        if (count($categories) == 0)
-        {
-            throw new midgardmvc_exception_notfound("Package category not found");
-        }
-
-        $this->data['package']->category_name = $categories[0]->name;
-
-        while ($categories[0]->up != 0)
+        if ($this->data['package']->category)
         {
             $qb = com_meego_package_category::new_query_builder();
-            $qb->add_constraint('id', '=', $categories[0]->up);
+            $qb->add_constraint('id', '=', $this->data['package']->category);
             $categories = $qb->execute();
             if (count($categories) == 0)
             {
-                throw new midgardmvc_exception_notfound("Package category not found");
+              throw new midgardmvc_exception_notfound("Package category not found");
             }
 
-            $this->data['package']->category_name = $categories[0]->name . "/" . $this->data['package']->category_name;
+
+            $this->data['package']->category_name = $categories[0]->name;
+
+            while ($categories[0]->up != 0)
+            {
+                $qb = com_meego_package_category::new_query_builder();
+                $qb->add_constraint('id', '=', $categories[0]->up);
+                $categories = $qb->execute();
+                if (count($categories) == 0)
+                {
+                    throw new midgardmvc_exception_notfound("Package parent category not found");
+                }
+
+                $this->data['package']->category_name = $categories[0]->name . "/" . $this->data['package']->category_name;
+            }
+        }
+        else
+        {
+          $this->data['package']->category_name = "";
         }
 
         $this->data['package']->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
