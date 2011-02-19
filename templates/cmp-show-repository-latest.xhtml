@@ -1,0 +1,12 @@
+<h1>Latest Packages</h1>
+<h2 tal:content="com_meego_packages/repository/title">MeeGo 1.2 Netbook</h2>
+
+<ul>
+    <li tal:repeat="package com_meego_packages/packages">
+        <a tal:attributes="href package/localurl">
+            <span class="name" tal:content="package/title">Chromium</span>
+            <span class="version" tal:content="package/version">1.0</span>
+        </a>
+    </li>
+</ul>
+

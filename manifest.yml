@@ -34,13 +34,13 @@ routes:
         controller: com_meego_packages_controllers_repository
         action: repository_latest
         template_aliases:
-            content: cmp-show-repository
+            content: cmp-show-repository-latest
     repository_latest_amount:
         path: /repository/{$repository}/latest/{$amount}
         controller: com_meego_packages_controllers_repository
         action: repository_latest
         template_aliases:
-            content: cmp-show-repository
+            content: cmp-show-repository-latest
     search:
         path: /search
         controller: com_meego_packages_controllers_package
