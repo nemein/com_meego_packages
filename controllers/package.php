@@ -6,6 +6,9 @@ class com_meego_packages_controllers_package
         $this->request = $request;
     }
 
+    /**
+     * @todo: docs
+     */
     public function get_package(array $args)
     {
         $qb = com_meego_package::new_query_builder();
@@ -37,7 +40,7 @@ class com_meego_packages_controllers_package
                 $package->title = $package->name;
             }
 
-            if (!isset($repositories[$package->repository]))
+            if ( ! isset($repositories[$package->repository]) )
             {
                 $repository = new com_meego_repository();
                 $repository->get_by_id($package->repository);
@@ -71,6 +74,9 @@ class com_meego_packages_controllers_package
         }
     }
 
+    /**
+     * @todo: docs
+     */
     public function get_repository(array $args)
     {
         $qb = com_meego_package::new_query_builder();
@@ -112,6 +118,9 @@ class com_meego_packages_controllers_package
         }
     }
 
+    /**
+     * @todo: docs
+     */
     public function get_instance(array $args)
     {
         $qb = com_meego_package::new_query_builder();
@@ -181,7 +190,9 @@ class com_meego_packages_controllers_package
         );
 
         $this->data['package']->screenshoturl = false;
+
         $attachments = $this->data['package']->list_attachments();
+
         foreach ($attachments as $attachment)
         {
             $this->data['package']->screenshoturl = midgardmvc_core::get_instance()->dispatcher->generate_url
@@ -231,22 +242,71 @@ class com_meego_packages_controllers_package
 
         foreach ($relations as $relation)
         {
-            if ( ! array_key_exists($relation->relation, $this->data['relations']))
+            $_url = false;
+
+            $_title = $relation->relation;
+
+            if (! isset($this->data['relations'][$relation->relation]))
             {
-                $_title = $relation->relation;
-
-                if (array_key_exists($relation->relation, $typemap))
-                {
-                    $_title = $typemap[$relation->relation] . ':';
-                }
-
-                $this->data['relations'][$relation->relation] = array('title' => $_title);
-                $this->data['relations'][$relation->relation]['packages'] = array();
+                $this->data['relations'][$relation->relation] = array
+                (
+                    // can be requires, conflicts, obsoletes etc
+                    'title' => $_title,
+                    // array for holding individial relation objects
+                    'packages' => array(),
+                );
             }
-            array_push($this->data['relations'][$relation->relation]['packages'], $relation);
+
+            $_relpackage = null;
+
+            $storage = new midgard_query_storage('com_meego_package_repository');
+            $q = new midgard_query_select($storage);
+            $q->set_constraint
+            (
+                new midgard_query_constraint
+                (
+                    new midgard_query_property('packageid', $storage),
+                    '=',
+                    new midgard_query_value($relation->to)
+                )
+            );
+
+            $q->execute();
+            $_packages = $q->list_objects();
+
+            if (count($_packages))
+            {
+                $_relpackage = $_packages[0];
+            }
+
+            if ($_relpackage)
+            {
+                $_url = midgardmvc_core::get_instance()->dispatcher->generate_url
+                (
+                    'package_instance',
+                    array
+                    (
+                        'package' => $relation->toname,
+                        'version' => $relation->version,
+                        'repository' => $_relpackage->reponame,
+                    ),
+                    $this->request
+                );
+            }
+
+            $_relation = $relation;
+
+            if (array_key_exists($relation->relation, $typemap))
+            {
+                $this->data['relations'][$relation->relation]['title'] = $typemap[$relation->relation] . ':';
+            }
+
+            $_relation->localurl = $_url;
+
+            array_push($this->data['relations'][$relation->relation]['packages'], $_relation);
         }
 
-        unset($relations, $_title, $typemap);
+        unset($relations, $relation, $_relation, $_url, $typemap);
 
         $list_of_workflows = midgardmvc_helper_workflow_utils::get_workflows_for_object($this->data['package']);
         $this->data['workflows'] = array();
@@ -271,6 +331,9 @@ class com_meego_packages_controllers_package
         }
     }
 
+    /**
+     * @todo: docs
+     */
     private function search_packages($query)
     {
         if (isset($query['q'])
@@ -306,6 +369,9 @@ class com_meego_packages_controllers_package
         }
     }
 
+    /**
+     * @todo: docs
+     */
     public function get_search(array $args)
     {
         $this->data['search'] = '';
