@@ -62,9 +62,11 @@ class com_meego_packages_controllers_repository
         $this->data['repository'] = $repositories[0];
 
         $this->data['packages'] = array();
+
         $qb = com_meego_package::new_query_builder();
         $qb->add_constraint('repository', '=', $this->data['repository']->id);
         $packages = $qb->execute();
+
         foreach ($packages as $package)
         {
             if (empty($package->title))
