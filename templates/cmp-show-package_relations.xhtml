@@ -1,9 +1,16 @@
-<div class="relations" tal:condition="com_meego_packages/relations" tal:repeat="relation com_meego_packages/relations">
+<div class="relations" tal:condition="exists:com_meego_packages/relations" tal:repeat="relation com_meego_packages/relations">
 
-    <span class="${relation/title}" tal:condition="relation/title" tal:content="relation/title">Name of the relation</span>
+    <span class="${relation/title}" tal:condition="exists:relation/title" tal:content="relation/title">Name of the relation</span>
 
-    <ul class="relationlist" tal:condition="relation/title" tal:repeat="package relation/packages">
-        <li>${package/toname} ${package/constraint} ${package/version}</li>
+    <ul class="relationlist" tal:condition="exists:relation/title" tal:repeat="package relation/packages">
+        <li>
+            <tal:block tal:condition="true:package/localurl">
+                <a tal:attributes="href package/localurl">${package/toname} ${package/constraint} ${package/version}</a>
+            </tal:block>
+            <tal:block tal:condition="not:true:package/localurl">
+                ${package/toname} ${package/constraint} ${package/version}
+            </tal:block>
+        </li>
     </ul>
 
 </div>
