@@ -54,6 +54,7 @@ class com_meego_packages_controllers_repository
         $qb = com_meego_repository::new_query_builder();
         $qb->add_constraint('disabledownload', '=', false);
         $qb->add_constraint('name', '=', $args['repository']);
+        $qb->add_constraint('arch', '=', $args['arch']);
         $repositories = $qb->execute();
         if (count($repositories) == 0)
         {
@@ -83,6 +84,7 @@ class com_meego_packages_controllers_repository
                     'package' => $package->title,
                     'version' => $package->version,
                     'repository' => $this->data['repository']->name,
+                    'arch' => $this->data['repository']->arch
                 ),
                 $this->request
             );
@@ -164,10 +166,11 @@ class com_meego_packages_controllers_repository
         {
             $repository->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
             (
-                'repository',
+                'repository_arch',
                 array
                 (
                     'repository' => $repository->name,
+                    'arch' => $repository->arch
                 ),
                 $this->request
             );
@@ -181,23 +184,37 @@ class com_meego_packages_controllers_repository
     public function get_repository_latest(array $args)
     {
         $this->data['repository'] = array();
+
         $storage = new midgard_query_storage('com_meego_repository');
-        $q = new midgard_query_select($storage);
-        $q->set_constraint(new midgard_query_constraint(
+
+        $qc = new midgard_query_constraint_group('AND');
+
+        $qc->add_constraint(new midgard_query_constraint(
             new midgard_query_property('name', $storage),
             '=',
             new midgard_query_value($args['repository'])
-	    ));
+        ));
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('arch', $storage),
+            '=',
+            new midgard_query_value($args['arch'])
+        ));
+
+        $q = new midgard_query_select($storage);
+
+        $q->set_constraint($qc);
         $q->execute();
-	    $repositories = $q->list_objects();
-	    if (count($repositories) > 0)
-	    {
-	        $this->data['repository'] = $repositories[0];
-	    }
+
+        $repositories = $q->list_objects();
+
+        if (count($repositories) > 0)
+        {
+                $this->data['repository'] = $repositories[0];
+        }
         else
         {
             throw new midgardmvc_exception_notfound("Repository not found");
-       }
+        }
         $storage = new midgard_query_storage('com_meego_package');
 
         $q = new midgard_query_select($storage);
@@ -212,7 +229,7 @@ class com_meego_packages_controllers_repository
         if (isset($args['amount']))
         {
             $q->set_limit((int)$args['amount']);
-        }  
+        }
 
         $q->execute();
 
@@ -232,6 +249,7 @@ class com_meego_packages_controllers_repository
                     'package' => $package->title,
                     'version' => $package->version,
                     'repository' => $this->data['repository']->name,
+                    'arch' => $this->data['repository']->arch
                 ),
                 $this->request
             );

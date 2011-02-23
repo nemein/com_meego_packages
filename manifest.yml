@@ -17,8 +17,8 @@ routes:
         action: index
         template_aliases:
             content: cmp-show-index
-    repository:
-        path: /repository/{$repository}
+    repository_arch:
+        path: /repository/{$repository}/{$arch}
         controller: com_meego_packages_controllers_repository
         action: repository
         template_aliases:
@@ -30,13 +30,13 @@ routes:
         template_aliases:
             content: cmp-show-repository-os-version
     repository_latest:
-        path: /repository/{$repository}/latest
+        path: /repository/{$repository}/{$arch}/latest
         controller: com_meego_packages_controllers_repository
         action: repository_latest
         template_aliases:
             content: cmp-show-repository-latest
     repository_latest_amount:
-        path: /repository/{$repository}/latest/{$amount}
+        path: /repository/{$repository}/{$arch}/latest/{$amount}
         controller: com_meego_packages_controllers_repository
         action: repository_latest
         template_aliases:
@@ -60,19 +60,19 @@ routes:
         template_aliases:
             content: cmp-show-package_repository
     package_instance:
-        path: /package/{$package}/{$repository}/{$version}
+        path: /package/{$package}/{$repository}/{$arch}/{$version}
         controller: com_meego_packages_controllers_package
         action: instance
         template_aliases:
             content: cmp-show-package_instance
     package_instance_workflow_start:
-        path: /package/{$package}/{$repository}/{$version}/workflow/{$workflow}
+        path: /package/{$package}/{$repository}/{$version}/{$arch}/workflow/{$workflow}
         controller: com_meego_packages_controllers_workflow
         action: start_package_instance
         template_aliases:
             content: cmp-show-package_instance_workflow
     package_instance_workflow_resume:
-        path: /package/{$package}/{$repository}/{$version}/workflow/{$workflow}/{$execution}
+        path: /package/{$package}/{$repository}/{$version}/{$arch}/workflow/{$workflow}/{$execution}
         controller: com_meego_packages_controllers_workflow
         action: resume_package_instance
         template_aliases:

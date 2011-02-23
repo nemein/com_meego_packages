@@ -58,16 +58,18 @@ class com_meego_packages_controllers_package
                     'package' => $package->title,
                     'version' => $package->version,
                     'repository' => $repositories[$package->repository]->name,
+                    'arch' => $repositories[$package->repository]->arch
                 ),
                 $this->request
             );
 
             $package->repositoryobject->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
             (
-                'repository',
+                'repository_arch',
                 array
                 (
                     'repository' => $repositories[$package->repository]->name,
+                    'arch' => $repositories[$package->repository]->arch
                 ),
                 $this->request
             );
@@ -112,6 +114,7 @@ class com_meego_packages_controllers_package
                     'package' => $package->title,
                     'version' => $package->version,
                     'repository' => $args['repository'],
+                    'arch' => $args['arch']
                 ),
                 $this->request
             );
@@ -128,7 +131,10 @@ class com_meego_packages_controllers_package
         $qb->add_constraint('title', '=', $args['package']);
         $qb->add_constraint('version', '=', $args['version']);
         $qb->add_constraint('repository.name', '=', $args['repository']);
+        $qb->add_constraint('repository.arch', '=', $args['arch']);
+
         $packages = $qb->execute();
+
         if (count($packages) == 0)
         {
             throw new midgardmvc_exception_notfound("Package not found");
@@ -190,10 +196,11 @@ class com_meego_packages_controllers_package
         $this->data['package']->repositoryobject = new com_meego_repository($this->data['package']->repository);
         $this->data['package']->repositoryobject->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
         (
-            'repository',
+            'repository_arch',
             array
             (
                 'repository' => $this->data['package']->repositoryobject->name,
+                'arch' => $this->data['package']->repositoryobject->arch
             ),
             $this->request
         );
@@ -298,6 +305,7 @@ class com_meego_packages_controllers_package
                         'package' => $relation->toname,
                         'version' => $relation->version,
                         'repository' => $_relpackage->reponame,
+                        'arch' => $_relpackage->repoarch
                     ),
                     $this->request
                 );
@@ -332,6 +340,7 @@ class com_meego_packages_controllers_package
                         'package' => $this->data['package']->name,
                         'version' => $this->data['package']->version,
                         'repository' => $args['repository'],
+                        'arch' => $args['arch'],
                         'workflow' => $workflow,
                     ),
                     $this->request
