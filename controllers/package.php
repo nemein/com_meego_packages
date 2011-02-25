@@ -57,17 +57,22 @@ class com_meego_packages_controllers_package
                 (
                     'package' => $package->title,
                     'version' => $package->version,
+                    'project' => $args['project'],
                     'repository' => $repositories[$package->repository]->name,
                     'arch' => $repositories[$package->repository]->arch
                 ),
                 $this->request
             );
 
+            // get the name of the project the repository belongs to
+            $project = new com_meego_project($repository->project);
+
             $package->repositoryobject->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
             (
-                'repository_arch',
+                'repository',
                 array
                 (
+                    'project' => $project->name,
                     'repository' => $repositories[$package->repository]->name,
                     'arch' => $repositories[$package->repository]->arch
                 ),
@@ -113,6 +118,7 @@ class com_meego_packages_controllers_package
                 (
                     'package' => $package->title,
                     'version' => $package->version,
+                    'project' => $args['project'],
                     'repository' => $args['repository'],
                     'arch' => $args['arch']
                 ),
@@ -127,9 +133,23 @@ class com_meego_packages_controllers_package
      */
     public function get_instance(array $args)
     {
+        if (isset($args['project']))
+        {
+            $qbproject = com_meego_project::new_query_builder();
+            $qbproject->add_constraint('name', '=', $args['project']);
+
+            $projects = $qbproject->execute();
+
+            if (count($projects))
+            {
+                $project = $projects[0];
+            }
+        }
+
         $qb = com_meego_package::new_query_builder();
         $qb->add_constraint('title', '=', $args['package']);
         $qb->add_constraint('version', '=', $args['version']);
+        $qb->add_constraint('repository.project', '=', $project->id);
         $qb->add_constraint('repository.name', '=', $args['repository']);
         $qb->add_constraint('repository.arch', '=', $args['arch']);
 
@@ -141,10 +161,12 @@ class com_meego_packages_controllers_package
         }
 
         $this->data['package'] = $packages[0];
+
         if (empty($this->data['package']->title))
         {
             $this->data['package']->title = $this->data['package']->name;
         }
+
         $this->data['package']->description = str_replace("\n\n","<br /><br />",($this->data['package']->description));
 
         // if user is not logged in then don't show the installfileurl link
@@ -194,11 +216,13 @@ class com_meego_packages_controllers_package
             $this->request
         );
         $this->data['package']->repositoryobject = new com_meego_repository($this->data['package']->repository);
+
         $this->data['package']->repositoryobject->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
         (
-            'repository_arch',
+            'repository',
             array
             (
+                'project' => $args['project'],
                 'repository' => $this->data['package']->repositoryobject->name,
                 'arch' => $this->data['package']->repositoryobject->arch
             ),
@@ -304,6 +328,7 @@ class com_meego_packages_controllers_package
                     (
                         'package' => $relation->toname,
                         'version' => $relation->version,
+                        'project' => $args['project'],
                         'repository' => $_relpackage->reponame,
                         'arch' => $_relpackage->repoarch
                     ),
@@ -339,6 +364,7 @@ class com_meego_packages_controllers_package
                     (
                         'package' => $this->data['package']->name,
                         'version' => $this->data['package']->version,
+                        'project' => $args['project'],
                         'repository' => $args['repository'],
                         'arch' => $args['arch'],
                         'workflow' => $workflow,
