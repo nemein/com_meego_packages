@@ -39,7 +39,7 @@
 
   <mgd:include>cmp-show-package_relations</mgd:include>
 
-  <div class="workflow_bar" tal:condition="com_meego_packages/workflows">
+  <div class="workflow_bar" tal:condition="true:com_meego_packages/workflows">
     <form tal:repeat="workflow com_meego_packages/workflows" method="post" tal:attributes="action workflow/url">
         <input type="submit" tal:attributes="value workflow/label" />
     </form>
