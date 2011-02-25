@@ -96,3 +96,38 @@ li.ux a div.core.ivi,
 li.ux a div.ivi {
 background-image: url(/midgardmvc-static/com_meego_packages/images/device-automotive.png);
 }
+
+div.list div.header {
+line-height: 2em;
+background: lightgrey;
+border-bottom: 1px solid grey;
+font-weight: bold;
+}
+
+div.element {
+line-height: 1.5em;
+}
+
+div.element.odd {
+background-color: white;
+}
+
+div.element.even {
+background-color: lightgrey;
+}
+
+div.list div.header div,
+div.list div.element div {
+display: inline-block;
+margin: 0 0 0.1em 0;
+}
+
+div.list div.header .title,
+div.list div.element .title {
+width: 25em;
+}
+
+div.list div.header .projectname,
+div.list div.element .projectname {
+width: 20em;
+}
