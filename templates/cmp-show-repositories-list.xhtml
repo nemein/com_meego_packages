@@ -1,0 +1,14 @@
+<h1 tal:content="com_meego_packages/title"></h1>
+
+<div class="list">
+    <div class="header">
+        <div class="title">Title</div>
+        <div class="projectname">Project Name</div>
+    </div>
+    <div tal:attributes="class php:'element ' . repository.rawclass" tal:repeat="repository com_meego_packages/repositories">
+        <div class="title">
+            <a tal:attributes="href repository/localurl" tal:content="repository/title">MeeGo 1.2 Netbook</a>
+        </div>
+        <div class="projectname" tal:content="repository/projectname">home:zigbee</div>
+    </div>
+</div>
