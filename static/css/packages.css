@@ -4,8 +4,8 @@ height: 140px;
 }
 
 #drupal_content .section{
-margin-left:200px;
-margin-right:-760px;
+/*margin-left:200px;*/
+margin-right:10px;
 width:560px;
 float: left;
 }
