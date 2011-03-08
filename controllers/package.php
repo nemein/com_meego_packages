@@ -299,7 +299,7 @@ class com_meego_packages_controllers_package
 
             $_relpackage = null;
 
-            $storage = new midgard_query_storage('com_meego_package_repository');
+            $storage = new midgard_query_storage('com_meego_package_details');
             $q = new midgard_query_select($storage);
             $q->set_constraint
             (
