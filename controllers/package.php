@@ -598,17 +598,17 @@ class com_meego_packages_controllers_package
             $this->data['categorytree'] = $categorytree . ' (' . $ids[0] . ')';
         }
 
-        $storage = new midgard_query_storage('com_meego_package');
+        $storage = new midgard_query_storage('com_meego_package_details');
         $q = new midgard_query_select($storage);
 
         $qc = new midgard_query_constraint(
-            new midgard_query_property('category'),
+            new midgard_query_property('packagecategory'),
             '=',
             new midgard_query_value($ids[0])
         );
 
         $q->set_constraint($qc);
-        $q->add_order(new midgard_query_property('title', $storage), SORT_ASC);
+        $q->add_order(new midgard_query_property('packagetitle', $storage), SORT_ASC);
         $q->execute();
 
         $this->data['packages'] = $q->list_objects();
