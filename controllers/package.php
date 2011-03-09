@@ -1,9 +1,25 @@
 <?php
 class com_meego_packages_controllers_package
 {
+
+    var $request = null;
+    var $mvc = null;
+
     public function __construct(midgardmvc_core_request $request)
     {
         $this->request = $request;
+
+        $this->mvc = midgardmvc_core::get_instance();
+        $this->mvc->i18n->set_translation_domain('com_meego_packages');
+
+        $default_language = $this->mvc->configuration->default_language;
+
+        if (! isset($default_language))
+        {
+            $default_language = 'en_US';
+        }
+
+        $this->mvc->i18n->set_language($default_language, false);
     }
 
     /**
@@ -31,7 +47,7 @@ class com_meego_packages_controllers_package
         foreach ($packages as $package)
         {
             // if user is not logged in then don't show the installfileurl link
-            if ( ! midgardmvc_core::get_instance()->authentication->is_user() )
+            if ( ! $this->mvc->authentication->is_user() )
             {
                 $package->installfileurl = false;
             }
@@ -50,7 +66,7 @@ class com_meego_packages_controllers_package
 
             $package->repositoryobject = $repositories[$package->repository];
 
-            $package->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
+            $package->localurl = $this->mvc->dispatcher->generate_url
             (
                 'package_instance',
                 array
@@ -67,7 +83,7 @@ class com_meego_packages_controllers_package
             // get the name of the project the repository belongs to
             $project = new com_meego_project($repository->project);
 
-            $package->repositoryobject->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
+            $package->repositoryobject->localurl = $this->mvc->dispatcher->generate_url
             (
                 'repository',
                 array
@@ -111,7 +127,7 @@ class com_meego_packages_controllers_package
                 $package->title = $package->name;
             }
 
-            $package->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
+            $package->localurl = $this->mvc->dispatcher->generate_url
             (
                 'package_instance',
                 array
@@ -170,7 +186,7 @@ class com_meego_packages_controllers_package
         $this->data['package']->description = str_replace("\n\n","<br /><br />",($this->data['package']->description));
 
         // if user is not logged in then don't show the installfileurl link
-        if ( ! midgardmvc_core::get_instance()->authentication->is_user() )
+        if ( ! $this->mvc->authentication->is_user() )
         {
             $this->data['package']->installfileurl = false;
         }
@@ -206,7 +222,7 @@ class com_meego_packages_controllers_package
           $this->data['package']->category_name = "";
         }
 
-        $this->data['package']->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
+        $this->data['package']->localurl = $this->mvc->dispatcher->generate_url
         (
             'package',
             array
@@ -217,7 +233,7 @@ class com_meego_packages_controllers_package
         );
         $this->data['package']->repositoryobject = new com_meego_repository($this->data['package']->repository);
 
-        $this->data['package']->repositoryobject->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
+        $this->data['package']->repositoryobject->localurl = $this->mvc->dispatcher->generate_url
         (
             'repository',
             array
@@ -235,7 +251,7 @@ class com_meego_packages_controllers_package
 
         foreach ($attachments as $attachment)
         {
-            $this->data['package']->screenshoturl = midgardmvc_core::get_instance()->dispatcher->generate_url
+            $this->data['package']->screenshoturl = $this->mvc->dispatcher->generate_url
             (
                 'attachmentserver_variant',
                 array
@@ -321,7 +337,7 @@ class com_meego_packages_controllers_package
 
             if ($_relpackage)
             {
-                $_url = midgardmvc_core::get_instance()->dispatcher->generate_url
+                $_url = $this->mvc->dispatcher->generate_url
                 (
                     'package_instance',
                     array
@@ -357,7 +373,7 @@ class com_meego_packages_controllers_package
             $this->data['workflows'][] = array
             (
                 'label' => $workflow_data['label'],
-                'url' => midgardmvc_core::get_instance()->dispatcher->generate_url
+                'url' => $this->mvc->dispatcher->generate_url
                 (
                     'package_instance_workflow_start',
                     array
@@ -430,9 +446,9 @@ class com_meego_packages_controllers_package
             if (count($packages) == 1)
             {
                 // Relocate to package directly
-                midgardmvc_core::get_instance()->head->relocate
+                $this->mvc->head->relocate
                 (
-                    midgardmvc_core::get_instance()->dispatcher->generate_url
+                    $this->mvc->dispatcher->generate_url
                     (
                         'package',
                         array
@@ -457,7 +473,7 @@ class com_meego_packages_controllers_package
                         $package->title = $package->name;
                     }
 
-                    $package->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
+                    $package->localurl = $this->mvc->dispatcher->generate_url
                     (
                         'package',
                         array
@@ -476,4 +492,125 @@ class com_meego_packages_controllers_package
         $this->data['repositories'] = $qb->execute();
     }
 
+    /**
+     * Returns all packages that belong to a certain category
+     * @param array args; 'categorytree' argument can be like: System:Base
+     */
+    public function get_packages_by_categorytree(array $args)
+    {
+        $this->data['categorytree'] = false;
+        $this->data['packages'] = false;
+
+        $categorytree = rawurldecode($args['categorytree']);
+
+        if (strlen($categorytree))
+        {
+            if (strpos($categorytree, ':'))
+            {
+                $tree = explode(':', $categorytree);
+            }
+            else
+            {
+                $tree = array($categorytree);
+            }
+        }
+        else
+        {
+            // no categorytree given
+            return;
+        }
+
+        $storage = new midgard_query_storage('com_meego_package_category');
+        $q = new midgard_query_select($storage);
+
+        $qc = new midgard_query_constraint(
+            new midgard_query_property('name'),
+            '=',
+            new midgard_query_value(end($tree))
+        );
+
+        $q->set_constraint($qc);
+        $q->execute();
+
+        $categories = $q->list_objects();
+
+        $origtree = $tree;
+        $done = false;
+        $ids = array();
+
+        foreach ($categories as $category)
+        {
+            $tree = $origtree;
+            $current = $category;
+
+            if (   $current->up == 0
+                && count($tree) == 1)
+            {
+                $done = true;
+                $ids[] = $current->id;
+            }
+            else
+            {
+                #echo "------------------------------------<br/>\n";
+                #echo "start with: " . $current->name . "(" . $current->id . "), parent: " . $current->up . "<br/>\n";
+                while ($current->up != 0)
+                {
+                    $done = false;
+
+                    #echo end($tree) . " vs " . $current->name . "(" . $current->id . ")\n<br/>";
+
+                    if ($current->name == end($tree))
+                    {
+                        array_pop($tree);
+
+                        $ids[] = $current->id;
+                        $current = new com_meego_package_category($current->up);
+
+                        #echo "new current: " . $current->name . "(" . $current->id . ")<br/>\n";
+                        #echo "new end tree: " . end($tree) . "<br/>\n";
+                        #echo "count: " . count($tree) . "<br/>\n";
+
+                        if (count($tree) == 1)
+                        {
+                            $done = true;
+                        }
+                    }
+                    else
+                    {
+                        #echo "reset and break<br/>\n";
+                        break;
+                    }
+                }
+            }
+
+            if ($done)
+            {
+                break;
+            }
+
+        }
+
+        #print_r($ids);
+
+        if (   isset($ids[0])
+            && $ids[0] != 0)
+        {
+            $this->data['categorytree'] = $categorytree . ' (' . $ids[0] . ')';
+        }
+
+        $storage = new midgard_query_storage('com_meego_package');
+        $q = new midgard_query_select($storage);
+
+        $qc = new midgard_query_constraint(
+            new midgard_query_property('category'),
+            '=',
+            new midgard_query_value($ids[0])
+        );
+
+        $q->set_constraint($qc);
+        $q->add_order(new midgard_query_property('title', $storage), SORT_ASC);
+        $q->execute();
+
+        $this->data['packages'] = $q->list_objects();
+    }
 }

@@ -1,4 +1,4 @@
-version: 0.0.1
+version: 0.0.2
 requires:
     com_meego_obsconnector:
         - {type: github, user: nemein, repository: com_meego_obsconnector, branch: master}
@@ -11,6 +11,14 @@ routes:
         path: /
         controller: com_meego_packages_controllers_repository
         action: redirect
+
+    categories:
+        path: /categories
+        controller: com_meego_packages_controllers_category
+        action: categories_list
+        template_aliases:
+            content: cmp-show-categories-list
+
     repositories:
         path: /repositories
         controller: com_meego_packages_controllers_repository
@@ -23,12 +31,7 @@ routes:
         action: repositories_list
         template_aliases:
             content: cmp-show-repositories-list
-    repositories_categories:
-        path: /repositories/{$os}/{$version}/{$ux}/${category}
-        controller: com_meego_packages_controllers_repository
-        action: repositories_list
-        template_aliases:
-            content: cmp-show-repository-categories
+
     repository:
         path: /repository/{$project}/{$repository}/{$arch}
         controller: com_meego_packages_controllers_repository
@@ -47,12 +50,20 @@ routes:
         action: repository_latest
         template_aliases:
             content: cmp-show-repository-latest
+
     search:
         path: /search
         controller: com_meego_packages_controllers_package
         action: search
         template_aliases:
             content: cmp-show-search
+
+    packages_by_categorytree:
+        path: /packages/{$categorytree}
+        controller: com_meego_packages_controllers_package
+        action: packages_by_categorytree
+        template_aliases:
+            content: cmp-show-packages-list
     package:
         path: /package/{$package}
         controller: com_meego_packages_controllers_package

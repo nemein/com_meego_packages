@@ -1,0 +1,19 @@
+
+<h2 i18n:translate="'package_list_title'" i18n:attributes="title package_list_title_tip">
+    <span i18n:name="categorytree" tal:omit-tag="">${com_meego_packages/categorytree}</span>
+</h2>
+
+<div tal:condition="not: com_meego_packages/packages" i18n:translate="'no_available_packages'"></div>
+
+<table tal:condition="true: com_meego_packages/packages">
+    <thead>
+        <tr>
+            <th i18n:translate="'package_name'"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr tal:repeat="package com_meego_packages/packages">
+            <td>${package/name}</td>
+        </tr>
+    </tbody>
+</table>

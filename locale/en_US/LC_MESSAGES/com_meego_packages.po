@@ -1,0 +1,28 @@
+msgid ""
+msgstr ""
+
+"Project-Id-Version: com_meego_packages\n"
+"Report-Msgid-Bugs-To:\n"
+"PO-Revision-Date:\n"
+"Last-Translator:\n"
+"Language-Team: info <info@urho.eu>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "welcome"
+msgstr "Welcome!"
+
+msgid "package_list_title"
+msgstr "Packages in ${categorytree}"
+
+msgid "package_list_title_tip"
+msgstr "Listing all packages available in the given category"
+
+msgid "package_name"
+msgstr "Package Name"
+
+msgid "no_available_packages"
+msgstr "There are no available packages."
+
+

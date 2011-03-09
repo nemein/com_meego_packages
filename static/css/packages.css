@@ -11,12 +11,13 @@ float: left;
 }
 
 #drupal_content .region .section {
-float: left;
 border:1px solid #CCCCCC;
 margin:1px;
 padding:2px;
 width:180px;
-margin-top:-45px;
+display: block;
+clear: both;
+margin-bottom: 10px;
 }
 
 .region .section li

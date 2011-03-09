@@ -1,0 +1,5 @@
+<ul class="menu" tal:condition="true: com_meego_packages/categories">
+    <li tal:attributes="class php:'leaf ' . category.css" tal:repeat="category com_meego_packages/categories">
+        <a tal:attributes="href category/localurl; title php: 'id: ' . category.id . ', packages: ' . category.available_packages" tal:content="category/tree">Games</a>
+    </li>
+</ul>
