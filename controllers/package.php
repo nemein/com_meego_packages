@@ -553,6 +553,8 @@ class com_meego_packages_controllers_package
             {
                 #echo "------------------------------------<br/>\n";
                 #echo "start with: " . $current->name . "(" . $current->id . "), parent: " . $current->up . "<br/>\n";
+                $ids = array();
+
                 while ($current->up != 0)
                 {
                     $done = false;
@@ -562,6 +564,8 @@ class com_meego_packages_controllers_package
                     if ($current->name == end($tree))
                     {
                         array_pop($tree);
+
+                        #echo "add " . $current->id . "\n<br/>";
 
                         $ids[] = $current->id;
                         $current = new com_meego_package_category($current->up);
@@ -591,6 +595,7 @@ class com_meego_packages_controllers_package
         }
 
         #print_r($ids);
+        #ob_flush();
 
         if (   isset($ids[0])
             && $ids[0] != 0)
