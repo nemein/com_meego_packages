@@ -80,8 +80,6 @@ class com_meego_packages_controllers_category
             }
         );
 
-        //print_r($this->data['categories']);
-
         // @todo: set the active leaf somehow; class="active"
     }
 
