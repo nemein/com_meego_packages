@@ -26,29 +26,75 @@ list-style:none;
 padding-left:5px;
 }
 
-.package_instance, .package
-{
+.package_instance, .package {
 width:560px;
+border-bottom: 1px dashed lightgrey;
+margin: 0 0 2em;
+padding: 0 0 2em;
 }
 
-.package_instance .summary, .package .summary
-{
+.package_instance .summary, .package .summary {
 font-style: italic;
 }
 
-.package_instance div, .package div
-{
+.package_instance div {
 margin-bottom: 10px;
 }
 
-.package_instance .screenshot
-{
+.package_instance .screenshot {
 border:2px solid #CCCCCC;
 width:250px;
 height:250px;
 float:right;
 margin-left: 10px;
 margin-bottom: 10px;
+}
+
+.package h3.name {
+color: #0098f8;
+font-size: 2em;
+font-weight: bold;
+margin: 0;
+padding: 0;
+}
+
+.package div.maintainer,
+.package div.ratcomm {
+color: #938c93;
+}
+
+.package div.ratcomm div.rating,
+.package div.ratcomm div.comments {
+display: inline-block;
+}
+
+.package div.ratcomm .rating {
+margin: 0 2em 0 0;
+}
+
+// the span of the stars
+.package div.ratcomm div.rating span {
+position: relative;
+top: 3px;
+}
+
+.package div.description {
+margin: 1em 0 1em 0;
+}
+
+.package div.providers h4 {
+padding: 0;
+margin: 1em 0 0 0;
+}
+
+.package div.providers ul {
+margin: 0.5em 0 0 0;
+padding: 0;
+list-style: none;
+}
+
+.package div.providers ul li {
+margin: 0 0 0.5em 0;
 }
 
 ul.uxes {

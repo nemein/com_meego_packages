@@ -595,7 +595,7 @@ class com_meego_packages_controllers_package
         if (   isset($ids[0])
             && $ids[0] != 0)
         {
-            $this->data['categorytree'] = $categorytree . ' (' . $ids[0] . ')';
+            $this->data['categorytree'] = $categorytree;
         }
 
         $storage = new midgard_query_storage('com_meego_package_details');
@@ -611,6 +611,135 @@ class com_meego_packages_controllers_package
         $q->add_order(new midgard_query_property('packagetitle', $storage), SORT_ASC);
         $q->execute();
 
-        $this->data['packages'] = $q->list_objects();
+        $packages = $q->list_objects();
+
+        // let's do a smart grouping by package_title (ie. short names)
+        $variant_counter = 0;
+        foreach ($packages as $package)
+        {
+            // certain things must not be recorded in evert iteration of this loop
+            // if we recorded the name, then we are pretty sure we recorded everything
+            if (! isset($this->data['packages'][$package->packagetitle]['name']))
+            {
+                // set the name
+                $this->data['packages'][$package->packagetitle]['name'] = $package->packagetitle;
+
+                // gather some basic stats
+                $stats = $this->get_statistics($package->packagetitle);
+
+                // set the total number of comments
+                $this->data['packages'][$package->packagetitle]['number_of_comments'] = $stats['number_of_comments'];
+
+                // the stars as html snippet for the average rating; should be used as-is in the template
+                $this->data['packages'][$package->packagetitle]['stars'] = com_meego_ratings_controllers_rating::draw_stars($stats['average_rating']);
+
+                // set a longer description
+                $this->data['packages'][$package->packagetitle]['description'] = $package->packagedescription;
+            }
+
+            // we group the variants into providers. a provider is basically a project repository, e.g. home:fal
+            $this->data['packages'][$package->packagetitle]['providers'][$package->repoprojectname]['projectname'] = $package->repoprojectname;
+
+            // provide a link to visit the page of a certain package variant
+            $package->localurl = $this->mvc->dispatcher->generate_url
+            (
+                'package_instance',
+                array
+                (
+                    'package' => $package->packagetitle,
+                    'version' => $package->packageversion,
+                    'project' => $package->repoprojectname,
+                    'repository' => $package->reponame,
+                    'arch' => $package->repoarch
+                ),
+                $this->request
+            );
+
+            // if the UX is empty then we consider the package to be good for all UXes
+            // this value is used in the template to show a proper icon
+            $package->ux = $package->repoosux;
+            if ( ! strlen($package->ux) )
+            {
+                $package->ux = 'allux';
+            }
+
+            // the variants are basically the versions built for different hardware architectures (not UXes)
+            $this->data['packages'][$package->packagetitle]['providers'][$package->repoprojectname]['variants'][] = $package;
+        }
     }
+
+    /**
+     * Returns an array filled with some stats about a package identified by its title
+     *
+     * @param string title, e.g. anki
+     * @return array
+     *
+     */
+    public function get_statistics($title)
+    {
+        $retval = array
+        (
+            'average_rating' => 0,
+            'number_of_comments' => 0
+        );
+
+        // get the packages that have this title
+        $storage = new midgard_query_storage('com_meego_package_ratings');
+        $q = new midgard_query_select($storage);
+
+        $qc = new midgard_query_constraint(
+            new midgard_query_property('title'),
+            '=',
+            new midgard_query_value($title)
+        );
+
+        $q->set_constraint($qc);
+        $q->execute();
+
+        $packages = $q->list_objects();
+
+        $sum = 0;
+        foreach ($packages as $package)
+        {
+            // get the rating sum
+            $sum += $package->rating;
+
+            if ($package->commentid)
+            {
+                // now search for comments
+                // unfortunately this can not be done in the com_meego_package_ratings view
+                // because if a rating has a comment with ID 0 then SQL JOINs will skip that
+                $storage = new midgard_query_storage('com_meego_comments_comment_author');
+                $q = new midgard_query_select($storage);
+
+                $qc = new midgard_query_constraint(
+                    new midgard_query_property('commentid'),
+                    '=',
+                    new midgard_query_value($package->commentid)
+                );
+
+                $q->set_constraint($qc);
+                $q->execute();
+
+                $comments = $q->list_objects();
+
+                if (count($comments))
+                {
+                    // do not count empty comments
+                    if (strlen($comments[0]->content))
+                    {
+                        $retval['number_of_comments']++;
+                    }
+                }
+            }
+        }
+
+        if (count($packages))
+        {
+            $retval['average_rating'] = round($sum / count($packages), 1);
+        }
+
+        return $retval;
+    }
+
 }

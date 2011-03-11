@@ -19,10 +19,45 @@ msgstr "Packages in ${categorytree}"
 msgid "package_list_title_tip"
 msgstr "Listing all packages available in the given category"
 
+msgid "package_title"
+msgstr "Package"
+
+msgid "package_title_tip"
+msgstr "Short package name"
+
 msgid "package_name"
-msgstr "Package Name"
+msgstr "Full Name"
+
+msgid "package_name_tip"
+msgstr "Full package name including version number and supported CPU architecture"
 
 msgid "no_available_packages"
 msgstr "There are no available packages."
 
+msgid "os_release"
+msgstr "MeeGo Release"
+
+msgid "os_release_tip"
+msgstr "Shows the MeeGo release required by the application"
+
+msgid "maintainer"
+msgstr "Maintainer"
+
+msgid "rating"
+msgstr "Rating"
+
+msgid "comments"
+msgstr "Comments: ${number}"
+
+msgid "providers"
+msgstr "Versions available in ${projectname}"
+
+msgid "providers_tip"
+msgstr "Available versions are from providers who have public repositories where the application can be downloaded from"
+
+msgid "variants"
+msgstr "Variants"
+
+msgid "variants_tip"
+msgstr "A variant is a different version of the application"
 
