@@ -50,7 +50,31 @@ margin-left: 10px;
 margin-bottom: 10px;
 }
 
-.package h3.name {
+.package div.screenshot,
+.package div.details {
+display: inline-block;
+}
+
+.package div.screenshot {
+float: left;
+margin: 0 1em 0 0;
+}
+
+.package div.screenshot img {
+width: 85px;
+}
+
+.package div.details {
+width: 460px;
+}
+
+.package div.screenshot.missing {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+width: 85px;
+height: 60px;
+}
+
+.package div.details h3.name {
 color: #0098f8;
 font-size: 2em;
 font-weight: bold;
@@ -58,42 +82,42 @@ margin: 0;
 padding: 0;
 }
 
-.package div.maintainer,
-.package div.ratcomm {
+.package div.details div.maintainer,
+.package div.details div.ratcomm {
 color: #938c93;
 }
 
-.package div.ratcomm div.rating,
-.package div.ratcomm div.comments {
+.package div.details div.ratcomm div.rating,
+.package div.details div.ratcomm div.comments {
 display: inline-block;
 }
 
-.package div.ratcomm .rating {
+.package div.details div.ratcomm div.rating {
 margin: 0 2em 0 0;
 }
 
-// the span of the stars
-.package div.ratcomm div.rating span {
+/* the span of the stars */
+.package div.details div.ratcomm div.rating span {
 position: relative;
 top: 3px;
 }
 
-.package div.description {
+.package div.details div.description {
 margin: 1em 0 1em 0;
 }
 
-.package div.providers h4 {
+.package div.details div.providers h4 {
 padding: 0;
 margin: 1em 0 0 0;
 }
 
-.package div.providers ul {
+.package div.details div.providers ul {
 margin: 0.5em 0 0 0;
 padding: 0;
 list-style: none;
 }
 
-.package div.providers ul li {
+.package div.details div.providers ul li {
 margin: 0 0 0.5em 0;
 }
 

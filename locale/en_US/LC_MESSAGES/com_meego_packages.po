@@ -50,14 +50,14 @@ msgid "comments"
 msgstr "Comments: ${number}"
 
 msgid "providers"
-msgstr "Versions available in ${projectname}"
+msgstr "Version(s) available in ${projectname}"
 
 msgid "providers_tip"
-msgstr "Available versions are from providers who have public repositories where the application can be downloaded from"
+msgstr "Available versions are from providers who have public repositories where the package(s) can be downloaded from"
 
 msgid "variants"
 msgstr "Variants"
 
 msgid "variants_tip"
-msgstr "A variant is a different version of the application"
+msgstr "A variant is simply a different version of the application"
 

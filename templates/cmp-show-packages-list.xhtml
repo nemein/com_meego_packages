@@ -8,37 +8,48 @@
 <div class="packages" tal:condition="true: com_meego_packages/packages">
     <div class="package" tal:condition="true: com_meego_packages/packages" tal:repeat="package com_meego_packages/packages">
 
-        <h3 class="name">${package/name}</h3>
+        <div class="screenshot missing" tal:condition="not: package/screenshoturl"></div>
 
-        <div class="maintainer">
-            <tal:block i18n:domain="com_meego_packages" i18n:translate="'maintainer'"></tal:block>: <span>Maintainer</span>
+        <div class="screenshot" tal:condition="true: package/screenshoturl">
+            <img tal:attributes="src package/screenshoturl" property="v:image" />
         </div>
 
-        <div class="ratcomm">
-            <div class="rating">
-                <tal:block i18n:domain="com_meego_packages" i18n:translate="'rating'"></tal:block>: <span tal:content="structure package/stars">Stars</span>
-            </div>
-            <div class="comments" i18n:domain="com_meego_packages" i18n:translate="'comments'">
-                <tal:block i18n:name="number">${package/number_of_comments}</tal:block>: <span tal:content="structure package/stars">Stars</span>
-            </div>
-        </div>
-        <div class="description">${package/description}</div>
+        <div class="details">
 
-        <div class="providers" tal:condition="true: package/providers">
-            <tal:block tal:repeat="provider package/providers">
-            <h4 i18n:domain="com_meego_packages" i18n:translate="'providers'" i18n:attributes="title providers_tip">
-                <tal:block i18n:name="projectname">${provider/projectname}</tal:block>
-            </h4>
-            <ul>
-                <li>
-                    <div class="variant" tal:repeat="variant provider/variants">
-                        <a tal:attributes="href variant/localurl; class php: 'variant ' . variant.ux" i18n:domain="com_meego_packages" i18n:attributes="title variants_tip">
-                            <span>${variant/packageversion} - ${variant/repoarch} - ${variant/ux}</span>
-                        </a>
-                    </div>
-                </li>
-            </ul>
-            </tal:block>
+            <h3 class="name">${package/name}</h3>
+
+            <div class="maintainer">
+                <tal:block i18n:domain="com_meego_packages" i18n:translate="'maintainer'"></tal:block>: <span>Maintainer</span>
+            </div>
+
+            <div class="ratcomm">
+                <div class="rating">
+                    <tal:block i18n:domain="com_meego_packages" i18n:translate="'rating'"></tal:block>: <span tal:content="structure package/stars">Stars</span>
+                </div>
+                <div class="comments" i18n:domain="com_meego_packages" i18n:translate="'comments'">
+                    <tal:block i18n:name="number">${package/number_of_comments}</tal:block>: <span tal:content="structure package/stars">Stars</span>
+                </div>
+            </div>
+            <div class="description">${package/description}</div>
+
+            <div class="providers" tal:condition="true: package/providers">
+                <tal:block tal:repeat="provider package/providers">
+                <h4 i18n:domain="com_meego_packages" i18n:translate="'providers'" i18n:attributes="title providers_tip">
+                    <tal:block i18n:name="projectname">${provider/projectname}</tal:block>
+                </h4>
+                <ul>
+                    <li>
+                        <div class="variant" tal:repeat="variant provider/variants">
+                            <a tal:attributes="href variant/localurl; class php: 'variant ' . variant.ux" i18n:domain="com_meego_packages" i18n:attributes="title variants_tip">
+                                <span>${variant/packageversion} - ${variant/repoarch} - ${variant/ux}</span>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+                </tal:block>
+
+            </div>
+
         </div>
     </div>
 </div>
