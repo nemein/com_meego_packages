@@ -26,7 +26,7 @@ list-style:none;
 padding-left:5px;
 }
 
-.package_instance, .package {
+.package_instance, div.packages .package {
 width:560px;
 border-bottom: 1px dashed lightgrey;
 margin: 0 0 2em;
@@ -48,6 +48,10 @@ height:250px;
 float:right;
 margin-left: 10px;
 margin-bottom: 10px;
+}
+
+div.section div.package {
+margin: 2em 0 1em 0;
 }
 
 .package div.screenshot,
@@ -74,12 +78,17 @@ width: 85px;
 height: 60px;
 }
 
-.package div.details h3.name {
-color: #0098f8;
-font-size: 2em;
-font-weight: bold;
+.package div.details h3 {
 margin: 0;
 padding: 0;
+}
+
+.package div.details h3.name span,
+.package div.details h3.name a {
+color: #0098f8;
+text-decoration: none;
+font-size: 2em;
+font-weight: bold;
 }
 
 .package div.details div.maintainer,

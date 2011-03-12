@@ -34,6 +34,9 @@ msgstr "Full package name including version number and supported CPU architectur
 msgid "no_available_packages"
 msgstr "There are no available packages."
 
+msgid "no_such_package"
+msgstr "There is no such available package."
+
 msgid "os_release"
 msgstr "MeeGo Release"
 

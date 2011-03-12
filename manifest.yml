@@ -1,4 +1,5 @@
 version: 0.0.2
+
 requires:
     com_meego_obsconnector:
         - {type: github, user: nemein, repository: com_meego_obsconnector, branch: master}
@@ -6,6 +7,7 @@ requires:
         - {type: github, user: bergie, repository: midgardmvc_helper_workflow, branch: master}
     midgardmvc_ui_forms:
         - {type: github, user: bergie, repository: midgardmvc_ui_forms, branch: master}
+
 routes:
     index:
         path: /
@@ -64,6 +66,17 @@ routes:
         action: packages_by_categorytree
         template_aliases:
             content: cmp-show-packages-list
+
+    # to give an overview of a package by listing all
+    # the comments / ratings that each of its variants received
+    package_overview:
+        path: /packages/{$categorytree}/{$packagetitle}
+        controller: com_meego_packages_controllers_package
+        action: package_overview
+        template_aliases:
+            content: cmp-show-package-overview
+
+    # display a uniquely identified package
     package:
         path: /package/{$package}
         controller: com_meego_packages_controllers_package
