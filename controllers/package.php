@@ -1,7 +1,6 @@
 <?php
 class com_meego_packages_controllers_package
 {
-
     var $request = null;
     var $mvc = null;
 
