@@ -1,9 +1,24 @@
 <?php
 class com_meego_packages_controllers_category
 {
+    var $request = null;
+    var $mvc = null;
+
     public function __construct(midgardmvc_core_request $request)
     {
         $this->request = $request;
+
+        $this->mvc = midgardmvc_core::get_instance();
+        $this->mvc->i18n->set_translation_domain('com_meego_packages');
+
+        $default_language = $this->mvc->configuration->default_language;
+
+        if (! isset($default_language))
+        {
+            $default_language = 'en_US';
+        }
+
+        $this->mvc->i18n->set_language($default_language, false);
     }
 
     /**
