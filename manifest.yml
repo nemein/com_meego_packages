@@ -14,6 +14,8 @@ routes:
         controller: com_meego_packages_controllers_repository
         action: redirect
 
+    # lists all package categories (for now)
+    # @todo: it should probably list only base categories later
     categories:
         path: /categories
         controller: com_meego_packages_controllers_category
@@ -21,12 +23,51 @@ routes:
         template_aliases:
             content: cmp-show-categories-list
 
+    # admin UI for base categories
+    # meant only for managing base categories
+    # and their mappings to real package categories
+    basecategories_admin_index:
+        path: /basecategories/admin
+        controller: com_meego_packages_controllers_basecategory
+        action: admin_index
+        template_aliases:
+            content: cmp-admin-index-basecategories
+
+    basecategories_create:
+        path: /basecategories/create/
+        controller: com_meego_packages_controllers_basecategory
+        action: create_basecategory
+        template_aliases:
+            content: cmp-create-update-basecategory
+
+    basecategories_read:
+        path: /basecategories/read/{$basecategory}
+        controller: com_meego_packages_controllers_basecategory
+        action: read_basecategory
+        template_aliases:
+            content: cmp-read-basecategory
+
+    basecategories_update:
+        path: /basecategories/update/{$basecategory}
+        controller: com_meego_packages_controllers_basecategory
+        action: update_basecategory
+        template_aliases:
+            content: cmp-create-update-basecategory
+
+    basecategories_delete:
+        path: /basecategories/delete/{$basecategory}
+        controller: com_meego_packages_controllers_basecategory
+        action: delete_basecategory
+        template_aliases:
+            content: cmp-delete-basecategory
+
     repositories:
         path: /repositories
         controller: com_meego_packages_controllers_repository
         action: index
         template_aliases:
             content: cmp-show-index
+
     repositories_os_version_ux:
         path: /repositories/{$os}/{$version}/{$ux}
         controller: com_meego_packages_controllers_repository
@@ -40,12 +81,14 @@ routes:
         action: repository
         template_aliases:
             content: cmp-show-repository
+
     repository_latest:
         path: /repository/{$project}/{$repository}/{$arch}/latest
         controller: com_meego_packages_controllers_repository
         action: repository_latest
         template_aliases:
             content: cmp-show-repository-latest
+
     repository_latest_amount:
         path: /repository/{$project}/{$repository}/{$arch}/latest/{$amount}
         controller: com_meego_packages_controllers_repository
@@ -60,8 +103,10 @@ routes:
         template_aliases:
             content: cmp-show-search
 
+    # category tree is coming from the packages itself.
+    # it is a : separated list, such as Amusements:Games, Development:Libraries
     packages_by_categorytree:
-        path: /packages/{$categorytree}
+        path: /packages/tree/{$categorytree}
         controller: com_meego_packages_controllers_package
         action: packages_by_categorytree
         template_aliases:
@@ -70,7 +115,7 @@ routes:
     # to give an overview of a package by listing all
     # the comments / ratings that each of its variants received
     package_overview:
-        path: /packages/{$categorytree}/{$packagetitle}
+        path: /packages/tree/{$categorytree}/{$packagetitle}
         controller: com_meego_packages_controllers_package
         action: package_overview
         template_aliases:
@@ -83,24 +128,28 @@ routes:
         action: package
         template_aliases:
             content: cmp-show-package
+
     package_repository:
         path: /package/{$package}/{$repository}
         controller: com_meego_packages_controllers_package
         action: repository
         template_aliases:
             content: cmp-show-package_repository
+
     package_instance:
         path: /package/{$package}/{$version}/{$project}/{$repository}/{$arch}
         controller: com_meego_packages_controllers_package
         action: instance
         template_aliases:
             content: cmp-show-package_instance
+
     package_instance_workflow_start:
         path: /package/{$package}/{$version}/{$project}/{$repository}/{$arch}/workflow/{$workflow}
         controller: com_meego_packages_controllers_workflow
         action: start_package_instance
         template_aliases:
             content: cmp-show-package_instance_workflow
+
     package_instance_workflow_resume:
         path: /package/{$package}/{$version}/{$project}/{$repository}/{$arch}/workflow/{$workflow}/{$execution}
         controller: com_meego_packages_controllers_workflow
