@@ -498,10 +498,143 @@ class com_meego_packages_controllers_package
      */
     public function get_packages_by_categorytree(array $args)
     {
-        $this->data['categorytree'] = false;
         $this->data['packages'] = false;
+        $this->data['categorytree'] = rawurldecode($args['categorytree']);
 
-        $categorytree = rawurldecode($args['categorytree']);
+        $category = $this->determine_category_by_tree($this->data['categorytree']);
+
+        if (   isset($category)
+            && $category != 0)
+        {
+            $storage = new midgard_query_storage('com_meego_package_details');
+            $q = new midgard_query_select($storage);
+
+            $qc = new midgard_query_constraint(
+                new midgard_query_property('packagecategory'),
+                '=',
+                new midgard_query_value($category)
+            );
+
+            $q->set_constraint($qc);
+            $q->add_order(new midgard_query_property('packagetitle', $storage), SORT_ASC);
+            $q->execute();
+
+            $packages = $q->list_objects();
+
+            $this->set_data($packages);
+        }
+    }
+
+    /**
+     * Renders an overview of a package identified by its title
+     * The page will display all ratings and comments of all variants of the given package
+     *
+     * It will also show the links to the detailed pages of each individual package variants
+     *
+     * No commenting or rating is enabled on this page. Those can be done on the variant pages.
+     *
+     * @param array args
+     *
+     */
+    public function get_package_overview(array $args)
+    {
+        $this->data['packages'] = false;
+        $this->data['categorytree'] = rawurldecode($args['categorytree']);
+        $this->data['packagetitle'] = rawurldecode($args['packagetitle']);
+
+        $category = $this->determine_category_by_tree($this->data['categorytree']);
+
+        if (   isset($category)
+            && $category != 0)
+        {
+            $storage = new midgard_query_storage('com_meego_package_details');
+            $q = new midgard_query_select($storage);
+
+            $qc = new midgard_query_constraint_group('AND');
+
+            $qc->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('packagecategory'),
+                '=',
+                new midgard_query_value($category)
+            ));
+            $qc->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('packagetitle'),
+                '=',
+                new midgard_query_value($this->data['packagetitle'])
+            ));
+
+            $q->set_constraint($qc);
+            $q->add_order(new midgard_query_property('packagetitle', $storage), SORT_ASC);
+            $q->execute();
+
+            $packages = $q->list_objects();
+
+            $this->set_data($packages);
+
+            // collect all ratings and comments
+            $this->data['packages'][$this->data['packagetitle']]['ratings'] = array();
+
+            foreach ($this->data['packages'][$this->data['packagetitle']]['providers'] as $provider)
+            {
+                foreach ($provider['variants'] as $variant)
+                {
+                    $storage = new midgard_query_storage('com_meego_ratings_rating_author');
+                    $q = new midgard_query_select($storage);
+                    $q->set_constraint
+                    (
+                        new midgard_query_constraint
+                        (
+                            new midgard_query_property('to'),
+                            '=',
+                            new midgard_query_value($variant->packageguid)
+                        )
+                    );
+
+                    $q->add_order(new midgard_query_property('posted', $storage), SORT_DESC);
+                    $q->execute();
+
+                    $ratings = $q->list_objects();
+
+                    if (count($ratings))
+                    {
+                        foreach ($ratings as $rating)
+                        {
+                            $rating->stars = '';
+                            if ($rating->ratingcomment)
+                            {
+                                $comment = new com_meego_comments_comment($rating->ratingcomment);
+                                $rating->ratingcommentcontent = $comment->content;
+                            }
+                            if (   $rating->rating
+                                || $rating->ratingcomment)
+                            {
+                                // add a new property containing the stars to the rating object
+                                $rating->stars = com_meego_ratings_controllers_rating::draw_stars($rating->rating);
+                                // pimp the posted date
+                                $rating->date = gmdate('Y-m-d H:i e', strtotime($rating->posted));
+                            }
+                            array_push($this->data['packages'][$this->data['packagetitle']]['ratings'], $rating);
+                        }
+                    }
+                }
+
+            print_r($this->data['packages'][$this->data['packagetitle']]['ratings']);
+            ob_flush();
+
+            }
+
+
+        }
+    }
+
+    /**
+     * Returns a category id based on a category tree, such as: Application:Games:Chess for example
+     * @param string category tree (: separated list of strings)
+     * @return integer id of the category
+     */
+    public function determine_category_by_tree($categorytree)
+    {
+        $retval = 0;
 
         if (strlen($categorytree))
         {
@@ -517,7 +650,7 @@ class com_meego_packages_controllers_package
         else
         {
             // no categorytree given
-            return;
+            return $retval;
         }
 
         $storage = new midgard_query_storage('com_meego_package_category');
@@ -600,105 +733,12 @@ class com_meego_packages_controllers_package
 
         }
 
-        #print_r($ids);
-        #ob_flush();
-
-        if (   isset($ids[0])
-            && $ids[0] != 0)
+        if (count($ids))
         {
-            $this->data['categorytree'] = $categorytree;
+            $retval = $ids[0];
         }
 
-        $storage = new midgard_query_storage('com_meego_package_details');
-        $q = new midgard_query_select($storage);
-
-        $qc = new midgard_query_constraint(
-            new midgard_query_property('packagecategory'),
-            '=',
-            new midgard_query_value($ids[0])
-        );
-
-        $q->set_constraint($qc);
-        $q->add_order(new midgard_query_property('packagetitle', $storage), SORT_ASC);
-        $q->execute();
-
-        $packages = $q->list_objects();
-
-        // let's do a smart grouping by package_title (ie. short names)
-        $variant_counter = 0;
-        foreach ($packages as $package)
-        {
-            // certain things must not be recorded in evert iteration of this loop
-            // if we recorded the name, then we are pretty sure we recorded everything
-            if (! isset($this->data['packages'][$package->packagetitle]['name']))
-            {
-                // set the name
-                $this->data['packages'][$package->packagetitle]['name'] = $package->packagetitle;
-
-                // gather some basic stats
-                $stats = $this->get_statistics($package->packagetitle);
-
-                // set the total number of comments
-                $this->data['packages'][$package->packagetitle]['number_of_comments'] = $stats['number_of_comments'];
-
-                // the stars as html snippet for the average rating; should be used as-is in the template
-                $this->data['packages'][$package->packagetitle]['stars'] = com_meego_ratings_controllers_rating::draw_stars($stats['average_rating']);
-
-                // set a longer description
-                $this->data['packages'][$package->packagetitle]['description'] = $package->packagedescription;
-
-                // set a screenshoturl if the package object has any
-                $this->data['packages'][$package->packagetitle]['screenshoturl'] = false;
-
-                $_package = new com_meego_package($package->packageid);
-                $attachments = $_package->list_attachments();
-
-                foreach ($attachments as $attachment)
-                {
-                    $this->data['packages'][$package->packagetitle]['screenshoturl'] = $this->mvc->dispatcher->generate_url
-                    (
-                        'attachmentserver_variant',
-                        array
-                        (
-                            'guid' => $attachment->guid,
-                            'variant' => 'sidesquare',
-                            'filename' => $attachment->name,
-                        ),
-                        '/'
-                    );
-                    break;
-                }
-            }
-
-            // we group the variants into providers. a provider is basically a project repository, e.g. home:fal
-            $this->data['packages'][$package->packagetitle]['providers'][$package->repoprojectname]['projectname'] = $package->repoprojectname;
-
-            // provide a link to visit the page of a certain package variant
-            $package->localurl = $this->mvc->dispatcher->generate_url
-            (
-                'package_instance',
-                array
-                (
-                    'package' => $package->packagetitle,
-                    'version' => $package->packageversion,
-                    'project' => $package->repoprojectname,
-                    'repository' => $package->reponame,
-                    'arch' => $package->repoarch
-                ),
-                $this->request
-            );
-
-            // if the UX is empty then we consider the package to be good for all UXes
-            // this value is used in the template to show a proper icon
-            $package->ux = $package->repoosux;
-            if ( ! strlen($package->ux) )
-            {
-                $package->ux = 'allux';
-            }
-
-            // the variants are basically the versions built for different hardware architectures (not UXes)
-            $this->data['packages'][$package->packagetitle]['providers'][$package->repoprojectname]['variants'][] = $package;
-        }
+        return $retval;
     }
 
     /**
@@ -775,4 +815,99 @@ class com_meego_packages_controllers_package
         return $retval;
     }
 
+    /**
+     * Sets data for the template
+     * It is used in two routes so that is why we have it as a separate function
+     * @param array of packages
+     */
+    private function set_data($packages)
+    {
+        // let's do a smart grouping by package_title (ie. short names)
+        $variant_counter = 0;
+        foreach ($packages as $package)
+        {
+            // certain things must not be recorded in evert iteration of this loop
+            // if we recorded the name, then we are pretty sure we recorded everything
+            if (! isset($this->data['packages'][$package->packagetitle]['name']))
+            {
+                // set the name
+                $this->data['packages'][$package->packagetitle]['name'] = $package->packagetitle;
+
+                // local url to a package index page
+                $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
+                (
+                    'package_overview',
+                    array
+                    (
+                        'categorytree' => $this->data['categorytree'],
+                        'packagetitle' => $package->packagetitle
+                    ),
+                    $this->request
+                );
+
+                // gather some basic stats
+                $stats = $this->get_statistics($package->packagetitle);
+
+                // set the total number of comments
+                $this->data['packages'][$package->packagetitle]['number_of_comments'] = $stats['number_of_comments'];
+
+                // the stars as html snippet for the average rating; should be used as-is in the template
+                $this->data['packages'][$package->packagetitle]['stars'] = com_meego_ratings_controllers_rating::draw_stars($stats['average_rating']);
+
+                // set a longer description
+                $this->data['packages'][$package->packagetitle]['description'] = $package->packagedescription;
+
+                // set a screenshoturl if the package object has any
+                $this->data['packages'][$package->packagetitle]['screenshoturl'] = false;
+
+                $_package = new com_meego_package($package->packageid);
+                $attachments = $_package->list_attachments();
+
+                foreach ($attachments as $attachment)
+                {
+                    $this->data['packages'][$package->packagetitle]['screenshoturl'] = $this->mvc->dispatcher->generate_url
+                    (
+                        'attachmentserver_variant',
+                        array
+                        (
+                            'guid' => $attachment->guid,
+                            'variant' => 'sidesquare',
+                            'filename' => $attachment->name,
+                        ),
+                        '/'
+                    );
+                    break;
+                }
+            }
+
+            // we group the variants into providers. a provider is basically a project repository, e.g. home:fal
+            $this->data['packages'][$package->packagetitle]['providers'][$package->repoprojectname]['projectname'] = $package->repoprojectname;
+
+            // provide a link to visit the page of a certain package variant
+            $package->localurl = $this->mvc->dispatcher->generate_url
+            (
+                'package_instance',
+                array
+                (
+                    'package' => $package->packagetitle,
+                    'version' => $package->packageversion,
+                    'project' => $package->repoprojectname,
+                    'repository' => $package->reponame,
+                    'arch' => $package->repoarch
+                ),
+                $this->request
+            );
+
+            // if the UX is empty then we consider the package to be good for all UXes
+            // this value is used in the template to show a proper icon
+            $package->ux = $package->repoosux;
+            if ( ! strlen($package->ux) )
+            {
+                $package->ux = 'allux';
+            }
+
+            // the variants are basically the versions built for different hardware architectures (not UXes)
+            $this->data['packages'][$package->packagetitle]['providers'][$package->repoprojectname]['variants'][] = $package;
+        }
+    }
 }
