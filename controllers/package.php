@@ -553,7 +553,6 @@ class com_meego_packages_controllers_package
             {
                 #echo "------------------------------------<br/>\n";
                 #echo "start with: " . $current->name . "(" . $current->id . "), parent: " . $current->up . "<br/>\n";
-                $ids = array();
 
                 while ($current->up != 0)
                 {
@@ -574,9 +573,16 @@ class com_meego_packages_controllers_package
                         #echo "new end tree: " . end($tree) . "<br/>\n";
                         #echo "count: " . count($tree) . "<br/>\n";
 
-                        if (count($tree) == 1)
+                        if (   count($tree) == 1
+                            && count($ids) == count($origtree))
                         {
                             $done = true;
+                        }
+
+                        if (   ! $done
+                            && $current->name != end($tree))
+                        {
+                            $ids = array();
                         }
                     }
                     else
