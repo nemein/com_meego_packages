@@ -64,3 +64,32 @@ msgstr "Variants"
 msgid "variants_tip"
 msgstr "A variant is simply a different version of the application"
 
+msgid "admin_title_base_categories"
+msgstr "Base Category Administration"
+
+msgid "current_base_categories"
+msgstr "Current Base Categories"
+
+msgid "no_base_categories"
+msgstr "There are no base categories defined"
+
+msgid "question_populate_default_base_categories"
+msgstr "Would you like to populate default base categories?"
+
+msgid "populate"
+msgstr "Populate"
+
+msgid "edit_mappings"
+msgstr "Edit Category Mappings"
+
+msgid "no_mappings_for_basecategory"
+msgstr "There are no mappings yet for this base category"
+
+msgid "fetch_mappings_for_basecategory"
+msgstr "Fetch mappings for this base category"
+
+msgid "hide_mappings_for_basecategory"
+msgstr "Hide mappings for this base category"
+
+msgid "save"
+msgstr "Save"
