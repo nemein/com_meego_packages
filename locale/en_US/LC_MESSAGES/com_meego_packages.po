@@ -73,11 +73,20 @@ msgstr "Current Base Categories"
 msgid "no_base_categories"
 msgstr "There are no base categories defined"
 
+msgid "default_base_categories"
+msgstr "Default Base Categories"
+
+msgid "instruction_populate_default_base_categories"
+msgstr "You can create default base categories in the database using the list below. We will try doing the initial mapping between these and the real package categories. However you can always change the mappings later on."
+
 msgid "question_populate_default_base_categories"
-msgstr "Would you like to populate default base categories?"
+msgstr "Would you like to populate the default base categories?"
 
 msgid "populate"
 msgstr "Populate"
+
+msgid "no_description"
+msgstr "No description"
 
 msgid "edit_mappings"
 msgstr "Edit Category Mappings"

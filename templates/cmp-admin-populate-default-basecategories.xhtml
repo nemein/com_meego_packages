@@ -1,0 +1,10 @@
+<h3 i18n:domain="com_meego_packages" i18n:translate="'default_base_categories'"></h3>
+
+<div class="instruction" i18n:domain="com_meego_packages" i18n:translate="'instruction_populate_default_base_categories'"></div>
+
+<ul class="defaults" tal:condition="true: com_meego_packages/defaultbasecategories">
+    <li class="basecategory" tal:repeat="category com_meego_packages/defaultbasecategories">
+        ${category/name}
+        <div class="description">${category/description}</div>
+    </li>
+</ul>

@@ -106,13 +106,6 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         //$this->data['redirect_url'] = '/';
 
         // check sufficient access rights
-var_dump($this->mvc->authentication->is_user());
-echo "\n";
-var_dump($this->mvc->authorization->can_do('midgard:create', $this->object));
-ob_flush();
-
-
-
         if (   ! $this->mvc->authentication->is_user()
             || ! $this->mvc->authorization->can_do('midgard:create', $this->object))
         {
@@ -140,6 +133,21 @@ ob_flush();
             {
                 $basecategory->mappings = $this->get_relations_of_basecategory($basecategory->id);
                 $this->data['basecategories'][] = $basecategory;
+            }
+        }
+        else
+        {
+            // gather defaults so the admin has a chance to populate those
+            foreach ($this->default_base_categories as $name => $description)
+            {
+                if ($description = '')
+                {
+                    $description = $this->mvc->i18n->get('no_description');
+                }
+                $category = array('name' => $name, 'description' => $description);
+                print_r($category);
+                ob_flush();
+                $this->data['defaultbasecategories'][] = $category;
             }
         }
     }
