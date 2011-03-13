@@ -71,7 +71,7 @@ msgid "current_base_categories"
 msgstr "Current Base Categories"
 
 msgid "no_base_categories"
-msgstr "There are no base categories defined"
+msgstr "There are no base categories defined in the system. Administrators need to create those before they will be visible."
 
 msgid "default_base_categories"
 msgstr "Default Base Categories"

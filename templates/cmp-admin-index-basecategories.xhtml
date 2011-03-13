@@ -3,7 +3,7 @@
 <div>
 
     <tal:block tal:condition="not: com_meego_packages/basecategories">
-        <span i18n:domain="com_meego_packages" i18n:translate="'no_base_categories'"></span>
+        <div class="warning" i18n:domain="com_meego_packages" i18n:translate="'no_base_categories'"></div>
         <mgd:include>cmp-admin-populate-default-basecategories</mgd:include>
     </tal:block>
 
