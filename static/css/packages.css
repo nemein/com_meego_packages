@@ -211,3 +211,25 @@ div.list div.header .projectname,
 div.list div.element .projectname {
 width: 20em;
 }
+
+ul.defaults {
+list-style: none;
+padding: 0;
+}
+
+ul.defaults li.basecategory {
+border-bottom: 1px dashed lightgrey;
+margin: 0 0 1em;
+padding: 0 0 1em;
+}
+
+ul.defaults li.basecategory span.name {
+font-weight: bold;
+}
+
+ul.defaults li.basecategory div.description {
+font-style: italic;
+}
+
+
+

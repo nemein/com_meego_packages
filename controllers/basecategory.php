@@ -140,13 +140,12 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
             // gather defaults so the admin has a chance to populate those
             foreach ($this->default_base_categories as $name => $description)
             {
-                if ($description = '')
+                if ($description == '')
                 {
                     $description = $this->mvc->i18n->get('no_description');
                 }
                 $category = array('name' => $name, 'description' => $description);
-                print_r($category);
-                ob_flush();
+
                 $this->data['defaultbasecategories'][] = $category;
             }
         }

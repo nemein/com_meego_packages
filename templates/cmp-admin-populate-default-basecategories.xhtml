@@ -4,7 +4,7 @@
 
 <ul class="defaults" tal:condition="true: com_meego_packages/defaultbasecategories">
     <li class="basecategory" tal:repeat="category com_meego_packages/defaultbasecategories">
-        ${category/name}
+        <span class="name">${category/name}</span>
         <div class="description">${category/description}</div>
     </li>
 </ul>
