@@ -13,22 +13,22 @@ msgstr ""
 msgid "welcome"
 msgstr "Welcome!"
 
-msgid "package_list_title"
+msgid "title_package_list"
 msgstr "Packages in ${categorytree}"
 
-msgid "package_list_title_tip"
+msgid "title_tip_package_list"
 msgstr "Listing all packages available in the given category"
 
-msgid "package_title"
+msgid "title_package"
 msgstr "Package"
 
-msgid "package_title_tip"
+msgid "title_tip_package"
 msgstr "Short package name"
 
 msgid "package_name"
 msgstr "Full Name"
 
-msgid "package_name_tip"
+msgid "tip_package_name"
 msgstr "Full package name including version number and supported CPU architecture"
 
 msgid "no_available_packages"
@@ -61,11 +61,17 @@ msgstr "Available versions are from providers who have public repositories where
 msgid "variants"
 msgstr "Variants"
 
-msgid "variants_tip"
+msgid "tip_variants"
 msgstr "A variant is simply a different version of the application"
+
+msgid "title_default_base_categories"
+msgstr "Default Base Categories"
 
 msgid "title_admin_base_categories"
 msgstr "Base Category Administration"
+
+msgid "title_categories"
+msgstr "Categories"
 
 msgid "title_base_category"
 msgstr "Category: ${name}"
