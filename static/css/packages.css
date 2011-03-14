@@ -1,3 +1,7 @@
+.bold {
+font-weight: bold;
+}
+
 .splash {
 background:url("http://meego.com/sites/all/themes/meego/images/splash-garage.png") no-repeat scroll right bottom transparent;
 height: 140px;
@@ -225,6 +229,14 @@ min-height: 21px;
 padding: 5px 5px 5px 35px;
 }
 
+div.instruction {
+background-image: url(/midgardmvc-static/com_meego_packages/images/messages-status.png);
+background-repeat: no-repeat;
+min-height: 21px;
+padding: 5px 5px 5px 35px;
+margin: 1em 1em 1em 0;
+}
+
 div.status {
 border-color: #5dba7c;
 }
@@ -261,7 +273,6 @@ font-style: italic;
 width: 28em;
 }
 
-div.instruction,
 div.basecategory {
 margin: 0 0 1em 0;
 }
@@ -304,11 +315,17 @@ margin: 2em 0 0 0;
 border-top: 1px dashed lightgrey;
 }
 
-form.admin div.map select {
+form.admin div.map {
 height: 20em;
-width: 23em;
+width: 44em;
+overflow: auto;
 }
 
-form.admin div.map div.instruction {
-margin: 1em;
+form.admin div.map div.category {
+margin: 0 0 0.5em 0;
 }
+
+form.admin div.map input {
+margin: 0 2em 0 1em;
+}
+

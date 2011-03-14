@@ -143,4 +143,4 @@ msgid "no_mappings_for_basecategory"
 msgstr "There are no mappings yet for this base category"
 
 msgid "instruction_mapping"
-msgstr "Double click will move an item"
+msgstr "Select the desired package categories that should be mapped to ${name}"
