@@ -30,8 +30,9 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         $this->mvc = midgardmvc_core::get_instance();
 
         // check sufficient access rights
+        // we could do that in injector too...
         if (   ! $this->mvc->authentication->is_user()
-            || ! $this->mvc->authorization->can_do('midgard:create', $this->object))
+            || ! $this->mvc->authentication->get_user()->is_admin())
         {
             midgardmvc_core::get_instance()->head->relocate('/');
         }
