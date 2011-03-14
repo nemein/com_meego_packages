@@ -16,8 +16,6 @@
             <div class="description">${category/description}</div>
 
             <span tal:condition="not: category/mappings" i18n:domain="com_meego_packages" i18n:translate="'no_mappings_for_basecategory'"></span>
-            <span tal:condition="true: category/mappings" i18n:domain="com_meego_packages" i18n:translate="'fetch_mappings_for_basecategory'"></span>
-
             <div class="mappings" tal:condition="true: category/mappings"></div>
         </li>
     </ul>

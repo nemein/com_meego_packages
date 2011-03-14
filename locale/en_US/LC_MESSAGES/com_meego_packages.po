@@ -103,6 +103,9 @@ msgstr "Save"
 msgid "command_update"
 msgstr "Update"
 
+msgid "command_update_mapping"
+msgstr "Update Mapping"
+
 msgid "command_delete"
 msgstr "Delete"
 
@@ -138,3 +141,6 @@ msgstr "No description"
 
 msgid "no_mappings_for_basecategory"
 msgstr "There are no mappings yet for this base category"
+
+msgid "instruction_mapping"
+msgstr "Double click will move an item"

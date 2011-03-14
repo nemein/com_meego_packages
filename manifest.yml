@@ -50,6 +50,14 @@ routes:
         template_aliases:
             content: cmp-manage-basecategory
 
+    basecategories_admin_create_relations:
+        path: /basecategories/admin/manage/createrelations/{$basecategory}
+        controller: com_meego_packages_controllers_basecategory
+        action: post_create_relations
+        template_aliases:
+            content: cmp-manage-basecategory
+
+
     repositories:
         path: /repositories
         controller: com_meego_packages_controllers_repository

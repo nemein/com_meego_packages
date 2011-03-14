@@ -14,7 +14,6 @@
 </form>
 
 <form class="admin" method="post" accept-charset="UTF-8" tal:condition="not: com_meego_packages/undelete" tal:attributes="action com_meego_packages/form_action">
-
     <div class="basecategory" tal:define="category com_meego_packages/category">
     <tal:block tal:define="name category/name; description category/description">
         <input class="name" type="text" tal:attributes="value name; name php: 'categories[' . name . '][name]'"/>
@@ -27,3 +26,19 @@
     <input type="submit" name="delete" i18n:domain="com_meego_packages" i18n:attributes="value command_delete" class="form-submit"/>
 </form>
 
+<form class="admin map" method="post" accept-charset="UTF-8" tal:condition="true: com_meego_packages/map" tal:attributes="action com_meego_packages/form_action">
+    <div class="map">
+        <div class="instruction" i18n:domain="com_meego_packages" i18n:translate="'instruction_mapping'"></div>
+
+        <select name="packagecategories" size="10">
+            <option tal:repeat="available com_meego_packages/categories" tal:attributes="value available/id">${available/tree}</option>
+        </select>
+
+        <select name="mappedcategories" size="10">
+            <option tal:repeat="mapped com_meego_packages/mappedcategories" tal:attributes="value mapped/id">${mapped/tree}</option>
+        </select>
+    </div>
+
+    <a class="back" i18n:domain="com_meego_packages" tal:condition="true: com_meego_packages/indexurl" tal:attributes="href com_meego_packages/indexurl" i18n:translate="'command_basecategory_index'"></a>
+    <input type="submit" name="updatemapping" i18n:domain="com_meego_packages" i18n:attributes="value command_update_mapping" class="form-submit"/>
+</form>

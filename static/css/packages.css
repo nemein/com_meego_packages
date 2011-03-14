@@ -294,3 +294,21 @@ background-color: #5DBA7C;
 border: 2px solid #5DBA7C;
 color: #FFFFFF;
 }
+
+form.admin div.map {
+margin: 1em 0 1em 0;
+}
+
+form.admin.map {
+margin: 2em 0 0 0;
+border-top: 1px dashed lightgrey;
+}
+
+form.admin div.map select {
+height: 20em;
+width: 23em;
+}
+
+form.admin div.map div.instruction {
+margin: 1em;
+}

@@ -94,7 +94,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
             if (is_object($this->object))
             {
                 $this->object->localurl = $this->get_url_read();
-                $this->object->mappings = $this->get_relations_of_basecategory($this->object->id);
+                $this->object->mappings = $this->get_relations($this->object->id);
             }
         }
 
@@ -182,7 +182,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
             foreach ($basecategories as $basecategory)
             {
                 $basecategory->localurl = $this->get_url_read($basecategory->guid);
-                $basecategory->mappings = $this->get_relations_of_basecategory($basecategory->id);
+                $basecategory->mappings = $this->get_relations($basecategory->id);
                 $this->data['basecategories'][] = $basecategory;
             }
         }
@@ -234,6 +234,8 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
                 $this->object->name = $category['name'];
                 $this->object->create();
                 echo "create " . $category['name'] . "\n";
+                // try to do the mapping now
+                // $this->post_create_relations(array('basecategory' => $this->object->guid));
             }
 
             ob_flush();
@@ -261,12 +263,25 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function get_manage_basecategory(array $args)
     {
+        $this->data['map'] = false;
+
         try
         {
             $this->load_object($args);
             $this->data['category'] = $this->object;
             $this->data['feedback_objectname'] = $this->object->name;
             $this->data['undelete_error'] = false;
+
+            // this will set the package categories to this->data['categories']
+            com_meego_packages_controllers_category::get_categories_list();
+            // get th current mappings
+            $this->data['mappedcategories'] = $this->get_relations($this->object->id);
+            // set a flag if both arrays are valid
+            if (   is_array($this->data['categories'])
+                && is_array($this->data['mappedcategories']))
+            {
+                $this->data['map'] = true;
+            }
         }
         catch (midgard_error_exception $e)
         {
@@ -365,11 +380,79 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         }
     }
 
+
+    /**
+     * Creates the mapping between base categories and package categories
+     *
+     * If id is given then it creates the mappings of the specified base category
+     * If id is null then it will create mappings of all the base categories
+     *
+     * @param integer id of the basecategory;
+     */
+    public function post_create_relations(array $args)
+    {
+        $this->data['undelete'] = false;
+        $this->data['undelete_error'] = false;
+        $this->data['form_action'] = $this->get_url_read($args['basecategory']);
+        $this->data['indexurl'] = $this->get_url_admin_index();
+
+        if (count($args))
+        {
+            $this->load_object($args);
+            $basecategories[$this->object->name] = $this->object;
+        }
+        else
+        {
+            $storage = new midgard_query_storage('com_meego_package_basecategory');
+            $q = new midgard_query_select($storage);
+
+            $qc = new midgard_query_constraint(
+                new midgard_query_property('name'),
+                '<>',
+                new midgard_query_value('')
+            );
+
+            $q->set_constraint($qc);
+            $q->execute();
+
+            $objects = $q->list_objects();
+
+            foreach ($objects as $basecategory)
+            {
+                $basecategories[$basecategory->name] = $basecategory;
+            }
+        }
+
+        // set the list of all package categories, but set it so
+        // that parents are also part of the category name, e.g. Application:Games, not just Games
+        com_meego_packages_controllers_category::get_categories_list();
+
+        $this->data['packagecategories'] = $this->data['categories'];
+        unset($this->data['categories']);
+
+        // iterate through all base categories
+        // look up if the name appears in package category names
+        // create relation if it does
+        if (is_array($this->data['packagecategories']))
+        {
+            foreach (array_keys($this->data['packagecategories']) as $categorytree)
+            {
+                echo $categorytree . "\n";
+                ob_flush();
+            }
+        }
+    }
+
     /**
      * Looks up and returns all the relations of a particular base category
+     *
+     * If id is given then it searches the mappings of the specified base category
+     * If id is null then it will search all the mappings of all base categories
+     *
+     * @param integer id of the basecategory;
      */
-    private function get_relations_of_basecategory($id)
+    private function get_relations($id = null)
     {
-        return null;
+        return array( 0 => array('id' => 1, 'tree' => 'test:tree'));
     }
 }

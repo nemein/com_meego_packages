@@ -24,7 +24,7 @@ class com_meego_packages_controllers_category
     /**
      * @todo: docs
      */
-    public function get_categories_list(array $args)
+    public function get_categories_list(array $args = null)
     {
         $this->data['categories'] = array();
 
@@ -44,7 +44,7 @@ class com_meego_packages_controllers_category
 
         foreach ($categories as $category)
         {
-            $category->available_packages = $this->number_of_packages($category->id);
+            $category->available_packages = self::number_of_packages($category->id);
 
             if ($category->available_packages == 0)
             {
@@ -75,13 +75,13 @@ class com_meego_packages_controllers_category
 
             $category->css = '';
 
-            $this->data['categories'][] = $category;
+            $this->data['categories'][$category->tree] = $category;
         }
 
         if (count($this->data['categories']))
         {
-            $this->data['categories'][0]->css = 'first';
-            $this->data['categories'][count($this->data['categories']) - 1]->css = 'last';
+            reset($this->data['categories'])->css = 'first';
+            end($this->data['categories'])->css = 'last';
         }
 
         uasort(
