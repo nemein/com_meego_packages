@@ -272,16 +272,8 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
             $this->data['feedback_objectname'] = $this->object->name;
             $this->data['undelete_error'] = false;
 
-            // this will set the package categories to this->data['categories']
-            com_meego_packages_controllers_category::get_categories_list();
-            // get th current mappings
-            $this->data['mappedcategories'] = $this->get_relations($this->object->id);
-            // set a flag if both arrays are valid
-            if (   is_array($this->data['categories'])
-                && is_array($this->data['mappedcategories']))
-            {
-                $this->data['map'] = true;
-            }
+            $this->prepare_mapping($this->object);
+
         }
         catch (midgard_error_exception $e)
         {
@@ -339,6 +331,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         $this->data['category'] = $this->object;
 
         $this->data['feedback_objectname'] = $this->object->name;
+        $this->prepare_mapping($this->object);
 
         if (array_key_exists('update', $_POST))
         {
@@ -440,6 +433,24 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
                 echo $categorytree . "\n";
                 ob_flush();
             }
+        }
+    }
+
+    /**
+     * Prepares some arrays for the mapping
+     * @param object the basecategory object
+     */
+    public function prepare_mapping($object)
+    {
+        // this will set the package categories to this->data['categories']
+        com_meego_packages_controllers_category::get_categories_list();
+        // get th current mappings
+        $this->data['mappedcategories'] = $this->get_relations($object->id);
+        // set a flag if both arrays are valid
+        if (   is_array($this->data['categories'])
+            && is_array($this->data['mappedcategories']))
+        {
+            $this->data['map'] = true;
         }
     }
 
