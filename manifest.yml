@@ -1,4 +1,7 @@
-version: 0.0.2
+version: 0.0.3
+
+process_injector: com_meego_packages_injector
+template_injector: com_meego_packages_injector
 
 requires:
     com_meego_obsconnector:

@@ -43,7 +43,7 @@
             <ul>
                 <li>
                     <div class="variant" tal:repeat="variant provider/variants">
-                        <a tal:attributes="href variant/localurl; class php: 'variant ' . variant.ux" i18n:domain="com_meego_packages" i18n:attributes="title variants_tip">
+                        <a tal:attributes="href variant/localurl; class php: 'variant ' . variant.ux" i18n:domain="com_meego_packages" i18n:attributes="title tip_variants">
                             <span>${variant/packageversion} - ${variant/repoarch} - ${variant/ux}</span>
                         </a>
                     </div>
