@@ -63,7 +63,7 @@ class com_meego_packages_controllers_category
                 $up = $current->up;
             }
 
-            $category->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
+            $category->localurl = $this->mvc->dispatcher->generate_url
             (
                 'packages_by_categorytree',
                 array
