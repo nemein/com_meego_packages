@@ -616,13 +616,7 @@ class com_meego_packages_controllers_package
                         }
                     }
                 }
-
-            print_r($this->data['packages'][$this->data['packagetitle']]['ratings']);
-            ob_flush();
-
             }
-
-
         }
     }
 
