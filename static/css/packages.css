@@ -211,7 +211,30 @@ div.list div.element .projectname {
 width: 20em;
 }
 
+div.warning,
+div.error,
+div.status {
+background-image: url(/midgardmvc-static/com_meego_packages/images/messages-status.png);
+background-color: #EAEAEA;
+background-position: 5px 5px;
+background-repeat: no-repeat;
+border: 2px solid #E3038D;
+color: #333333;
+margin: 1em 1em 1em 0;
+min-height: 21px;
+padding: 5px 5px 5px 35px;
+}
+
+div.status {
+border-color: #5dba7c;
+}
+
 div.warning {
+background-image: url(/midgardmvc-static/com_meego_packages/images/messages-error.png);
+border-color: #ff6d34;
+}
+
+div.error {
 background-image: url(/midgardmvc-static/com_meego_packages/images/messages-error.png);
 border-color: #CC0000;
 }
@@ -227,13 +250,47 @@ margin: 0 0 1em;
 padding: 0 0 1em;
 }
 
-ul.defaults li.basecategory span.name {
+ul.defaults li.basecategory .name,
+div.basecategory .name {
 font-weight: bold;
 }
 
-ul.defaults li.basecategory div.description {
+ul.defaults li.basecategory .description,
+div.basecategory .description {
 font-style: italic;
+width: 28em;
 }
 
+div.instruction,
+div.basecategory {
+margin: 0 0 1em 0;
+}
 
+a.back {
+padding: 3px 10px;
+}
 
+form.admin {
+display: inline-block;
+}
+
+input.form-submit {
+padding: 2px 10px;
+}
+
+a.back,
+input.form-submit {
+background-color: #E3038D;
+border: 2px solid #E3038D;
+color: #FFFFFF;
+cursor: pointer;
+font-weight: bold;
+text-align: center;
+}
+
+a.back:hover,
+input.form-submit:hover {
+background-color: #5DBA7C;
+border: 2px solid #5DBA7C;
+color: #FFFFFF;
+}

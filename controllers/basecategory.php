@@ -28,6 +28,14 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         $this->request = $request;
 
         $this->mvc = midgardmvc_core::get_instance();
+
+        // check sufficient access rights
+        if (   ! $this->mvc->authentication->is_user()
+            || ! $this->mvc->authorization->can_do('midgard:create', $this->object))
+        {
+            midgardmvc_core::get_instance()->head->relocate('/');
+        }
+
         $this->mvc->i18n->set_translation_domain('com_meego_packages');
 
         $default_language = $this->mvc->configuration->default_language;
@@ -41,15 +49,56 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
     }
 
     /**
-     * @todo: docs
+     * sets the current category object by its guid, id or name
+     * sets the current object to a new com_meego_package_basecategory if
+     * the no argument specified, of the given category is not in the database
      */
     public function load_object(array $args)
     {
+        $this->object = null;
+
         if (array_key_exists('basecategory', $args))
         {
-            $this->object = new com_meego_package_basecategory($args['basecategory']);
+            try
+            {
+                $this->object = new com_meego_package_basecategory($args['basecategory']);
+            }
+            catch (InvalidArgumentException $e)
+            {
+                if (! is_object($this->object))
+                {
+                    // try to search by name
+                    $storage = new midgard_query_storage('com_meego_package_basecategory');
+                    $q = new midgard_query_select($storage);
+
+                    $qc = new midgard_query_constraint(
+                        new midgard_query_property('name'),
+                        '=',
+                        new midgard_query_value($args['basecategory'])
+                    );
+
+                    $q->set_constraint($qc);
+                    $q->set_limit(1);
+                    $q->execute();
+
+                    $categories = $q->list_objects();
+
+                    if (count($categories))
+                    {
+                        $this->object = $categories[0];
+                    }
+                }
+            }
+
+            if (is_object($this->object))
+            {
+                $this->object->localurl = $this->get_url_read();
+                $this->object->mappings = $this->get_relations_of_basecategory($this->object->id);
+            }
         }
-        else
+
+        if (   ! array_key_exists('basecategory', $args)
+            || ! is_object($this->object))
         {
             $this->prepare_new_object($args);
         }
@@ -66,13 +115,28 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
     /**
      * @todo: docs
      */
-    public function get_url_read()
+    public function get_url_admin_index()
     {
         return $this->mvc->dispatcher->generate_url
         (
-            'basecategory_read', array
+            'basecategories_admin_index', array(), $this->request
+        );
+    }
+
+    /**
+     * @todo: docs
+     */
+    public function get_url_read($guid = null)
+    {
+        if (! $guid)
+        {
+            $guid = $this->object->guid;
+        }
+        return $this->mvc->dispatcher->generate_url
+        (
+            'basecategories_admin_manage', array
             (
-                'basecategory' => $this->object->guid
+                'basecategory' => $guid
             ),
             $this->request
         );
@@ -81,16 +145,9 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
     /**
      * @todo: docs
      */
-    public function get_url_update()
+    public function get_url_update($guid = null)
     {
-        return $this->mvc->dispatcher->generate_url
-        (
-            'basecategory_update', array
-            (
-                'basecategory' => $this->object->guid
-            ),
-            $this->request
-        );
+        $this->get_url_read($guid);
     }
 
     /**
@@ -102,15 +159,6 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
     public function get_admin_index(array $args)
     {
         $this->load_object($args);
-
-        //$this->data['redirect_url'] = '/';
-
-        // check sufficient access rights
-        if (   ! $this->mvc->authentication->is_user()
-            || ! $this->mvc->authorization->can_do('midgard:create', $this->object))
-        {
-            midgardmvc_core::get_instance()->head->relocate('/');
-        }
 
         $storage = new midgard_query_storage('com_meego_package_basecategory');
         $q = new midgard_query_select($storage);
@@ -127,10 +175,12 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         $basecategories = $q->list_objects();
 
         $this->data['basecategories'] = null;
+
         if (count($basecategories))
         {
             foreach ($basecategories as $basecategory)
             {
+                $basecategory->localurl = $this->get_url_read($basecategory->guid);
                 $basecategory->mappings = $this->get_relations_of_basecategory($basecategory->id);
                 $this->data['basecategories'][] = $basecategory;
             }
@@ -148,6 +198,11 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
 
                 $this->data['defaultbasecategories'][] = $category;
             }
+
+            $this->data['form_action'] = $this->mvc->dispatcher->generate_url
+            (
+                'basecategories_admin_create', array(), $this->request
+            );
         }
     }
 
@@ -156,27 +211,157 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function post_create_basecategory(array $args)
     {
+        $saved = true;
+
+        // save categories update existing ones
+        foreach($_POST['categories'] as $category)
+        {
+            // look if basecategory with such name exists already
+            $this->load_object(array('basecategory' => $category['name']));
+
+            $this->object->description = $category['description'];
+
+            if ($this->object->guid)
+            {
+                // update
+                $this->object->update();
+                echo "update " . $category['name'] . "\n";
+            }
+            else
+            {
+                // create
+                $this->object->name = $category['name'];
+                $this->object->create();
+                echo "create " . $category['name'] . "\n";
+            }
+
+            ob_flush();
+
+            if (! $this->object->guid)
+            {
+                $saved = false;
+            }
+        }
+
+        if ($saved)
+        {
+            // @todo: add an uimessage
+            $this->data['relocate'] = $this->get_url_admin_index();
+            $this->mvc->head->relocate($this->data['relocate']);
+        }
+        else
+        {
+            throw new midgardmvc_exception_httperror("Could not populate default base categories", 500);
+        }
     }
 
     /**
      * Reading a basecategory
      */
-    public function get_read_basecategory(array $args)
+    public function get_manage_basecategory(array $args)
     {
+        try
+        {
+            $this->load_object($args);
+            $this->data['category'] = $this->object;
+            $this->data['feedback_objectname'] = $this->object->name;
+            $this->data['undelete_error'] = false;
+        }
+        catch (midgard_error_exception $e)
+        {
+            $this->data['status'] = 'error';
+            $this->data['feedback_objectname'] = $args['basecategory'];
+            $this->data['feedback'] = 'feedback_basecategory_does_not_exist';
+            $this->data['undelete_error'] = true;
+        }
+
+        $this->data['undelete'] = false;
+        $this->data['indexurl'] = $this->get_url_admin_index();
+        $this->data['form_action'] = $this->get_url_read($args['basecategory']);
     }
 
     /**
      * Updateing a basecategory
      */
-    public function post_update_basecategory(array $args)
+    public function post_manage_basecategory(array $args)
     {
-    }
+        $this->data['undelete'] = false;
+        $this->data['undelete_error'] = false;
+        $this->data['form_action'] = $this->get_url_read($args['basecategory']);
+        $this->data['indexurl'] = $this->get_url_admin_index();
 
-    /**
-     * Deleting a basecategory
-     */
-    public function post_delete_basecategory(array $args)
-    {
+        if (array_key_exists('undelete', $_POST))
+        {
+            if (midgard_object_class::undelete($args['basecategory']))
+            {
+                $this->data['feedback'] = 'feedback_basecategory_undelete_ok';
+            }
+            else
+            {
+                $this->data['undelete_error'] = true;
+                $this->data['status'] = 'error';
+                $this->data['feedback_objectname'] = $args['basecategory'];
+                $this->data['feedback'] = 'feedback_basecategory_undelete_failed';
+                return;
+            }
+        }
+
+        try
+        {
+            $this->load_object($args);
+        }
+        catch (midgard_error_exception $e)
+        {
+            $this->data['status'] = 'error';
+            $this->data['feedback_objectname'] = $args['basecategory'];
+            $this->data['feedback'] = 'feedback_basecategory_does_not_exist';
+            $this->data['undelete_error'] = true;
+            return;
+        }
+
+        $this->data['status'] = 'status';
+        $this->data['category'] = $this->object;
+
+        $this->data['feedback_objectname'] = $this->object->name;
+
+        if (array_key_exists('update', $_POST))
+        {
+            $new_name = trim(htmlentities($_POST['categories'][$this->object->name]['name']));
+            $new_description = trim(htmlentities($_POST['categories'][$this->object->name]['description']));
+
+            if (strlen($new_name) == 0)
+            {
+                $this->data['status'] = 'error';
+                $this->data['feedback'] = 'error_basecategory_name_empty';
+                return;
+            }
+
+            if ($new_name == $this->object->name)
+            {
+                if ($new_description == $this->object->description)
+                {
+                    $this->data['feedback'] = 'feedback_basecategory_no_change';
+                    return;
+                }
+            }
+
+            $this->object->name = $new_name;
+            $this->object->description = $new_description;
+            $this->object->update();
+
+            $this->data['feedback_objectname'] = $this->object->name;
+            $this->data['feedback'] = 'feedback_basecategory_update_ok';
+        }
+        elseif (array_key_exists('delete', $_POST))
+        {
+            $this->object->delete();
+            $this->data['undelete'] = true;
+            $this->data['feedback'] = 'feedback_basecategory_delete_ok';
+        }
+        elseif (array_key_exists('index', $_POST))
+        {
+            $this->mvc->head->relocate($this->get_url_admin_index());
+        }
     }
 
     /**

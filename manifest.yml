@@ -33,33 +33,19 @@ routes:
         template_aliases:
             content: cmp-admin-index-basecategories
 
-    basecategories_create:
-        path: /basecategories/create/
+    basecategories_admin_create:
+        path: /basecategories/admin/create/
         controller: com_meego_packages_controllers_basecategory
         action: create_basecategory
         template_aliases:
-            content: cmp-create-update-basecategory
+            content: cmp-create-basecategory
 
-    basecategories_read:
-        path: /basecategories/read/{$basecategory}
+    basecategories_admin_manage:
+        path: /basecategories/admin/manage/{$basecategory}
         controller: com_meego_packages_controllers_basecategory
-        action: read_basecategory
+        action: manage_basecategory
         template_aliases:
-            content: cmp-read-basecategory
-
-    basecategories_update:
-        path: /basecategories/update/{$basecategory}
-        controller: com_meego_packages_controllers_basecategory
-        action: update_basecategory
-        template_aliases:
-            content: cmp-create-update-basecategory
-
-    basecategories_delete:
-        path: /basecategories/delete/{$basecategory}
-        controller: com_meego_packages_controllers_basecategory
-        action: delete_basecategory
-        template_aliases:
-            content: cmp-delete-basecategory
+            content: cmp-manage-basecategory
 
     repositories:
         path: /repositories

@@ -1,10 +1,18 @@
-<h3 i18n:domain="com_meego_packages" i18n:translate="'default_base_categories'"></h3>
+<h3 i18n:domain="com_meego_packages" i18n:translate="'title_default_base_categories'"></h3>
 
 <div class="instruction" i18n:domain="com_meego_packages" i18n:translate="'instruction_populate_default_base_categories'"></div>
 
-<ul class="defaults" tal:condition="true: com_meego_packages/defaultbasecategories">
-    <li class="basecategory" tal:repeat="category com_meego_packages/defaultbasecategories">
-        <span class="name">${category/name}</span>
-        <div class="description">${category/description}</div>
-    </li>
-</ul>
+<form method="post" accept-charset="UTF-8" tal:attributes="action com_meego_packages/form_action">
+
+    <ul class="defaults" tal:condition="true: com_meego_packages/defaultbasecategories">
+        <li class="basecategory" tal:repeat="category com_meego_packages/defaultbasecategories">
+        <tal:block tal:define="name category/name; description category/description">
+            <input class="name" type="text" tal:attributes="value name; name php: 'categories[' . name . '][name]'"/>
+            <input class="description" type="text" tal:attributes="value description; name php: 'categories[' . name . '][description]'"/>
+        </tal:block>
+        </li>
+    </ul>
+
+    <input type="submit" name="populate" i18n:domain="com_meego_packages" i18n:attributes="value command_populate_default_base_categories" class="form-submit"/>
+
+</form>

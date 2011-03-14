@@ -1,19 +1,24 @@
-<h2 i18n:domain="com_meego_packages" i18n:translate="'admin_title_base_categories'"></h2>
+<h2 i18n:domain="com_meego_packages" i18n:translate="'title_admin_base_categories'"></h2>
+
+<div tal:attributes="class com_meego_packages/status" tal:condition="true: com_meego_packages/feedback" i18n:domain="com_meego_packages" i18n:translate="com_meego_packages/feedback">
+    <tal:block i18n:name="name">${com_meego_packages/feedback_objectname}</tal:block>
+</div>
 
 <div>
-
     <tal:block tal:condition="not: com_meego_packages/basecategories">
-        <div class="warning" i18n:domain="com_meego_packages" i18n:translate="'no_base_categories'"></div>
+        <div class="warning" i18n:domain="com_meego_packages" i18n:translate="'warning_no_base_categories'"></div>
         <mgd:include>cmp-admin-populate-default-basecategories</mgd:include>
     </tal:block>
 
-    <ul tal:condition="true: com_meego_packages/basecategories">
-        <li tal:attributes="id php: 'base_' . basecategory.id" class="basecategory" tal:repeat="basecategory com_meego_packages/basecategories">
-            <div class="name">${basecategory/name}</div>
-            <div class="description">${basecategory/description}</div>
-            <span tal:condition="not: basecategory/mappings" i18n:domain="com_meego_packages" i18n:translate="'no_mappings_for_basecategory'"></span>
-            <span tal:condition="true: basecategory/mappings" i18n:domain="com_meego_packages" i18n:translate="'fetch_mappings_for_basecategory'"></span>
-            <div class="mappings" tal:condition="true: basecategory/mappings"></div>
+    <ul class="defaults" tal:condition="true: com_meego_packages/basecategories">
+        <li class="basecategory" tal:attributes="id php: 'base_' . category.id" tal:repeat="category com_meego_packages/basecategories">
+            <div class="name"><a tal:attributes="href category/localurl">${category/name}</a></div>
+            <div class="description">${category/description}</div>
+
+            <span tal:condition="not: category/mappings" i18n:domain="com_meego_packages" i18n:translate="'no_mappings_for_basecategory'"></span>
+            <span tal:condition="true: category/mappings" i18n:domain="com_meego_packages" i18n:translate="'fetch_mappings_for_basecategory'"></span>
+
+            <div class="mappings" tal:condition="true: category/mappings"></div>
         </li>
     </ul>
 </div>

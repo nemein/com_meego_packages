@@ -1,0 +1,29 @@
+<h3 i18n:domain="com_meego_packages" i18n:translate="'title_base_category'">
+    <tal:block i18n:name="name">${com_meego_packages/feedback_objectname}</tal:block>
+</h3>
+
+<div class="instruction" tal:condition="not: com_meego_packages/undelete" i18n:domain="com_meego_packages" i18n:translate="'instruction_manage_base_category'"></div>
+
+<div tal:attributes="class com_meego_packages/status" tal:condition="true: com_meego_packages/feedback" i18n:domain="com_meego_packages" i18n:translate="com_meego_packages/feedback">
+    <tal:block i18n:name="name">${com_meego_packages/feedback_objectname}</tal:block>
+</div>
+
+<form class="admin" method="post" accept-charset="UTF-8" tal:condition="true: com_meego_packages/undelete" tal:attributes="action com_meego_packages/form_action">
+    <a class="back" i18n:domain="com_meego_packages" tal:condition="true: com_meego_packages/indexurl" tal:attributes="href com_meego_packages/indexurl" i18n:translate="'command_basecategory_index'"></a>
+    <input tal:condition="not: com_meego_packages/undelete_error" type="submit" name="undelete" i18n:domain="com_meego_packages" i18n:attributes="value command_undelete" class="form-submit"/>
+</form>
+
+<form class="admin" method="post" accept-charset="UTF-8" tal:condition="not: com_meego_packages/undelete" tal:attributes="action com_meego_packages/form_action">
+
+    <div class="basecategory" tal:define="category com_meego_packages/category">
+    <tal:block tal:define="name category/name; description category/description">
+        <input class="name" type="text" tal:attributes="value name; name php: 'categories[' . name . '][name]'"/>
+        <input class="description" type="text" tal:attributes="value description; name php: 'categories[' . name . '][description]'"/>
+    </tal:block>
+    </div>
+
+    <a class="back" i18n:domain="com_meego_packages" tal:condition="true: com_meego_packages/indexurl" tal:attributes="href com_meego_packages/indexurl" i18n:translate="'command_basecategory_index'"></a>
+    <input type="submit" name="update" i18n:domain="com_meego_packages" i18n:attributes="value command_update" class="form-submit"/>
+    <input type="submit" name="delete" i18n:domain="com_meego_packages" i18n:attributes="value command_delete" class="form-submit"/>
+</form>
+
