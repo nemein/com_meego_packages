@@ -22,16 +22,21 @@
 </form>
 
 <form class="admin" method="post" accept-charset="UTF-8" tal:condition="not: com_meego_packages/undelete" tal:attributes="action com_meego_packages/form_action">
-    <div class="basecategory" tal:define="category com_meego_packages/category">
-    <tal:block tal:define="name category/name; description category/description">
-        <input class="name" type="text" tal:attributes="value name; name php: 'categories[' . name . '][name]'"/>
-        <input class="description" type="text" tal:attributes="value description; name php: 'categories[' . name . '][description]'"/>
-    </tal:block>
+
+    <div class="basecategory" tal:condition="true: com_meego_packages/category" tal:define="category com_meego_packages/category">
+        <tal:block tal:define="name category/name; description category/description">
+            <input class="name" type="text" tal:attributes="value name; name php: 'categories[' . name . '][name]'"/>
+            <input class="description" type="text" tal:attributes="value description; name php: 'categories[' . name . '][description]'"/>
+        </tal:block>
     </div>
 
     <a class="back" i18n:domain="com_meego_packages" tal:condition="true: com_meego_packages/indexurl" tal:attributes="href com_meego_packages/indexurl" i18n:translate="'command_basecategory_index'"></a>
-    <input type="submit" name="update" i18n:domain="com_meego_packages" i18n:attributes="value command_update" class="form-submit"/>
-    <input type="submit" name="delete" i18n:domain="com_meego_packages" i18n:attributes="value command_delete" class="form-submit"/>
+
+    <tal:block tal:condition="true: com_meego_packages/category">
+        <input type="submit" name="update" i18n:domain="com_meego_packages" i18n:attributes="value command_update" class="form-submit"/>
+        <input type="submit" name="delete" i18n:domain="com_meego_packages" i18n:attributes="value command_delete" class="form-submit"/>
+    </tal:block>
+
 </form>
 
 <form class="admin map" method="post" accept-charset="UTF-8" tal:condition="true: com_meego_packages/map" tal:attributes="action com_meego_packages/form_action">
