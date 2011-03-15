@@ -255,18 +255,6 @@ class com_meego_packages_controllers_category
             }
 
             ksort($this->data['categories']);
-/*
-            uasort(
-                $this->data['categories'],
-                function($a, $b)
-                {
-                    if ($a->tree == $b->tree) {
-                        return 0;
-                    }
-                    return ($a->tree < $b->tree) ? -1 : 1;
-                }
-            );
-*/
             // @todo: set the active leaf somehow; class="active"
         }
     }
