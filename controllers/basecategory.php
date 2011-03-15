@@ -93,16 +93,17 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
 
             if (is_object($this->object))
             {
-                $this->object->localurl = $this->get_url_read();
-                $this->object->mappings = $this->get_relations($this->object->id);
+                $this->object->localurl = self::get_url_read();
             }
         }
 
         if (   ! array_key_exists('basecategory', $args)
             || ! is_object($this->object))
         {
-            $this->prepare_new_object($args);
+            self::prepare_new_object($args);
         }
+
+        return $this->object;
     }
 
     /**
@@ -182,7 +183,8 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
             foreach ($basecategories as $basecategory)
             {
                 $basecategory->localurl = $this->get_url_read($basecategory->guid);
-                $basecategory->mappings = $this->get_relations($basecategory->id);
+                $basecategory->mapping_counter = $this->count_number_of_relations($basecategory->id);
+                $basecategory->package_counter = $this->count_number_of_packages($basecategory->id);
                 $this->data['basecategories'][] = $basecategory;
             }
         }
@@ -273,7 +275,6 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
             $this->data['undelete_error'] = false;
 
             $this->prepare_mapping($this->object);
-
         }
         catch (midgard_error_exception $e)
         {
@@ -289,7 +290,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
     }
 
     /**
-     * Updateing a basecategory
+     * Updating a basecategory
      */
     public function post_manage_basecategory(array $args)
     {
@@ -331,7 +332,6 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         $this->data['category'] = $this->object;
 
         $this->data['feedback_objectname'] = $this->object->name;
-        $this->prepare_mapping($this->object);
 
         if (array_key_exists('update', $_POST))
         {
@@ -354,12 +354,40 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
                 }
             }
 
+            $this->prepare_mapping($this->object);
+
             $this->object->name = $new_name;
             $this->object->description = $new_description;
             $this->object->update();
 
             $this->data['feedback_objectname'] = $this->object->name;
             $this->data['feedback'] = 'feedback_basecategory_update_ok';
+        }
+        elseif (array_key_exists('updatemapping', $_POST))
+        {
+            // delete all mappings of this base category
+            $this->delete_relations($this->object->id);
+
+            // set relations to db if they were posted
+            if (array_key_exists('mapped', $_POST))
+            {
+                foreach ($_POST['mapped'] as $packagecategory)
+                {
+                    $newrelation = new com_meego_package_category_relation();
+                    $newrelation->basecategory = $this->object->id;
+                    $newrelation->packagecategory = $packagecategory;
+                    if (   $newrelation->basecategory != 0
+                        && $newrelation->packagecategory != 0)
+                    {
+                        $newrelation->create();
+                    }
+                }
+                $this->data['feedback'] = 'feedback_category_mapping_updated_ok';
+            }
+
+            // set the list of all package categories, but set it so
+            // that parents are also part of the category name, e.g. Application:Games, not just Games
+            $this->prepare_mapping($this->object);
         }
         elseif (array_key_exists('delete', $_POST))
         {
@@ -373,65 +401,19 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         }
     }
 
-
     /**
-     * Creates the mapping between base categories and package categories
-     *
-     * If id is given then it creates the mappings of the specified base category
-     * If id is null then it will create mappings of all the base categories
-     *
-     * @param integer id of the basecategory;
+     * Deetes all existing relations of a base category
+     * @param integer id of the base category
      */
-    public function post_create_relations(array $args)
+    private function delete_relations($basecategory_id = null)
     {
-        $this->data['undelete'] = false;
-        $this->data['undelete_error'] = false;
-        $this->data['form_action'] = $this->get_url_read($args['basecategory']);
-        $this->data['indexurl'] = $this->get_url_admin_index();
-
-        if (count($args))
+        if ($basecategory_id)
         {
-            $this->load_object($args);
-            $basecategories[$this->object->name] = $this->object;
-        }
-        else
-        {
-            $storage = new midgard_query_storage('com_meego_package_basecategory');
-            $q = new midgard_query_select($storage);
+            $relations = $this->load_relations_for_basecategory($basecategory_id);
 
-            $qc = new midgard_query_constraint(
-                new midgard_query_property('name'),
-                '<>',
-                new midgard_query_value('')
-            );
-
-            $q->set_constraint($qc);
-            $q->execute();
-
-            $objects = $q->list_objects();
-
-            foreach ($objects as $basecategory)
+            foreach($relations as $relation)
             {
-                $basecategories[$basecategory->name] = $basecategory;
-            }
-        }
-
-        // set the list of all package categories, but set it so
-        // that parents are also part of the category name, e.g. Application:Games, not just Games
-        com_meego_packages_controllers_category::get_categories_list();
-
-        $this->data['packagecategories'] = $this->data['categories'];
-        unset($this->data['categories']);
-
-        // iterate through all base categories
-        // look up if the name appears in package category names
-        // create relation if it does
-        if (is_array($this->data['packagecategories']))
-        {
-            foreach (array_keys($this->data['packagecategories']) as $categorytree)
-            {
-                echo $categorytree . "\n";
-                ob_flush();
+                $relation->purge();
             }
         }
     }
@@ -443,27 +425,138 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
     public function prepare_mapping($object)
     {
         // this will set the package categories to this->data['categories']
-        com_meego_packages_controllers_category::get_categories_list();
-        // get th current mappings
-        $this->data['mappedcategories'] = $this->get_relations($object->id);
+        $packagecategories = com_meego_packages_controllers_category::get_all_package_categories();
+        com_meego_packages_controllers_category::prepare_category_list($packagecategories);
+
+        // to be used when displaying the number of package categories mapped to this base category
+        $this->data['mapping_counter'] = 0;
+        $this->data['package_counter'] = 0;
+
         // set a flag if both arrays are valid
-        if (   is_array($this->data['categories'])
-            && is_array($this->data['mappedcategories']))
+        foreach($this->data['categories'] as $category)
         {
-            $this->data['map'] = true;
+            $relation = $this->load_relation($object->id, $category->id);
+
+            $mapped = false;
+
+            if (is_object($relation))
+            {
+                $mapped = true;
+
+                ++$this->data['mapping_counter'];
+                $this->data['package_counter'] += $category->available_packages;
+            }
+
+            $this->data['map'][] = array(
+                'id' => $category->id,
+                'tree' => $category->tree,
+                'mapped' => $mapped
+            );
         }
     }
 
     /**
-     * Looks up and returns all the relations of a particular base category
+     * Loads a relation object betwenn a base category and a package category
      *
-     * If id is given then it searches the mappings of the specified base category
-     * If id is null then it will search all the mappings of all base categories
+     * @param integer id of the base category
+     * @param integer id of the package category
      *
-     * @param integer id of the basecategory;
+     * @return object relation object
+     *
      */
-    private function get_relations($id = null)
+    private function load_relation($basecategory = null, $packagecategory = null)
     {
-        return array( 0 => array('id' => 1, 'tree' => 'test:tree'));
+        $relation = null;
+
+        $storage = new midgard_query_storage('com_meego_package_category_relation');
+
+        $qc = new midgard_query_constraint_group('AND');
+
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('basecategory'),
+            '=',
+            new midgard_query_value($basecategory)
+        ));
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('packagecategory'),
+            '=',
+            new midgard_query_value($packagecategory)
+        ));
+
+        $q = new midgard_query_select($storage);
+
+        $q->set_constraint($qc);
+        $q->set_limit(1);
+        $q->execute();
+
+        $relations = $q->list_objects();
+
+        if (   is_array($relations)
+            && count($relations))
+        {
+            $relation = $relations[0];
+        }
+
+        return $relation;
+    }
+
+    /**
+     * Counts the amount of mapping a base category has
+     * @param integer id of a basecategory
+     * @return integer number of relations recorded
+     */
+    public function count_number_of_relations($basecategory_id)
+    {
+        $relations = $this->load_relations_for_basecategory($basecategory_id);
+
+        return count($relations);
+    }
+
+    /**
+     * Counts the amount of packages that are covered by a base category
+     * @param integer id of a basecategory
+     * @return integer number of packages
+     */
+    public function count_number_of_packages($basecategory_id)
+    {
+        $counter = 0;
+
+        $relations = $this->load_relations_for_basecategory($basecategory_id);
+
+        foreach($relations as $relation)
+        {
+            $counter += com_meego_packages_controllers_category::number_of_packages($relation->packagecategory);
+        }
+
+        return $counter;
+    }
+
+    /**
+     * Loads all relations that belong to a base category
+     * @param integer id of the base category
+     * @return array of relation objects
+     */
+    public function load_relations_for_basecategory($basecategory_id = null)
+    {
+        $relations = null;
+
+        if ($basecategory_id)
+        {
+            $storage = new midgard_query_storage('com_meego_package_category_relation');
+            $q = new midgard_query_select($storage);
+
+            $qc = new midgard_query_constraint(
+                new midgard_query_property('basecategory'),
+                '=',
+                new midgard_query_value($basecategory_id)
+            );
+
+            $q->set_constraint($qc);
+            $q->execute();
+
+            $relations = $q->list_objects();
+        }
+
+        return $relations;
     }
 }

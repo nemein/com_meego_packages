@@ -100,6 +100,15 @@ routes:
         template_aliases:
             content: cmp-show-search
 
+    # base categories are defined by admins
+    # base categories have one or more package categories mapped to them
+    packages_by_basecategory:
+        path: /packages/base/{$basecategory}
+        controller: com_meego_packages_controllers_package
+        action: packages_by_basecategory
+        template_aliases:
+            content: cmp-show-packages-list
+
     # category tree is coming from the packages itself.
     # it is a : separated list, such as Amusements:Games, Development:Libraries
     packages_by_categorytree:
@@ -111,7 +120,7 @@ routes:
 
     # to give an overview of a package by listing all
     # the comments / ratings that each of its variants received
-    package_overview:
+    package_overview_tree:
         path: /packages/tree/{$categorytree}/{$packagetitle}
         controller: com_meego_packages_controllers_package
         action: package_overview

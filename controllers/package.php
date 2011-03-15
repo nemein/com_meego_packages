@@ -487,6 +487,7 @@ class com_meego_packages_controllers_package
         }
 
         $qb = com_meego_repository::new_query_builder();
+
         //TODO: add constraints for arch or release.
         $this->data['repositories'] = $qb->execute();
     }
@@ -499,6 +500,9 @@ class com_meego_packages_controllers_package
     {
         $this->data['packages'] = false;
         $this->data['categorytree'] = rawurldecode($args['categorytree']);
+
+        $this->data['base'] = false;
+        $this->data['basecategory'] = false;
 
         $category = $this->determine_category_by_tree($this->data['categorytree']);
 
@@ -521,6 +525,65 @@ class com_meego_packages_controllers_package
             $packages = $q->list_objects();
 
             $this->set_data($packages);
+        }
+    }
+
+    /**
+     * Returns all packages that belong to a certain base category
+     * @param array args; 'basecategory' argument can be like: Games
+     */
+    public function get_packages_by_basecategory(array $args)
+    {
+        // get the base category object
+        $basecategory = com_meego_packages_controllers_basecategory::load_object($args);
+
+        if (is_object($basecategory))
+        {
+            $this->data['base'] = true;
+            $this->data['basecategory'] = $basecategory->name;
+
+            // get relations
+            $relations = com_meego_packages_controllers_basecategory::load_relations_for_basecategory($basecategory->id);
+
+            $packages = array();
+
+            // gather all packages from each relation
+            foreach ($relations as $relation)
+            {
+                $storage = new midgard_query_storage('com_meego_package_details');
+                $q = new midgard_query_select($storage);
+
+                $qc = new midgard_query_constraint(
+                    new midgard_query_property('packagecategory'),
+                    '=',
+                    new midgard_query_value($relation->packagecategory)
+                );
+
+                $q->set_constraint($qc);
+                $q->execute();
+
+                $packages = array_merge($q->list_objects(), $packages);
+            }
+
+            // sort the packages by title
+            uasort(
+                $packages,
+                function($a, $b)
+                {
+                    if ($a->packagetitle == $b->packagetitle) {
+                        return 0;
+                    }
+                    return ($a->packagetitle < $b->packagetitle) ? -1 : 1;
+                }
+            );
+
+            // prepare the data for the template
+            $this->set_data($packages);
+        }
+        else
+        {
+            // oops, there are no packages for this base category..
+            throw new midgardmvc_exception_notfound("There are no packages are within this category");
         }
     }
 
@@ -680,7 +743,7 @@ class com_meego_packages_controllers_package
                 #echo "------------------------------------<br/>\n";
                 #echo "start with: " . $current->name . "(" . $current->id . "), parent: " . $current->up . "<br/>\n";
 
-                while ($current->up != 0)
+                while (! $done)
                 {
                     $done = false;
 
@@ -695,13 +758,16 @@ class com_meego_packages_controllers_package
                         $ids[] = $current->id;
                         $current = new com_meego_package_category($current->up);
 
+                        #echo "new current up: " . $current->up . "<br/>\n";
                         #echo "new current: " . $current->name . "(" . $current->id . ")<br/>\n";
                         #echo "new end tree: " . end($tree) . "<br/>\n";
-                        #echo "count: " . count($tree) . "<br/>\n";
+                        #echo "count tree: " . count($tree) . "<br/>\n";
+                        #echo "count ids: " . count($ids) . ", count origtree: " . count($origtree) . "<br/>\n";
 
                         if (   count($tree) == 1
-                            && count($ids) == count($origtree))
+                            && $current->name == end($tree))
                         {
+                            $ids[] = $current->id;
                             $done = true;
                         }
 
@@ -813,10 +879,11 @@ class com_meego_packages_controllers_package
      * It is used in two routes so that is why we have it as a separate function
      * @param array of packages
      */
-    private function set_data($packages)
+    private function set_data(array $packages)
     {
         // let's do a smart grouping by package_title (ie. short names)
         $variant_counter = 0;
+
         foreach ($packages as $package)
         {
             // certain things must not be recorded in evert iteration of this loop
@@ -826,10 +893,18 @@ class com_meego_packages_controllers_package
                 // set the name
                 $this->data['packages'][$package->packagetitle]['name'] = $package->packagetitle;
 
+                if (   isset($this->data['base'])
+                    && $this->data['base'])
+                {
+                    // if browsing by base categories, then we have to figure out the
+                    // the category tree of the package
+                    $this->data['categorytree'] = self::determine_category_tree($package);
+                }
+
                 // local url to a package index page
                 $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
                 (
-                    'package_overview',
+                    'package_overview_tree',
                     array
                     (
                         'categorytree' => $this->data['categorytree'],
@@ -902,5 +977,33 @@ class com_meego_packages_controllers_package
             // the variants are basically the versions built for different hardware architectures (not UXes)
             $this->data['packages'][$package->packagetitle]['providers'][$package->repoprojectname]['variants'][] = $package;
         }
+    }
+
+    /**
+     * Determines a category tree starting from a certain category
+     * @param object a packagedetails object
+     * @return string the full category tree
+     */
+    public function determine_category_tree($packagedetails)
+    {
+        $category = new com_meego_package_category($packagedetails->packagecategory);
+
+        $category->tree = null;
+
+        if (is_object($category))
+        {
+            $up = $category->up;
+
+            $category->tree = $category->name;
+
+            while ($up != 0)
+            {
+                $current = new com_meego_package_category($up);
+                $category->tree = $current->name . ':' . $category->tree;
+                $up = $current->up;
+            }
+        }
+
+        return $category->tree;
     }
 }

@@ -131,7 +131,10 @@ msgid "feedback_basecategory_undelete_failed"
 msgstr "'${name}' base category could not be restored"
 
 msgid "feedback_basecategory_no_change"
-msgstr "No change recorded for '${name}' base category"
+msgstr "No change(s) recorded for base category ${name}"
+
+msgid "feedback_category_mapping_updated_ok"
+msgstr "Mapping is successfuly updated for base category ${name}"
 
 msgid "error_basecategory_name_empty"
 msgstr "The name of a base category can not be empty"
@@ -141,6 +144,9 @@ msgstr "No description"
 
 msgid "no_mappings_for_basecategory"
 msgstr "There are no mappings yet for this base category"
+
+msgid "number_of_mappings_for_basecategory"
+msgstr "${mappings} package category(ies) are mapped to ${name} covering ${packages} package(s)"
 
 msgid "instruction_mapping"
 msgstr "Select the desired package categories that should be mapped to ${name}"

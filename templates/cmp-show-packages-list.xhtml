@@ -1,6 +1,6 @@
-
 <h2 i18n:domain="com_meego_packages" i18n:translate="'title_package_list'" i18n:attributes="title title_tip_package_list">
-    <span i18n:name="categorytree" tal:omit-tag="">${com_meego_packages/categorytree}</span>
+    <span tal:condition="not: com_meego_packages/basecategory" i18n:name="categorytree" tal:omit-tag="">${com_meego_packages/categorytree}</span>
+    <span tal:condition="true: com_meego_packages/basecategory" i18n:name="categorytree" tal:omit-tag="">${com_meego_packages/basecategory}</span>
 </h2>
 
 <div tal:condition="not: com_meego_packages/packages" i18n:domain="com_meego_packages" i18n:translate="'no_available_packages'"></div>

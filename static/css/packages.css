@@ -329,3 +329,13 @@ form.admin div.map input {
 margin: 0 2em 0 1em;
 }
 
+div.info {
+color: grey;
+font-style: italic;
+margin: 0 0 1em 0;
+}
+
+span.catname {
+font-weight: bold;
+font-style: italic;
+}
