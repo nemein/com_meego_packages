@@ -270,6 +270,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         try
         {
             $this->load_object($args);
+
             $this->data['category'] = $this->object;
             $this->data['feedback_objectname'] = $this->object->name;
             $this->data['undelete_error'] = false;
@@ -282,6 +283,8 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
             $this->data['feedback_objectname'] = $args['basecategory'];
             $this->data['feedback'] = 'feedback_basecategory_does_not_exist';
             $this->data['undelete_error'] = true;
+            // relocate
+            $this->mvc->head->relocate($this->get_url_admin_index());
         }
 
         $this->data['undelete'] = false;
@@ -294,18 +297,19 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function post_manage_basecategory(array $args)
     {
+        $this->data['category'] = false;
         $this->data['undelete'] = false;
         $this->data['undelete_error'] = false;
         $this->data['form_action'] = $this->get_url_read($args['basecategory']);
         $this->data['indexurl'] = $this->get_url_admin_index();
 
+        // some counters need to be reset
+        $this->data['mapping_counter'] = 0;
+        $this->data['package_counter'] = 0;
+
         if (array_key_exists('undelete', $_POST))
         {
-            if (midgard_object_class::undelete($args['basecategory']))
-            {
-                $this->data['feedback'] = 'feedback_basecategory_undelete_ok';
-            }
-            else
+            if (! midgard_object_class::undelete($args['basecategory']))
             {
                 $this->data['undelete_error'] = true;
                 $this->data['status'] = 'error';
@@ -326,6 +330,23 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
             $this->data['feedback'] = 'feedback_basecategory_does_not_exist';
             $this->data['undelete_error'] = true;
             return;
+        }
+
+        if (array_key_exists('undelete', $_POST))
+        {
+            $relations = self::load_relations_for_basecategory($this->object->id, true);
+
+            if (is_array($relations))
+            {
+                foreach ($relations as $relation)
+                {
+                    midgard_object_class::undelete($relation->guid);
+                }
+            }
+            // refresh mapping table
+            $this->prepare_mapping($this->object);
+            // set feedback and let it go
+            $this->data['feedback'] = 'feedback_basecategory_undelete_ok';
         }
 
         $this->data['status'] = 'status';
@@ -366,7 +387,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         elseif (array_key_exists('updatemapping', $_POST))
         {
             // delete all mappings of this base category
-            $this->delete_relations($this->object->id);
+            $this->delete_relations($this->object->id, true);
 
             // set relations to db if they were posted
             if (array_key_exists('mapped', $_POST))
@@ -391,9 +412,17 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         }
         elseif (array_key_exists('delete', $_POST))
         {
+            // delete the base category
             $this->object->delete();
+            // delete all its relations
+            self::delete_relations($this->object->id, false);
+            // allow undelete
             $this->data['undelete'] = true;
+            // set feedback
             $this->data['feedback'] = 'feedback_basecategory_delete_ok';
+            // some counters need to be reset
+            $this->data['mapping_counter'] = 0;
+            $this->data['package_counter'] = 0;
         }
         elseif (array_key_exists('index', $_POST))
         {
@@ -405,7 +434,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      * Deetes all existing relations of a base category
      * @param integer id of the base category
      */
-    private function delete_relations($basecategory_id = null)
+    private function delete_relations($basecategory_id = null, $purge = false)
     {
         if ($basecategory_id)
         {
@@ -413,7 +442,14 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
 
             foreach($relations as $relation)
             {
-                $relation->purge();
+                if ($purge)
+                {
+                    $relation->purge();
+                }
+                else
+                {
+                    $relation->delete();
+                }
             }
         }
     }
@@ -464,7 +500,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      * @return object relation object
      *
      */
-    private function load_relation($basecategory = null, $packagecategory = null)
+    private function load_relation($basecategory = null, $packagecategory = null, $includedeleted = false)
     {
         $relation = null;
 
@@ -487,6 +523,12 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
 
         $q->set_constraint($qc);
         $q->set_limit(1);
+
+        if ($includedeleted)
+        {
+            $q->include_deleted(true);
+        }
+
         $q->execute();
 
         $relations = $q->list_objects();
@@ -536,7 +578,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      * @param integer id of the base category
      * @return array of relation objects
      */
-    public function load_relations_for_basecategory($basecategory_id = null)
+    public function load_relations_for_basecategory($basecategory_id = null, $includedeleted = false)
     {
         $relations = null;
 
@@ -552,6 +594,12 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
             );
 
             $q->set_constraint($qc);
+
+            if ($includedeleted)
+            {
+                $q->include_deleted(true);
+            }
+
             $q->execute();
 
             $relations = $q->list_objects();
