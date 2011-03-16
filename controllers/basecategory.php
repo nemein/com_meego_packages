@@ -4,6 +4,8 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
     var $request = null;
     var $mvc = null;
 
+    var $top_projects = array();
+
     // these defaults can be used to populate the com_meego_package_basecategory table
     var $default_base_categories = array(
         'Internet' => '',
@@ -32,7 +34,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         // check sufficient access rights
         // we could do that in injector too...
         if (   ! $this->mvc->authentication->is_user()
-            || ! $this->mvc->authentication->get_user()->is_admin())
+            || ! $this->mvc->authorization->can_do('midgard:admin', null))
         {
             midgardmvc_core::get_instance()->head->relocate('/');
         }
@@ -47,6 +49,11 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         }
 
         $this->mvc->i18n->set_language($default_language, false);
+
+        // get the top projects from configuration
+        // only packages that are in repositories belonging to these top projects
+        // will be shown to non-techie audience
+        $this->top_projects = $this->mvc->configuration->top_projects;
     }
 
     /**
@@ -128,6 +135,22 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
     /**
      * @todo: docs
      */
+    public function get_url_browse_basecategory($ux = null, $basecategory = null)
+    {
+        return $this->mvc->dispatcher->generate_url
+        (
+            'basecategory_ux_index', array
+            (
+                'ux' => $ux,
+                'basecategory' => $basecategory
+            ),
+            $this->request
+        );
+    }
+
+    /**
+     * @todo: docs
+     */
     public function get_url_read($guid = null)
     {
         if (! $guid)
@@ -162,19 +185,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
     {
         $this->load_object($args);
 
-        $storage = new midgard_query_storage('com_meego_package_basecategory');
-        $q = new midgard_query_select($storage);
-
-        $qc = new midgard_query_constraint(
-            new midgard_query_property('name'),
-            '<>',
-            new midgard_query_value('')
-        );
-
-        $q->set_constraint($qc);
-        $q->execute();
-
-        $basecategories = $q->list_objects();
+        $basecategories = self::load_basecategories();
 
         $this->data['basecategories'] = null;
 
@@ -210,7 +221,71 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
     }
 
     /**
+     * Show a fancy list of basecategories
+     *
+     * @param array args where the key 'ux' will contain the name of the UX
+     *
+     */
+    public function get_basecategories_by_ux(array $args)
+    {
+        // for now we will not use the UX at all
+        $basecategories = self::load_basecategories();
+
+        $this->data['basecategories'] = null;
+
+        if (count($basecategories))
+        {
+            foreach ($basecategories as $basecategory)
+            {
+                // set the url where to browse that category
+                $basecategory->localurl = $this->get_url_browse_basecategory($args['ux'], $basecategory->name);
+                // count all apps that are in this category for that UX
+                $basecategory->apps_counter = $this->count_number_of_apps($basecategory->name, $args['ux']);
+                // set the css class to be used to display this base category
+                $pattern = '/(\w+)\s/i';
+                $replacement = '${1}';
+                $basecategory->css = mb_strtolower(preg_replace($pattern, $replacement, $basecategory->name));
+                // populate data
+                $this->data['basecategories'][] = $basecategory;
+            }
+        }
+    }
+
+    /**
+     * Reading a basecategory
+     */
+    public function get_manage_basecategory(array $args)
+    {
+        $this->data['map'] = false;
+
+        try
+        {
+            $this->load_object($args);
+
+            $this->data['category'] = $this->object;
+            $this->data['feedback_objectname'] = $this->object->name;
+            $this->data['undelete_error'] = false;
+
+            $this->prepare_mapping($this->object);
+        }
+        catch (midgard_error_exception $e)
+        {
+            $this->data['status'] = 'error';
+            $this->data['feedback_objectname'] = $args['basecategory'];
+            $this->data['feedback'] = 'feedback_basecategory_does_not_exist';
+            $this->data['undelete_error'] = true;
+            // relocate
+            $this->mvc->head->relocate($this->get_url_admin_index());
+        }
+
+        $this->data['undelete'] = false;
+        $this->data['indexurl'] = $this->get_url_admin_index();
+        $this->data['form_action'] = $this->get_url_read($args['basecategory']);
+    }
+
+    /**
      * Creating a basecategory
+     * @todo: finalize
      */
     public function post_create_basecategory(array $args)
     {
@@ -261,39 +336,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
     }
 
     /**
-     * Reading a basecategory
-     */
-    public function get_manage_basecategory(array $args)
-    {
-        $this->data['map'] = false;
-
-        try
-        {
-            $this->load_object($args);
-
-            $this->data['category'] = $this->object;
-            $this->data['feedback_objectname'] = $this->object->name;
-            $this->data['undelete_error'] = false;
-
-            $this->prepare_mapping($this->object);
-        }
-        catch (midgard_error_exception $e)
-        {
-            $this->data['status'] = 'error';
-            $this->data['feedback_objectname'] = $args['basecategory'];
-            $this->data['feedback'] = 'feedback_basecategory_does_not_exist';
-            $this->data['undelete_error'] = true;
-            // relocate
-            $this->mvc->head->relocate($this->get_url_admin_index());
-        }
-
-        $this->data['undelete'] = false;
-        $this->data['indexurl'] = $this->get_url_admin_index();
-        $this->data['form_action'] = $this->get_url_read($args['basecategory']);
-    }
-
-    /**
-     * Updating a basecategory
+     * Update, delete, undelete a basecategory
      */
     public function post_manage_basecategory(array $args)
     {
@@ -491,6 +534,32 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         }
     }
 
+
+    /**
+     * Loads all available base categories
+     *
+     * We could use a view later and then could have different criteria
+     * like load only those bases who have packages for a certain UX
+     *
+     * @return array of base category objects
+     */
+    private function load_basecategories()
+    {
+        $storage = new midgard_query_storage('com_meego_package_basecategory');
+        $q = new midgard_query_select($storage);
+
+        $qc = new midgard_query_constraint(
+            new midgard_query_property('name'),
+            '<>',
+            new midgard_query_value('')
+        );
+
+        $q->set_constraint($qc);
+        $q->execute();
+
+        return $q->list_objects();
+    }
+
     /**
      * Loads a relation object betwenn a base category and a package category
      *
@@ -571,6 +640,34 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         }
 
         return $counter;
+    }
+
+
+    /**
+     * Count number of apps (ie. packages group by package->title)
+     * for the given basecategory and UX
+     *
+     * @param string name of the basecategory
+     * @param string name of the ux
+     *
+     * @return integer total amount of apps
+     *
+     */
+    public function count_number_of_apps($basecategory = '', $ux = '')
+    {
+        $packages = array();
+
+        if (   strlen($basecategory)
+            && strlen($ux))
+        {
+            // gather packages from top projects that belong to this basecategory and ux
+            $packages = array_merge(
+                $packages,
+                com_meego_packages_controllers_package::get_top_packages_by_basecategory_ux($basecategory, $ux)
+            );
+        }
+
+        return count($packages);
     }
 
     /**

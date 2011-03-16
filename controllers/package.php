@@ -578,7 +578,7 @@ class com_meego_packages_controllers_package
             );
 
             // prepare the data for the template
-            $this->set_data($packages);
+            self::set_data($packages);
         }
         else
         {
@@ -914,7 +914,7 @@ class com_meego_packages_controllers_package
                 );
 
                 // gather some basic stats
-                $stats = $this->get_statistics($package->packagetitle);
+                $stats = self::get_statistics($package->packagetitle);
 
                 // set the total number of comments
                 $this->data['packages'][$package->packagetitle]['number_of_comments'] = $stats['number_of_comments'];
@@ -1005,5 +1005,64 @@ class com_meego_packages_controllers_package
         }
 
         return $category->tree;
+    }
+
+    /**
+     * Get packages for a base category but
+     * only if they belong to a certain ux and to a top project that is configurable
+     *
+     * This is eventually filters the results of
+     * get_packages_by_basecategory()
+     *
+     * @param string name of base category
+     * @param string name of ux
+     *
+     * @return array of packagedetails objects
+     *
+     * The code will get simples as soon as
+     * https://github.com/midgardproject/midgard-core/issues#issue/86
+     * is fixed and we can define joined views
+     */
+    public function get_top_packages_by_basecategory_ux($basecategory_name = '', $ux_name = '')
+    {
+        #echo "check: " . $basecategory_name . ', ' . $ux_name;
+
+        $packages = array();
+        $this->data['packages'] = array();
+
+        // this sets data['packages'] and we just need to filter that
+        self::get_packages_by_basecategory(array('basecategory' => $basecategory_name));
+
+        #echo "Filter " . count($this->data['packages']) . " packages...\n";
+
+        foreach ($this->data['packages'] as $package)
+        {
+            // providers are the individual projects
+            foreach($package['providers'] as $provider)
+            {
+                foreach($this->mvc->configuration->top_projects as $top_project_name)
+                {
+                    # echo "compare project: " . $provider['projectname'] . ' vs ' . $top_project_name . "\n";
+                    if (! array_keys($provider, $top_project_name))
+                    {
+                        continue;
+                    }
+                    // variants are the individual packages
+                    foreach ($provider['variants'] as $variant)
+                    {
+                        #echo "compare ux: " . strtolower($variant->repoosux) . ' vs ' . strtolower($ux_name) . "\n";
+                        if (strtolower($variant->repoosux) == strtolower($ux_name))
+                        {
+                            #echo "Add: " . $variant->packagetitle . ','  . $variant->packagecategoryname . "\n";
+                            $packages[] = $variant;
+                        }
+                    }
+                }
+            }
+        }
+
+        #echo "Found: " . count($packages) . "\n";
+
+        return $packages;
     }
 }

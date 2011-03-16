@@ -1,0 +1,1 @@
+This is the main component behing MeeGo Apps
