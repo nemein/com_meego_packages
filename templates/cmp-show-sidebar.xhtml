@@ -24,9 +24,10 @@
 
                         <h2 class="title">
                          <tal:block tal:condition="true: admin">
-                            <a tal:attributes="href category_admin_url" i18n:domain="com_meego_packages" i18n:translate="'title_categories'"></a>
+                            <a tal:condition="true: category_admin_url" tal:attributes="href category_admin_url" i18n:domain="com_meego_packages" i18n:translate="'title_categories'"></a>
                          </tal:block>
                          <tal:block tal:condition="not: admin" i18n:domain="com_meego_packages" i18n:translate="'title_categories'"></tal:block>
+
                         </h2>
                         <div class="content">
                             <div class="menu-block-1 menu-name-primary-links parent-mlid-0 menu-level-2"

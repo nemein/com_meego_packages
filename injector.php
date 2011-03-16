@@ -14,7 +14,7 @@ class com_meego_packages_injector
         // We inject the template to provide MeeGo styling
         $request->add_component_to_chain($this->mvc->component->get('com_meego_packages'), true);
         $this->request = $request;
-        
+
         // Default title for Packages pages, override in controllers when possible
         midgardmvc_core::get_instance()->head->set_title('MeeGo Packages');
     }
@@ -50,7 +50,7 @@ class com_meego_packages_injector
             }
         }
     }
-    
+
     private function add_head_elements()
     {
         midgardmvc_core::get_instance()->head->add_jsfile(MIDGARDMVC_STATIC_URL . '/eu_urho_widgets/js/jquery.rating/jquery.rating.pack.js');
@@ -78,7 +78,7 @@ class com_meego_packages_injector
             (
                 'rel' => 'stylesheet',
                 'type' => 'text/css',
-                'href' => MIDGARDMVC_STATIC_URL . '/midgardmvc-static/com_meego_ratings/css/cmr-ratings.css'
+                'href' => MIDGARDMVC_STATIC_URL . '/com_meego_ratings/css/cmr-ratings.css'
             )
         );
     }
