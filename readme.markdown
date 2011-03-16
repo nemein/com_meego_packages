@@ -37,5 +37,5 @@ Todo..
   map all the package categories. One or many package category belongs to a base category.
 
   Base categories are used in the UI of MeeGo Apps. If there is no base category defined
-  then the application revert to package categories.
+  then MeeGo Apps reverts to package categories.
 
