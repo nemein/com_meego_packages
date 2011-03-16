@@ -17,6 +17,6 @@ workflows:
 # are meant for the non-techie audience.
 # these projects define the so called "downloads" area
 top_projects:
-    - home:feri
-    - home:xfade
+    home:feri: some description
+    home:xfade: some description
 
