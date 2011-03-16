@@ -242,7 +242,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
                 // count all apps that are in this category for that UX
                 $basecategory->apps_counter = $this->count_number_of_apps($basecategory->name, $args['ux']);
                 // set the css class to be used to display this base category
-                $pattern = '/(\w+)\s/i';
+                $pattern = '/^(\w*)\s.*$/';
                 $replacement = '${1}';
                 $basecategory->css = mb_strtolower(preg_replace($pattern, $replacement, $basecategory->name));
                 // populate data
