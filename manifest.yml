@@ -29,7 +29,7 @@ routes:
     basecategory_ux_index:
         path: /{$ux}/{$basecategory}
         controller: com_meego_packages_controllers_package
-        action: package_list_by_ux_basecategory
+        action: top_packages_by_basecategory_ux
         template_aliases:
             content: cmp-show-packages-list
 
