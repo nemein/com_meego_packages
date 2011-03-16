@@ -13,8 +13,14 @@ msgstr ""
 msgid "welcome"
 msgstr "Welcome!"
 
+msgid "title_apps"
+msgstr "Applications"
+
 msgid "title_package_list"
 msgstr "Packages in ${categorytree}"
+
+msgid "title_application_list"
+msgstr "Applications in ${basecategory}"
 
 msgid "title_tip_package_list"
 msgstr "Listing all packages available in the given category"
@@ -75,6 +81,27 @@ msgstr "Categories"
 
 msgid "title_base_category"
 msgstr "Category: ${name}"
+
+msgid "title_netbook_ux"
+msgstr "Netbook"
+
+msgid "title_handset_ux"
+msgstr "Handset"
+
+msgid "title_ivi_ux"
+msgstr "In Vehicle Infotainment"
+
+msgid "title_smarttv_ux"
+msgstr "Smart TV"
+
+msgid "title_mediaphone_ux"
+msgstr "Media Phone"
+
+msgid "title_tablet_ux"
+msgstr "Tablet"
+
+msgid "title_allux_ux"
+msgstr "All UX"
 
 msgid "warning_no_base_categories"
 msgstr "There are no base categories defined in the system. Administrators need to create those before they will be visible."
