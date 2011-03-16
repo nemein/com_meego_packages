@@ -27,3 +27,15 @@ Todo..
 
   An application is a executable program that is delivered by one (or more) package(s).
 
+* Package Category
+
+  Each package specifies a category where it belongs to.
+
+* Base Category
+
+  Since there are no limit of package categories we defined base categories that
+  map all the package categories. One or many package category belongs to a base category.
+
+  Base categories are used in the UI of MeeGo Apps. If there is no base category defined
+  then the application revert to package categories.
+
