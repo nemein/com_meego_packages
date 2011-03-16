@@ -28,6 +28,7 @@ class com_meego_packages_injector
 
         // Replace the default MeeGo sidebar with our own
         $route->template_aliases['content-sidebar'] = 'cmp-show-sidebar';
+        $route->template_aliases['main-menu'] = 'cmp-show-main_menu';
         
         // Add the CSS and JS files needed by Packages
         $this->add_head_elements();
