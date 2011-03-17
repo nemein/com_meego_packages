@@ -46,7 +46,11 @@
                         <h2 class="title" i18n:domain="com_meego_packages" i18n:translate="'title_repositories'"></h2>
                         <div class="content">
                             <div class="menu-block-1 menu-name-primary-links parent-mlid-0 menu-level-2">
-                                <a tal:condition="true: repository_index_url" tal:attributes="href repository_index_url" i18n:domain="com_meego_packages" i18n:translate="'command_browse'"></a>
+                              <ul class="menu">
+                                <li class="leaf first">
+                                  <a tal:condition="true: repository_index_url" tal:attributes="href repository_index_url" i18n:domain="com_meego_packages" i18n:translate="'command_browse'"></a>
+                                </li>
+                              </ul>
                             </div>
                         </div>
 
