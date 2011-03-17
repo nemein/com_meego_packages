@@ -12,13 +12,4 @@ community QA process for apps. This is NOT the Apps area for end-users.
 Apps will be a separate view on top of this data..
 </div>
 
-<div class="os" tal:repeat="os com_meego_packages/oses">
-    <h2 tal:content="os/title">MeeGo 1.0</h2>
-    <ul class="uxes">
-        <li class="ux" tal:repeat="ux os/uxes">
-            <a tal:attributes="href ux/url">
-                <div tal:attributes="class ux/css"></div>
-            </a>
-        </li>
-    </ul>
-</div>
+<mgd:include>cmp-show-os-version-ux-index</mgd:include>
