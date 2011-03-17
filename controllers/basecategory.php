@@ -1,19 +1,17 @@
 <?php
 class com_meego_packages_controllers_basecategory extends midgardmvc_core_controllers_baseclasses_crud
 {
-    var $request = null;
     var $mvc = null;
-
-    var $top_projects = array();
+    var $request = null;
 
     // these defaults can be used to populate the com_meego_package_basecategory table
+    // @todo: maybe make this configurable
     var $default_base_categories = array(
         'Internet' => '',
         'Office' => '',
         'Graphics' => '',
         'Games' => '',
-        'Audio' => '',
-        'Video' => '',
+        'Multimedia' => '',
         'Education' => '',
         'Science' => '',
         'System' => '',
@@ -31,14 +29,6 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
 
         $this->mvc = midgardmvc_core::get_instance();
 
-        // check sufficient access rights
-        // we could do that in injector too...
-        if (   ! $this->mvc->authentication->is_user()
-            || ! $this->mvc->authorization->can_do('midgard:admin', null))
-        {
-            midgardmvc_core::get_instance()->head->relocate('/');
-        }
-
         $this->mvc->i18n->set_translation_domain('com_meego_packages');
 
         $default_language = $this->mvc->configuration->default_language;
@@ -50,11 +40,26 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
 
         $this->mvc->i18n->set_language($default_language, false);
 
-        // get the top projects from configuration
-        // only packages that are in repositories belonging to these top projects
-        // will be shown to non-techie audience
-        $this->top_projects = $this->mvc->configuration->top_projects;
+        if (isset($this->mvc->configuration->base_categories))
+        {
+            $this->default_base_categories = $this->mvc->configuration->base_categories;
+        }
     }
+
+    /**
+     * If user does not have admin privileges then redirects to /
+     */
+    private function require_admin()
+    {
+        // check sufficient access rights
+        // we could do that in injector too...
+        if (   ! $this->mvc->authentication->is_user()
+            || ! $this->mvc->authorization->can_do('midgard:admin', null))
+        {
+            midgardmvc_core::get_instance()->head->relocate('/');
+        }
+    }
+
 
     /**
      * sets the current category object by its guid, id or name
@@ -139,7 +144,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
     {
         return $this->mvc->dispatcher->generate_url
         (
-            'basecategory_ux_index', array
+            'apps_basecategory_ux_index', array
             (
                 'ux' => $ux,
                 'basecategory' => $basecategory
@@ -183,6 +188,8 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function get_admin_index(array $args)
     {
+        self::require_admin();
+
         $this->load_object($args);
 
         $basecategories = self::load_basecategories();
@@ -228,10 +235,10 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function get_basecategories_by_ux(array $args)
     {
+        $this->data['basecategories'] = array();
+
         // for now we will not use the UX at all
         $basecategories = self::load_basecategories();
-
-        $this->data['basecategories'] = null;
 
         if (count($basecategories))
         {
@@ -256,6 +263,8 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function get_manage_basecategory(array $args)
     {
+        self::require_admin();
+
         $this->data['map'] = false;
 
         try
@@ -289,6 +298,8 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function post_create_basecategory(array $args)
     {
+        self::require_admin();
+
         $saved = true;
 
         // save categories update existing ones
@@ -340,6 +351,8 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function post_manage_basecategory(array $args)
     {
+        self::require_admin();
+
         $this->data['category'] = false;
         $this->data['undelete'] = false;
         $this->data['undelete_error'] = false;
@@ -479,6 +492,8 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     private function delete_relations($basecategory_id = null, $purge = false)
     {
+        self::require_admin();
+
         if ($basecategory_id)
         {
             $relations = $this->load_relations_for_basecategory($basecategory_id);
@@ -503,6 +518,8 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function prepare_mapping($object)
     {
+        self::require_admin();
+
         // this will set the package categories to this->data['categories']
         $packagecategories = com_meego_packages_controllers_category::get_all_package_categories();
         com_meego_packages_controllers_category::prepare_category_list($packagecategories);
@@ -642,7 +659,6 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         return $counter;
     }
 
-
     /**
      * Count number of apps (ie. packages group by package->title)
      * for the given basecategory and UX
@@ -663,7 +679,12 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
             // gather packages from top projects that belong to this basecategory and ux
             $packages = array_merge(
                 $packages,
-                com_meego_packages_controllers_package::get_top_packages_by_basecategory_ux($basecategory, $ux)
+                com_meego_packages_controllers_package::get_top_packages_by_basecategory_ux(
+                    array(
+                        'basecategory' => $basecategory,
+                        'ux' => $ux
+                    )
+                )
             );
         }
 
