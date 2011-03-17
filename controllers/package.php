@@ -904,21 +904,34 @@ class com_meego_packages_controllers_package
                 {
                     // if browsing by base categories, then we have to figure out the
                     // the category tree of the package
-                    $this->data['categorytree'] = self::determine_category_tree($package);
-                }
+                    //$this->data['categorytree'] = self::determine_category_tree($package);
 
-                // local url to a package index page
-                $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
-                (
-                    'package_overview_tree',
-                    array
+                    $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
                     (
-                        'categorytree' => $this->data['categorytree'],
-                        'packagetitle' => $package->packagetitle
-                    ),
-                    $this->request
-                );
-
+                        'apps_package_basecategory_ux_overview',
+                        array
+                        (
+                            'ux' => $this->data['ux'],
+                            'basecategory' => $this->data['basecategory'],
+                            'packagetitle' => $package->packagetitle
+                        ),
+                        $this->request
+                    );
+                }
+                else
+                {
+                    // local url to a package index page
+                    $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
+                    (
+                        'package_overview_tree',
+                        array
+                        (
+                            'categorytree' => $this->data['categorytree'],
+                            'packagetitle' => $package->packagetitle
+                        ),
+                        $this->request
+                    );
+                }
                 // gather some basic stats
                 $stats = self::get_statistics($package->packagetitle);
 
