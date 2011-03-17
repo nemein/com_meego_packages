@@ -50,6 +50,8 @@ package_filters:
     - /^(.*)\-data$/
     # no dev packages
     - /^(.*)\-dev$/
+    # no dev packages
+    - /^(.*)\-devel$/
     # no debug packages
     - /^(.*)-debug\w*$/
     # libs are no apps
