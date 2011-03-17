@@ -17,8 +17,8 @@ workflows:
 # are meant for the non-techie audience.
 # these projects define the so called "downloads" area
 top_projects:
-    home:feri: Some description
-    home:xfade: Some description
+#    home:feri: Some description
+#    home:xfade: Some description
     home:zigbee: Some description
 
 # list of base categories as name: description pairs
@@ -50,3 +50,7 @@ package_filters:
     - /^(.*)\-data$/
     # no dev packages
     - /^(.*)\-dev$/
+    # no debug packages
+    - /^(.*)-debug\w*$/
+    # libs are no apps
+    - /^(.*)-lib[s]$/
