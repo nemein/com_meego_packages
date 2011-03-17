@@ -53,8 +53,8 @@ routes:
     # show a package overview based on UX / basecategory / packagetitle
     apps_package_basecategory_ux_overview:
         path: /applications/{$ux}/{$basecategory}/{$packagetitle}
-        controller: com_meego_packages_controllers_package
-        action: package_overview_by_ux_basecategory
+        controller: com_meego_packages_controllers_application
+        action: applications
         template_aliases:
             content: cmp-show-package-overview
 
