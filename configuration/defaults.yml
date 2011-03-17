@@ -17,6 +17,36 @@ workflows:
 # are meant for the non-techie audience.
 # these projects define the so called "downloads" area
 top_projects:
-    home:feri: some description
-    home:xfade: some description
+    home:feri: Some description
+    home:xfade: Some description
+    home:zigbee: Some description
 
+# list of base categories as name: description pairs
+# base categories are supposed to map all package categories that are
+# defined in the individual rpm or deb packages
+base_categories:
+    Internet: Some description
+    Office: Some description
+    Graphics: Some description
+    Games: Some description
+    Multimedia: Some description
+    Education: Some description
+    Science: Some description
+    System: Some description
+    Development: Some description
+    Accessibility: Some description
+    Network: Some description
+    Location & Navigation: Some description
+    Utilities: Some description
+    Other: Some description
+
+# package filter regular expression
+# package title matching the filters will not shown in the "downloads" area
+# filters need delimeters e.g. / character at the beginning and at the end
+package_filters:
+    # no source packages
+    - /^(.*)\-src$/
+    # no data packages
+    - /^(.*)\-data$/
+    # no dev packages
+    - /^(.*)\-dev$/
