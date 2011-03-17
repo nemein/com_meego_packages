@@ -892,6 +892,17 @@ class com_meego_packages_controllers_package
         {
             $this->data['categorytree'] = self::determine_category_tree($package);
 
+            $tree_url = $this->mvc->dispatcher->generate_url
+            (
+                'package_overview_tree',
+                array
+                (
+                    'categorytree' => $this->data['categorytree'],
+                    'packagetitle' => $package->packagetitle
+                ),
+                $this->request
+            );
+
             // certain things must not be recorded in evert iteration of this loop
             // if we recorded the name, then we are pretty sure we recorded everything
             if (! isset($this->data['packages'][$package->packagetitle]['name']))
@@ -906,31 +917,40 @@ class com_meego_packages_controllers_package
                     // the category tree of the package
                     //$this->data['categorytree'] = self::determine_category_tree($package);
 
-                    $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
-                    (
-                        'apps_package_basecategory_ux_overview',
-                        array
+                    if (! strlen($this->data['basecategory']))
+                    {
+                        $this->data['basecategory'] = self::determine_base_category($package);
+                    }
+
+                    // if base category is still empty
+                    // then it means that this package is not yet covered by any base category
+                    // so we have to provide a different URL
+                    if (! strlen($this->data['basecategory']))
+                    {
+                        // local url to a package index page
+                        $this->data['packages'][$package->packagetitle]['localurl'] = $tree_url;
+                    }
+                    else
+                    {
+                        // ok, so we got a base category, let's form the url
+                        $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
                         (
-                            'ux' => $this->data['ux'],
-                            'basecategory' => $this->data['basecategory'],
-                            'packagetitle' => $package->packagetitle
-                        ),
-                        $this->request
-                    );
+                            'apps_package_basecategory_ux_overview',
+                            array
+                            (
+                                'ux' => $this->data['ux'],
+                                'basecategory' => $this->data['basecategory'],
+                                'packagetitle' => $package->packagetitle
+                            ),
+                            $this->request
+                        );
+                        $this->data['basecategory'] = '';
+                    }
                 }
                 else
                 {
                     // local url to a package index page
-                    $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
-                    (
-                        'package_overview_tree',
-                        array
-                        (
-                            'categorytree' => $this->data['categorytree'],
-                            'packagetitle' => $package->packagetitle
-                        ),
-                        $this->request
-                    );
+                    $this->data['packages'][$package->packagetitle]['localurl'] = $tree_url;
                 }
                 // gather some basic stats
                 $stats = self::get_statistics($package->packagetitle);
@@ -1025,4 +1045,45 @@ class com_meego_packages_controllers_package
 
         return $category->tree;
     }
+
+    /**
+     * Determines the base category of a given package
+     * Since a package category can -in theory belong to multiple base categories
+     * this call will return the 1st match only
+     *
+     * @param object a packagedetails object
+     *
+     * @return string name of the base category
+     */
+    public function determine_base_category($packagedetails)
+    {
+        $basecategory = '';
+
+        $storage = new midgard_query_storage('com_meego_package_category_relation');
+        $q = new midgard_query_select($storage);
+
+        $qc = new midgard_query_constraint(
+            new midgard_query_property('packagecategory'),
+            '=',
+            new midgard_query_value($packagedetails->packagecategory)
+        );
+
+        $q->set_constraint($qc);
+        $q->execute();
+
+        $bases = $q->list_objects();
+
+        if (count($bases))
+        {
+            $object = new com_meego_package_basecategory($bases[0]->basecategory);
+
+            if (is_object($object))
+            {
+                $basecategory = $object->name;
+            }
+        }
+
+        return $basecategory;
+    }
+
 }
