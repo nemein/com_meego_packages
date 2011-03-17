@@ -219,10 +219,10 @@ class com_meego_packages_controllers_category
 
                     $category->localurl = $this->mvc->dispatcher->generate_url
                     (
-                        'packages_by_basecategory',
+                        'applications_by_something',
                         array
                         (
-                            'basecategory' => $category->basecategory
+                            'something' => $category->basecategory
                         ),
                         $this->request
                     );
