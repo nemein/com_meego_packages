@@ -1,14 +1,16 @@
 <?php
 class com_meego_packages_controllers_package
 {
-    var $request = null;
     var $mvc = null;
+    var $request = null;
+    var $uxmap = array();
 
     public function __construct(midgardmvc_core_request $request)
     {
         $this->request = $request;
 
         $this->mvc = midgardmvc_core::get_instance();
+
         $this->mvc->i18n->set_translation_domain('com_meego_packages');
 
         $default_language = $this->mvc->configuration->default_language;
@@ -498,11 +500,12 @@ class com_meego_packages_controllers_package
      */
     public function get_packages_by_categorytree(array $args)
     {
+        $this->data['ux'] = false;
+        $this->data['base'] = false;
         $this->data['packages'] = false;
+        $this->data['basecategory'] = false;
         $this->data['categorytree'] = rawurldecode($args['categorytree']);
 
-        $this->data['base'] = false;
-        $this->data['basecategory'] = false;
 
         $category = $this->determine_category_by_tree($this->data['categorytree']);
 
@@ -540,7 +543,8 @@ class com_meego_packages_controllers_package
         if (is_object($basecategory))
         {
             $this->data['base'] = true;
-            $this->data['basecategory'] = $basecategory->name;
+            $this->data['categorytree'] = false;
+            $this->data['basecategory'] = strtolower($basecategory->name);
 
             // get relations
             $relations = com_meego_packages_controllers_basecategory::load_relations_for_basecategory($basecategory->id);
@@ -583,7 +587,7 @@ class com_meego_packages_controllers_package
         else
         {
             // oops, there are no packages for this base category..
-            throw new midgardmvc_exception_notfound("There are no packages are within this category");
+            throw new midgardmvc_exception_notfound("There is no category called: " . $args['basecategory']);
         }
     }
 
@@ -1023,46 +1027,89 @@ class com_meego_packages_controllers_package
      * https://github.com/midgardproject/midgard-core/issues#issue/86
      * is fixed and we can define joined views
      */
-    public function get_top_packages_by_basecategory_ux($basecategory_name = '', $ux_name = '')
+    public function get_top_packages_by_basecategory_ux(array $args)
     {
-        #echo "check: " . $basecategory_name . ', ' . $ux_name;
-
         $packages = array();
         $this->data['packages'] = array();
 
         // this sets data['packages'] and we just need to filter that
-        self::get_packages_by_basecategory(array('basecategory' => $basecategory_name));
+        self::get_packages_by_basecategory($args);
 
-        #echo "Filter " . count($this->data['packages']) . " packages...\n";
+        $this->data['ux'] = strtolower($args['ux']);
+        $this->data['categorytree'] = false;
+        $this->data['basecategory'] = strtolower($args['basecategory']);
 
-        foreach ($this->data['packages'] as $package)
+        $cnt = 0;
+
+        $localpackages = array();
+
+        foreach ($this->data['packages'] as $packagename => $package)
         {
-            // providers are the individual projects
-            foreach($package['providers'] as $provider)
+            $filtered = false;
+
+            // filter packages by their titles
+            // useful to filter -src packages for example
+            // the pattern of projects to be filtered is configurable
+            foreach ($this->mvc->configuration->package_filters as $filter)
             {
-                foreach($this->mvc->configuration->top_projects as $top_project_name)
+                if (preg_match($filter, $packagename))
                 {
-                    # echo "compare project: " . $provider['projectname'] . ' vs ' . $top_project_name . "\n";
-                    if (! array_keys($provider, $top_project_name))
-                    {
-                        continue;
-                    }
+                    $filtered = true;
+                    break;
+                }
+                ob_flush();
+            }
+
+            if ($filtered)
+            {
+                ob_flush();
+                continue;
+            }
+
+            // create a copy of the package so that we can work on it
+            $localpackages[$packagename] = $package;
+            $localpackages[$packagename]['providers'] = array();
+
+            // providers are the individual projects
+            foreach($package['providers'] as $projectname => $project)
+            {
+                if (array_key_exists($projectname, $this->mvc->configuration->top_projects))
+                {
+                    $localpackages[$packagename]['providers'][$projectname] = $project;
+                    $localpackages[$packagename]['providers'][$projectname]['variants'] = array();
                     // variants are the individual packages
-                    foreach ($provider['variants'] as $variant)
+                    // filter out the ones that have wrong repoosux and projectcategoryname
+                    foreach ($project['variants'] as $variant)
                     {
-                        #echo "compare ux: " . strtolower($variant->repoosux) . ' vs ' . strtolower($ux_name) . "\n";
-                        if (strtolower($variant->repoosux) == strtolower($ux_name))
+                        if (   strtolower($variant->repoosux) == $this->data['ux']
+                            || strtolower($variant->repoosux) == 'allux'
+                            || strtolower($variant->repoosux) == '')
                         {
-                            #echo "Add: " . $variant->packagetitle . ','  . $variant->packagecategoryname . "\n";
-                            $packages[] = $variant;
+                            // cut this variant
+                            $localpackages[$packagename]['providers'][$projectname]['variants'][] = $variant;
                         }
                     }
+
+                    // if there is no suitable variant then remove the provider
+                    if (! count($localpackages[$packagename]['providers'][$projectname]['variants']))
+                    {
+                        unset($localpackages[$packagename]['providers'][$projectname]);
+                    }
+
                 }
+            }
+
+            // if there is no provider for a package then let's remove it
+            if (! count($localpackages[$packagename]['providers']))
+            {
+                unset($localpackages[$packagename]);
             }
         }
 
-        #echo "Found: " . count($packages) . "\n";
+        $this->data['packages'] = $localpackages;
 
-        return $packages;
+        unset($localpackages);
+
+        return $this->data['packages'];
     }
 }
