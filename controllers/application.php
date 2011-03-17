@@ -139,9 +139,11 @@ class com_meego_packages_controllers_application
         $localpackages = array();
 
         $this->data['ux'] = false;
+        $this->data['base'] = true;
         $this->data['packages'] = array();
         $this->data['basecategory'] = false;
         $this->data['categorytree'] = false;
+        $this->data['packagetitle'] = false;
 
         if (array_key_exists('something', $args))
         {
@@ -163,6 +165,20 @@ class com_meego_packages_controllers_application
             && $args['ux'])
         {
             $this->data['ux'] = strtolower($args['ux']);
+        }
+        else
+        {
+            $args['ux'] = false;
+        }
+
+        if (   array_key_exists('packagetitle', $args)
+            && $args['packagetitle'])
+        {
+            $this->data['packagetitle'] = strtolower($args['packagetitle']);
+        }
+        else
+        {
+            $args['packagetitle'] = false;
         }
 
         if (   array_key_exists('basecategory', $args)
@@ -286,7 +302,7 @@ class com_meego_packages_controllers_application
             // gather all packages from each relation
             foreach ($relations as $relation)
             {
-                $filtered = self::get_filtered_applications($relation->packagecategory);
+                $filtered = self::get_filtered_applications($relation->packagecategory, $args['ux'], $args['packagetitle']);
                 $packages = array_merge($filtered, $packages);
             }
 
@@ -321,12 +337,13 @@ class com_meego_packages_controllers_application
      * @param string ux name
      * @return array of com_meego_package_details objects
      */
-    public function get_filtered_applications($packagecategory_id = 0, $ux_name = false)
+    public function get_filtered_applications($packagecategory_id = 0, $ux_name = false, $package_title = false)
     {
         $packages = array();
         $repo_constraint = null;
         $packagecategory_constraint = null;
         $ux_constraint = null;
+        $packagetitle_constraint = null;
 
         $repo_constraint = new midgard_query_constraint(
             new midgard_query_property('repodisabledownload'),
@@ -350,6 +367,16 @@ class com_meego_packages_controllers_application
                 new midgard_query_property('repoosux'),
                 '=',
                 new midgard_query_value($ux_name)
+            );
+        }
+
+        if (is_string($package_title)
+            && strlen($package_title))
+        {
+            $packagetitle_constraint = new midgard_query_constraint(
+                new midgard_query_property('packagetitle'),
+                '=',
+                new midgard_query_value($package_title)
             );
         }
 
@@ -395,7 +422,10 @@ class com_meego_packages_controllers_application
         {
             $qc->add_constraint($ux_constraint);
         }
-
+        if ($packagetitle_constraint)
+        {
+            $qc->add_constraint($packagetitle_constraint);
+        }
 
         $q->set_constraint($qc);
         $q->execute();
