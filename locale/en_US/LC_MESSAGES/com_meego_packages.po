@@ -14,7 +14,7 @@ msgid "welcome"
 msgstr "Welcome!"
 
 msgid "title_apps"
-msgstr "Applications"
+msgstr "MeeGo Applications"
 
 msgid "title_package_list"
 msgstr "Packages in ${categorytree}"
@@ -30,6 +30,9 @@ msgstr "Package"
 
 msgid "title_tip_package"
 msgstr "Short package name"
+
+msgid "title_repositories"
+msgstr "Repositories"
 
 msgid "package_name"
 msgstr "Full Name"
@@ -141,6 +144,9 @@ msgstr "Undelete"
 
 msgid "command_basecategory_index"
 msgstr "Back to base categories"
+
+msgid "command_browse"
+msgstr "Browse"
 
 msgid "feedback_basecategory_does_not_exist"
 msgstr "The base category has been deleted or does not exist"
