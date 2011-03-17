@@ -1,9 +1,25 @@
 <?php
 class com_meego_packages_controllers_repository
 {
+    var $mvc = null;
+    var $request = null;
+
     public function __construct(midgardmvc_core_request $request)
     {
         $this->request = $request;
+
+        $this->mvc = midgardmvc_core::get_instance();
+
+        $this->mvc->i18n->set_translation_domain('com_meego_packages');
+
+        $default_language = $this->mvc->configuration->default_language;
+
+        if (! isset($default_language))
+        {
+            $default_language = 'en_US';
+        }
+
+        $this->mvc->i18n->set_language($default_language, false);
     }
 
     /**
@@ -12,9 +28,9 @@ class com_meego_packages_controllers_repository
     public function get_redirect(array $args)
     {
         // Fallback, didn't recognize browser's MeeGo version, redirect to list of repositories
-        midgardmvc_core::get_instance()->head->relocate
+        $this->mvc->head->relocate
         (
-            midgardmvc_core::get_instance()->dispatcher->generate_url
+            $this->mvc->dispatcher->generate_url
             (
                 'repositories', array(),
                 $this->request
@@ -34,7 +50,7 @@ class com_meego_packages_controllers_repository
         $qb->add_constraint('disabledownload', '=', false);
         $repositories = $qb->execute();
 
-        $prefix = midgardmvc_core::get_instance()->dispatcher->generate_url(
+        $prefix = $this->mvc->dispatcher->generate_url(
             'repositories',
             array(),
             $this->request
@@ -137,7 +153,7 @@ class com_meego_packages_controllers_repository
             $project = new com_meego_project($repository->project);
             $repository->projectname = $project->name;
 
-            $repository->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
+            $repository->localurl = $this->mvc->dispatcher->generate_url
             (
                 'repository',
                 array
@@ -219,7 +235,7 @@ class com_meego_packages_controllers_repository
                 $package->title = $package->name;
             }
 
-            $package->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
+            $package->localurl = $this->mvc->dispatcher->generate_url
             (
                 'package_instance',
                 array
@@ -305,7 +321,7 @@ class com_meego_packages_controllers_repository
                 $package->title = $package->name;
             }
 
-            $package->localurl = midgardmvc_core::get_instance()->dispatcher->generate_url
+            $package->localurl = $this->mvc->dispatcher->generate_url
             (
                 'package_instance',
                 array
