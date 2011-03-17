@@ -933,17 +933,33 @@ class com_meego_packages_controllers_package
                     else
                     {
                         // ok, so we got a base category, let's form the url
-                        $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
-                        (
-                            'apps_package_basecategory_ux_overview',
-                            array
+
+                        // check if we have ux
+                        if ( ! strlen($this->data['ux']))
+                        {
+                            $this->data['ux'] = strtolower($package->repoosux);
+                        }
+
+                        // if could not figure out the ux then provide a tree url
+                        if ( ! strlen($this->data['ux']))
+                        {
+                            $this->data['packages'][$package->packagetitle]['localurl'] = $tree_url;
+                        }
+                        else
+                        {
+                            $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
                             (
-                                'ux' => $this->data['ux'],
-                                'basecategory' => $this->data['basecategory'],
-                                'packagetitle' => $package->packagetitle
-                            ),
-                            $this->request
-                        );
+                                'apps_package_basecategory_ux_overview',
+                                array
+                                (
+                                    'ux' => $this->data['ux'],
+                                    'basecategory' => $this->data['basecategory'],
+                                    'packagetitle' => $package->packagetitle
+                                ),
+                                $this->request
+                            );
+                        }
+                        $this->data['ux'] = '';
                         $this->data['basecategory'] = '';
                     }
                 }
