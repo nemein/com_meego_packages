@@ -883,13 +883,15 @@ class com_meego_packages_controllers_package
      * It is used in two routes so that is why we have it as a separate function
      * @param array of packages
      */
-    private function set_data(array $packages)
+    public function set_data(array $packages)
     {
         // let's do a smart grouping by package_title (ie. short names)
         $variant_counter = 0;
 
         foreach ($packages as $package)
         {
+            $this->data['categorytree'] = self::determine_category_tree($package);
+
             // certain things must not be recorded in evert iteration of this loop
             // if we recorded the name, then we are pretty sure we recorded everything
             if (! isset($this->data['packages'][$package->packagetitle]['name']))
@@ -1009,107 +1011,5 @@ class com_meego_packages_controllers_package
         }
 
         return $category->tree;
-    }
-
-    /**
-     * Get packages for a base category but
-     * only if they belong to a certain ux and to a top project that is configurable
-     *
-     * This is eventually filters the results of
-     * get_packages_by_basecategory()
-     *
-     * @param string name of base category
-     * @param string name of ux
-     *
-     * @return array of packagedetails objects
-     *
-     * The code will get simples as soon as
-     * https://github.com/midgardproject/midgard-core/issues#issue/86
-     * is fixed and we can define joined views
-     */
-    public function get_top_packages_by_basecategory_ux(array $args)
-    {
-        $packages = array();
-        $this->data['packages'] = array();
-
-        // this sets data['packages'] and we just need to filter that
-        self::get_packages_by_basecategory($args);
-
-        $this->data['ux'] = strtolower($args['ux']);
-        $this->data['categorytree'] = false;
-        $this->data['basecategory'] = strtolower($args['basecategory']);
-
-        $cnt = 0;
-
-        $localpackages = array();
-
-        foreach ($this->data['packages'] as $packagename => $package)
-        {
-            $filtered = false;
-
-            // filter packages by their titles
-            // useful to filter -src packages for example
-            // the pattern of projects to be filtered is configurable
-            foreach ($this->mvc->configuration->package_filters as $filter)
-            {
-                if (preg_match($filter, $packagename))
-                {
-                    $filtered = true;
-                    break;
-                }
-                ob_flush();
-            }
-
-            if ($filtered)
-            {
-                ob_flush();
-                continue;
-            }
-
-            // create a copy of the package so that we can work on it
-            $localpackages[$packagename] = $package;
-            $localpackages[$packagename]['providers'] = array();
-
-            // providers are the individual projects
-            foreach($package['providers'] as $projectname => $project)
-            {
-                if (array_key_exists($projectname, $this->mvc->configuration->top_projects))
-                {
-                    $localpackages[$packagename]['providers'][$projectname] = $project;
-                    $localpackages[$packagename]['providers'][$projectname]['variants'] = array();
-                    // variants are the individual packages
-                    // filter out the ones that have wrong repoosux and projectcategoryname
-                    foreach ($project['variants'] as $variant)
-                    {
-                        if (   strtolower($variant->repoosux) == $this->data['ux']
-                            || strtolower($variant->repoosux) == 'allux'
-                            || strtolower($variant->repoosux) == '')
-                        {
-                            // cut this variant
-                            $localpackages[$packagename]['providers'][$projectname]['variants'][] = $variant;
-                        }
-                    }
-
-                    // if there is no suitable variant then remove the provider
-                    if (! count($localpackages[$packagename]['providers'][$projectname]['variants']))
-                    {
-                        unset($localpackages[$packagename]['providers'][$projectname]);
-                    }
-
-                }
-            }
-
-            // if there is no provider for a package then let's remove it
-            if (! count($localpackages[$packagename]['providers']))
-            {
-                unset($localpackages[$packagename]);
-            }
-        }
-
-        $this->data['packages'] = $localpackages;
-
-        unset($localpackages);
-
-        return $this->data['packages'];
     }
 }
