@@ -25,7 +25,7 @@ class com_meego_packages_injector
         $request->add_component_to_chain($this->mvc->component->get('com_meego_packages'), true);
 
         // Default title for Packages pages, override in controllers when possible
-        $this->mvc->head->set_title('MeeGo Packages');
+        $this->mvc->head->set_title($this->mvc->i18n->get('title_apps'));
     }
 
     /**
@@ -59,8 +59,14 @@ class com_meego_packages_injector
             }
         }
 
-        self::set_breadcrumb($request);
+        $repository_index_url = $this->mvc->dispatcher->generate_url
+        (
+            'repositories', array(), $request
+        );
 
+        $request->set_data_item('repository_index_url', $repository_index_url);
+
+        self::set_breadcrumb($request);
     }
 
     private function add_head_elements()
@@ -103,6 +109,10 @@ class com_meego_packages_injector
      */
     public function set_breadcrumb(midgardmvc_core_request $request)
     {
+        $nexturl = '';
+        $breadcrumb = array();
+
+        /*
         $nexturl = $this->mvc->dispatcher->generate_url('index', array(), $request);
         $firstitem = array(
             'title' => $this->mvc->i18n->get('title_apps'),
@@ -111,12 +121,13 @@ class com_meego_packages_injector
         );
 
         $breadcrumb[] = $firstitem;
+        */
 
         $cnt = 0;
 
         foreach ($request->argv as $arg)
         {
-            $nexturl .= $arg . '/';
+            $nexturl .= '/' . $arg;
 
             $item = array(
                 'title' => ucfirst($arg),
