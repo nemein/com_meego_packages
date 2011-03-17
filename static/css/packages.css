@@ -215,6 +215,7 @@ div.list div.element .projectname {
 width: 20em;
 }
 
+div.nohits,
 div.warning,
 div.error,
 div.status {
