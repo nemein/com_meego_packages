@@ -27,17 +27,26 @@ routes:
 
     # lists all base categories that are avaialable for a UX
     apps_ux_index:
-        path: /applications/{$ux}
+        path: /basecategories/{$ux}
         controller: com_meego_packages_controllers_basecategory
         action: basecategories_by_ux
         template_aliases:
             content: cmp-show-fancy-basecategories-list
 
+    # base categories are defined by admins
+    # base categories have one or more package categories mapped to them
+    applications_by_something:
+        path: /applications/{$something}
+        controller: com_meego_packages_controllers_application
+        action: applications
+        template_aliases:
+            content: cmp-show-packages-list
+
     # lists all packages that are avaialable for a UX / basecategory
     apps_basecategory_ux_index:
         path: /applications/{$ux}/{$basecategory}
-        controller: com_meego_packages_controllers_package
-        action: top_packages_by_basecategory_ux
+        controller: com_meego_packages_controllers_application
+        action: applications
         template_aliases:
             content: cmp-show-packages-list
 
