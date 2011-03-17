@@ -60,6 +60,39 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         }
     }
 
+    /**
+     * Check if a basecategory exist
+     *
+     * @param string name of basecategory
+     * @return false if basecategory does not exist; basecategory object otherwise
+     */
+    public function basecategory_exists($basecategory = '')
+    {
+        $retval = false;
+
+        // try to search by name
+        $storage = new midgard_query_storage('com_meego_package_basecategory');
+        $q = new midgard_query_select($storage);
+
+        $qc = new midgard_query_constraint(
+            new midgard_query_property('name'),
+            '=',
+            new midgard_query_value($basecategory)
+        );
+
+        $q->set_constraint($qc);
+        $q->set_limit(1);
+        $q->execute();
+
+        $categories = $q->list_objects();
+
+        if (count($categories))
+        {
+            $retval = $categories[0];
+        }
+
+        return $retval;
+    }
 
     /**
      * sets the current category object by its guid, id or name
@@ -80,26 +113,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
             {
                 if (! is_object($this->object))
                 {
-                    // try to search by name
-                    $storage = new midgard_query_storage('com_meego_package_basecategory');
-                    $q = new midgard_query_select($storage);
-
-                    $qc = new midgard_query_constraint(
-                        new midgard_query_property('name'),
-                        '=',
-                        new midgard_query_value($args['basecategory'])
-                    );
-
-                    $q->set_constraint($qc);
-                    $q->set_limit(1);
-                    $q->execute();
-
-                    $categories = $q->list_objects();
-
-                    if (count($categories))
-                    {
-                        $this->object = $categories[0];
-                    }
+                    $this->object = self::basecategory_exists($args['basecategory']);
                 }
             }
 
@@ -228,6 +242,19 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
     }
 
     /**
+     * Cleans the given string
+     * used for base category name cleanups
+     * @param string the input string
+     * @return string the cleaned up string
+     */
+    private static function tidy_up($string = '')
+    {
+        $pattern = '/^(\w*)\s.*$/';
+        $replacement = '${1}';
+        return mb_strtolower(preg_replace($pattern, $replacement, $string));
+    }
+
+    /**
      * Show a fancy list of basecategories
      *
      * @param array args where the key 'ux' will contain the name of the UX
@@ -240,6 +267,34 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         // for now we will not use the UX at all
         $basecategories = self::load_basecategories();
 
+        // check if ux is valid
+        if (! com_meego_packages_controllers_repository::ux_exists($args['ux']))
+        {
+            $found = false;
+            // check for base category, perhaps the user wants that
+            foreach($basecategories as $basecategory)
+            {
+                if (self::tidy_up($basecategory->name) == self::tidy_up($args['ux']))
+                {
+                    $found = true;
+                }
+            }
+
+            if (! $found)
+            {
+                //if no such base category then complain
+                throw new midgardmvc_exception_httperror($this->mvc->i18n->get("title_no_ux_or_basecategory", null, array('item' => $args['ux'])), 404);
+            }
+            else
+            {
+                //if no such base category then complain
+                throw new midgardmvc_exception_httperror('get_basecategories_by_ux todo', 404);
+                #$this->mvc->head->relocate($this->get_url_browse_basecategory($args['ux'], false));
+
+                // @todo: redirect to that particular category index
+            }
+        }
+
         if (count($basecategories))
         {
             foreach ($basecategories as $basecategory)
@@ -247,11 +302,9 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
                 // set the url where to browse that category
                 $basecategory->localurl = $this->get_url_browse_basecategory($args['ux'], $basecategory->name);
                 // count all apps that are in this category for that UX
-                $basecategory->apps_counter = $this->count_number_of_apps($basecategory->name, $args['ux']);
+                $basecategory->apps_counter = com_meego_packages_controllers_application::count_number_of_apps($basecategory->name, $args['ux']);
                 // set the css class to be used to display this base category
-                $pattern = '/^(\w*)\s.*$/';
-                $replacement = '${1}';
-                $basecategory->css = mb_strtolower(preg_replace($pattern, $replacement, $basecategory->name));
+                $basecategory->css = self::tidy_up($basecategory->name);
                 // populate data
                 $this->data['basecategories'][] = $basecategory;
             }
@@ -657,38 +710,6 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         }
 
         return $counter;
-    }
-
-    /**
-     * Count number of apps (ie. packages group by package->title)
-     * for the given basecategory and UX
-     *
-     * @param string name of the basecategory
-     * @param string name of the ux
-     *
-     * @return integer total amount of apps
-     *
-     */
-    public function count_number_of_apps($basecategory = '', $ux = '')
-    {
-        $packages = array();
-
-        if (   strlen($basecategory)
-            && strlen($ux))
-        {
-            // gather packages from top projects that belong to this basecategory and ux
-            $packages = array_merge(
-                $packages,
-                com_meego_packages_controllers_package::get_top_packages_by_basecategory_ux(
-                    array(
-                        'basecategory' => $basecategory,
-                        'ux' => $ux
-                    )
-                )
-            );
-        }
-
-        return count($packages);
     }
 
     /**
