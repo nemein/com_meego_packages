@@ -338,4 +338,30 @@ class com_meego_packages_controllers_repository
         }
     }
 
+    /**
+     * Checks is the given ux is valid
+     *
+     * @param string name of the ux
+     * @return boolean true if ux exists, false otherwise
+     */
+    public function ux_exists($ux = '')
+    {
+        $retval = false;
+        $storage = new midgard_query_storage('com_meego_repository');
+
+        $q = new midgard_query_select($storage);
+        $q->set_constraint(new midgard_query_constraint(
+            new midgard_query_property('osux'),
+            '=',
+            new midgard_query_value($ux)
+        ));
+
+        $q->execute();
+
+        if ($q->get_results_count())
+        {
+            $retval = true;
+        }
+        return $retval;
+    }
 }
