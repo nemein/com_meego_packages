@@ -174,7 +174,7 @@ class com_meego_packages_controllers_application
         if (   array_key_exists('packagetitle', $args)
             && $args['packagetitle'])
         {
-            $this->data['packagetitle'] = strtolower($args['packagetitle']);
+            $this->data['packagetitle'] = $args['packagetitle'];
         }
         else
         {
