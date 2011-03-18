@@ -367,19 +367,15 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
             {
                 // update
                 $this->object->update();
-                echo "update " . $category['name'] . "\n";
             }
             else
             {
                 // create
                 $this->object->name = $category['name'];
                 $this->object->create();
-                echo "create " . $category['name'] . "\n";
-                // try to do the mapping now
+                // @todo: try to do the mapping now
                 // $this->post_create_relations(array('basecategory' => $this->object->guid));
             }
-
-            ob_flush();
 
             if (! $this->object->guid)
             {
