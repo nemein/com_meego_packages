@@ -32,21 +32,19 @@
             <a class="url" tal:attributes="href package/homepageurl">Homepage</a>
         </div>
 
-        <div class="providers" tal:condition="true: package/providers">
-            <tal:block tal:repeat="provider package/providers">
-            <h4 i18n:domain="com_meego_packages" i18n:translate="'providers'" i18n:attributes="title providers_tip">
-                <tal:block i18n:name="projectname">${provider/projectname}</tal:block>
-            </h4>
-            <ul>
-                <li>
-                    <div class="variant" tal:repeat="variant provider/variants">
-                        <a tal:attributes="href variant/localurl; class php: 'variant ' . variant.ux" i18n:domain="com_meego_packages" i18n:attributes="title tip_variants">
-                            <span>${variant/packageversion} - ${variant/repoarch} - ${variant/ux}</span>
+        <div class="latest" tal:condition="true: package/latest">
+            <h3 i18n:domain="com_meego_packages" i18n:translate="'title_latest_version'">
+                <tal:block i18n:name="version">${package/latest/version}</tal:block>
+            </h3>
+            <ul tal:condition="true: package/latest/variants">
+                <li tal:repeat="variant package/latest/variants">
+                    <div class="variant">
+                        <a tal:attributes="href variant/packageinstallfileurl; class php: variant.ux . ' ' . variant.repoarch" i18n:domain="com_meego_packages" i18n:attributes="title tip_install" i18n:translate="'command_install'">
+                            <tal:block i18n:name="arch">${variant/repoarch}</tal:block>
                         </a>
                     </div>
                 </li>
             </ul>
-            </tal:block>
         </div>
 
         <!-- show all ratings and comments -->
