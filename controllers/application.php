@@ -304,8 +304,9 @@ class com_meego_packages_controllers_application
             );
         }
 
-        if (is_string($ux_name)
-            && strlen($ux_name))
+        if (   is_string($ux_name)
+            && strlen($ux_name)
+            && $ux_name != 'universal')
         {
             $ux_constraint = new midgard_query_constraint_group('OR');
 
@@ -446,10 +447,8 @@ class com_meego_packages_controllers_application
      */
     public function set_data(array $packages)
     {
-        $localpackages = array();
-
-        // let's do a smart grouping by package_title
-        $variant_counter = 0;
+        $older = array();
+        $latest = array('version' => '', 'variants' => array());
 
         foreach ($packages as $package)
         {
@@ -460,7 +459,7 @@ class com_meego_packages_controllers_application
                 if (   $this->data['ux'] == false
                     || ($this->data['ux'] != ''
                         && (   strtolower($package->repoosux) == $this->data['ux'])
-                            || strtolower($package->repoosux) == 'allux'
+                            || strtolower($package->repoosux) == 'universal'
                             || strtolower($package->repoosux) == ''))
                 {
                     if (! isset($this->data['packages'][$package->packagetitle]['name']))
@@ -473,39 +472,11 @@ class com_meego_packages_controllers_application
                             $this->data['basecategory'] = com_meego_packages_controllers_package::determine_base_category($package);
                         }
 
-
-                        // a hack to get a ux for linking to detailed package view
-                        if (   ! isset($this->data['packages'][$package->packagetitle]['localurl'])
-                            && $package->repoosux != '')
-                        {
-                            $ux = $package->repoosux;
-
-                            if (strlen($this->data['ux']))
-                            {
-                                $ux = $this->data['ux'];
-                            }
-
-                            $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
-                            (
-                                'apps_title_basecategory_ux',
-                                array
-                                (
-                                    'ux' => $ux,
-                                    'basecategory' => $this->data['basecategory'],
-                                    'packagetitle' => $package->packagetitle
-                                ),
-                                $this->request
-                            );
-                        }
-
                         // check if we have ux
                         if ( ! strlen($this->data['ux']))
                         {
                             $this->data['ux'] = strtolower($package->repoosux);
                         }
-
-                        $this->data['ux'] = '';
-                        $this->data['basecategory'] = '';
 
                         // gather some basic stats
                         $stats = com_meego_packages_controllers_package::get_statistics($package->packagetitle);
@@ -547,7 +518,7 @@ class com_meego_packages_controllers_application
                     $package->ux = $package->repoosux;
                     if ( ! strlen($package->ux) )
                     {
-                        $package->ux = 'allux';
+                        $package->ux = 'universal';
                     }
 
                     // provide a link to visit the page of a certain package variant
@@ -565,15 +536,80 @@ class com_meego_packages_controllers_application
                         $this->request
                     );
 
-                    // we group the variants into providers. a provider is basically a project repository, e.g. home:fal
-                    $this->data['packages'][$package->packagetitle]['providers'][$package->repoprojectname]['projectname'] = $package->repoprojectname;
+                    // set the latest version of the package
+                    // and also maintain an array with older versions (could be used in some templates)
+                    if (! array_key_exists($package->packageversion, $older))
+                    {
+                        $older[$package->packageversion] = array('version' => '', 'providers' => array());
+                    }
 
-                    // the variants are basically the versions built for different hardware architectures (not UXes)
-                    $this->data['packages'][$package->packagetitle]['providers'][$package->repoprojectname]['variants'][] = $package;
+                    if (! array_key_exists($package->repoprojectname, $older[$package->packageversion]['providers']))
+                    {
+                        $older[$package->packageversion]['providers'][$package->repoprojectname] = array('projectname' => '', 'variants' => array());
+                    }
 
-                    // @todo: need to filter out variants in case there are multiple versions available
+                    if ($latest['version'] < $package->packageversion)
+                    {
+                        if (count($latest['variants']))
+                        {
+                            // merge current latest to older
+                            $older[$package->packageversion]['providers'][$package->repoprojectname]['variants'] = array_merge($older[$package->packageversion]['providers'][$package->repoprojectname]['variants'], $latest['variants']);
+                            $latest['variants'] = array();
+                        }
+                        $latest['variants'][] = $package;
+                        $latest['version'] = $package->packageversion;
+                        $latest['ux'] = $package->ux;
+                    }
+                    elseif ($latest['version'] == $package->packageversion)
+                    {
+                        // same version, but probably different arch
+                        $latest['variants'][] = $package;
+                    }
+                    elseif ($latest['version'] > $package->packageversion)
+                    {
+                        // this package clearly goes to older
+                        $older[$package->packageversion]['version'] = $package->packageversion;
+                        $older[$package->packageversion]['providers'][$package->repoprojectname]['projectname'] = $package->repoprojectname;
+                        $older[$package->packageversion]['providers'][$package->repoprojectname]['variants'][] = $package;
+                    }
+
+                    if (! array_key_exists('latest', $this->data['packages'][$package->packagetitle]))
+                    {
+                        $this->data['packages'][$package->packagetitle]['latest'] = array('version' => '', 'variants' => array());
+                    }
+
+                    if ($this->data['packages'][$package->packagetitle]['latest']['version'] <= $latest['version'])
+                    {
+                        $this->data['packages'][$package->packagetitle]['latest'] = $latest;
+                    }
+
+                    if (array_key_exists($latest['version'], $older))
+                    {
+                        // always remove the latest from the older array
+                        unset($older[$latest['version']]);
+                    }
+
+                    // always keep it up-to-date
+                    $this->data['packages'][$package->packagetitle]['older'] = $older;
+
+                    // a hack to get a ux for linking to detailed package view
+                    if ($latest['ux'] != '')
+                    {
+                        $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
+                        (
+                            'apps_title_basecategory_ux',
+                            array
+                            (
+                                'ux' => $latest['ux'],
+                                'basecategory' => $this->data['basecategory'],
+                                'packagetitle' => $package->packagetitle
+                            ),
+                            $this->request
+                        );
+                    }
                 }
             }
-        }
+        } //foreach
+        unset($latest);
     }
 }
