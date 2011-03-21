@@ -104,7 +104,7 @@ class com_meego_packages_controllers_application
                 $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['uxes'][$repository->repoosux]['css'] = $repository->repoosgroup . ' ' . $repository->repoosux;
                 $localurl = $this->mvc->dispatcher->generate_url
                 (
-                    'apps_ux_index',
+                    'basecategories_for_ux_index',
                     array
                     (
                         'ux' => $repository->repoosux
@@ -151,12 +151,12 @@ class com_meego_packages_controllers_application
             $args['basecategory'] = false;
             if (com_meego_packages_controllers_repository::ux_exists($args['something']))
             {
-                // let's see if something is a ux
+                // something identifies a ux
                 $args['ux'] = $args['something'];
             }
             elseif (com_meego_packages_controllers_basecategory::basecategory_exists($args['something']))
             {
-                // see if this is a basecategory
+                // something is a basecategory actually
                 $args['basecategory'] = $args['something'];
             }
         }
@@ -184,9 +184,9 @@ class com_meego_packages_controllers_application
         if (   array_key_exists('basecategory', $args)
             && $args['basecategory'])
         {
+            $this->data['basecategory'] = strtolower($args['basecategory']);
             // this sets data['packages'] and we just need to filter that
             $localpackages = self::get_applications_by_basecategory($args);
-            $this->data['basecategory'] = strtolower($args['basecategory']);
         }
         else
         {
@@ -194,63 +194,13 @@ class com_meego_packages_controllers_application
             $localpackages = self::get_filtered_applications(0, $this->data['ux']);
         }
 
-        // prepare the data for the templates
-        com_meego_packages_controllers_package::set_data($localpackages);
+        // this will fill in providers, variants and statistics for each package
+        // by filtering out those projects that are not top_projects (see configuration)
+        // and variant names that don't fit the package filter criteria (see configuration)
+        self::set_data($localpackages);
 
-        // this is the placeholder for the needed apps
-        $localpackages = array();
-
-        foreach ($this->data['packages'] as $packagename => $package)
-        {
-            // create a copy of the package so that we can work on it
-            $localpackages[$packagename] = $package;
-            $localpackages[$packagename]['providers'] = array();
-
-            // providers are the individual projects
-            foreach($package['providers'] as $projectname => $project)
-            {
-                if (array_key_exists($projectname, $this->mvc->configuration->top_projects))
-                {
-                    $localpackages[$packagename]['providers'][$projectname] = $project;
-
-                    if (isset($data['ux']))
-                    {
-                        // filter variants base on ux only if it is set in the request
-                        $localpackages[$packagename]['providers'][$projectname]['variants'] = array();
-                        // variants are the individual packages
-                        // filter out the ones that have wrong repoosux and projectcategoryname
-                        foreach ($project['variants'] as $variant)
-                        {
-                            if (   strtolower($variant->repoosux) == $this->data['ux']
-                                || strtolower($variant->repoosux) == 'allux'
-                                || strtolower($variant->repoosux) == '')
-                            {
-                                // cut this variant
-                                $localpackages[$packagename]['providers'][$projectname]['variants'][] = $variant;
-                            }
-                        }
-
-                        // if there is no suitable variant then remove the provider
-                        if (! count($localpackages[$packagename]['providers'][$projectname]['variants']))
-                        {
-                            unset($localpackages[$packagename]['providers'][$projectname]);
-                        }
-                    }
-                }
-            }
-
-            // if there is no provider for a package then let's remove it
-            if (! count($localpackages[$packagename]['providers']))
-            {
-                unset($localpackages[$packagename]);
-            }
-        }
-
-        $this->data['packages'] = $localpackages;
-
-        unset($localpackages);
-
-        return $this->data['packages'];
+        // we return this counter as it is used by count_number_of_apps()
+        return count($this->data['packages']);
     }
 
     /**
@@ -265,20 +215,14 @@ class com_meego_packages_controllers_application
      */
     public function count_number_of_apps($basecategory = '', $ux = '')
     {
-        $packages = array();
-
-        // gather packages from top projects that belong to this basecategory and ux
-        $packages = array_merge(
-            $packages,
-            self::get_applications(
-                array(
-                    'basecategory' => $basecategory,
-                    'ux' => $ux
-                )
+        $counter = self::get_applications(
+            array(
+                'basecategory' => $basecategory,
+                'ux' => $ux
             )
         );
 
-        return count($packages);
+        return $counter;
     }
 
     /**
@@ -363,11 +307,18 @@ class com_meego_packages_controllers_application
         if (is_string($ux_name)
             && strlen($ux_name))
         {
-            $ux_constraint = new midgard_query_constraint(
+            $ux_constraint = new midgard_query_constraint_group('OR');
+
+            $ux_constraint->add_constraint(new midgard_query_constraint(
                 new midgard_query_property('repoosux'),
                 '=',
                 new midgard_query_value($ux_name)
-            );
+            ));
+            $ux_constraint->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('repoosux'),
+                '=',
+                new midgard_query_value('')
+            ));
         }
 
         if (is_string($package_title)
@@ -428,26 +379,26 @@ class com_meego_packages_controllers_application
         }
 
         $q->set_constraint($qc);
+
+        if ($packagetitle_constraint)
+        {
+            // if we look for an exact title then make sure we sort packages by versions
+            // this way when we do the filter_applications the associative array returned
+            // will only have the latest version of a certain application
+            $q->add_order(new midgard_query_property('packageversion', $storage), SORT_ASC);
+        }
+
         $q->execute();
 
         #$packages = $q->list_objects();
         #print_r($packages);
+
+        // filter apps so that only the ones remain that are allowed by package filter configuration
+        $packages = self::filter_titles($q->list_objects(), $this->mvc->configuration->package_filters);
+
+        #print_r($packages);
         #ob_flush();
         #die;
-
-        $packages = self::filter_applications($q->list_objects(), $this->mvc->configuration->package_filters);
-
-        // sort the packages by title
-        uasort(
-            $packages,
-            function($a, $b)
-            {
-                if ($a->packagetitle == $b->packagetitle) {
-                    return 0;
-                }
-                return ($a->packagetitle < $b->packagetitle) ? -1 : 1;
-            }
-        );
 
         return $packages;
     }
@@ -459,7 +410,7 @@ class com_meego_packages_controllers_application
      * @param array of filters as per configured
      * @return array the filtered associative array
      */
-    private static function filter_applications(array $packages, array $filters)
+    private static function filter_titles(array $packages, array $filters)
     {
         $localpackages = array();
 
@@ -467,9 +418,7 @@ class com_meego_packages_controllers_application
         {
             $filtered = false;
 
-            // filter packages by their titles
-            // useful to filter -src packages for example
-            // the pattern of projects to be filtered is configurable
+            // filter packages by their titles (see configuration: package_filters)
             foreach ($filters as $filter)
             {
                 if (preg_match($filter, $package->packagetitle))
@@ -484,10 +433,147 @@ class com_meego_packages_controllers_application
                 continue;
             }
 
-            // create a copy of the package so that we can work on it
-            $localpackages[$package->packagetitle] = $package;
+            $localpackages[] = $package;
         }
 
         return $localpackages;
+    }
+
+    /**
+     * Sets data for the template
+     * It is used in two routes so that is why we have it as a separate function
+     * @param array of packages
+     */
+    public function set_data(array $packages)
+    {
+        $localpackages = array();
+
+        // let's do a smart grouping by package_title
+        $variant_counter = 0;
+
+        foreach ($packages as $package)
+        {
+            // check if the project that supplies this package is a top_project (see configuration)
+            if (array_key_exists($package->repoprojectname, $this->mvc->configuration->top_projects))
+            {
+                // include only the necassary variants
+                if (   $this->data['ux'] == false
+                    || ($this->data['ux'] != ''
+                        && (   strtolower($package->repoosux) == $this->data['ux'])
+                            || strtolower($package->repoosux) == 'allux'
+                            || strtolower($package->repoosux) == ''))
+                {
+                    if (! isset($this->data['packages'][$package->packagetitle]['name']))
+                    {
+                        // set the name
+                        $this->data['packages'][$package->packagetitle]['name'] = $package->packagetitle;
+
+                        if (! strlen($this->data['basecategory']))
+                        {
+                            $this->data['basecategory'] = com_meego_packages_controllers_package::determine_base_category($package);
+                        }
+
+
+                        // a hack to get a ux for linking to detailed package view
+                        if (   ! isset($this->data['packages'][$package->packagetitle]['localurl'])
+                            && $package->repoosux != '')
+                        {
+                            $ux = $package->repoosux;
+
+                            if (strlen($this->data['ux']))
+                            {
+                                $ux = $this->data['ux'];
+                            }
+
+                            $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
+                            (
+                                'apps_title_basecategory_ux',
+                                array
+                                (
+                                    'ux' => $ux,
+                                    'basecategory' => $this->data['basecategory'],
+                                    'packagetitle' => $package->packagetitle
+                                ),
+                                $this->request
+                            );
+                        }
+
+                        // check if we have ux
+                        if ( ! strlen($this->data['ux']))
+                        {
+                            $this->data['ux'] = strtolower($package->repoosux);
+                        }
+
+                        $this->data['ux'] = '';
+                        $this->data['basecategory'] = '';
+
+                        // gather some basic stats
+                        $stats = com_meego_packages_controllers_package::get_statistics($package->packagetitle);
+
+                        // set the total number of comments
+                        $this->data['packages'][$package->packagetitle]['number_of_comments'] = $stats['number_of_comments'];
+
+                        // the stars as html snippet for the average rating; should be used as-is in the template
+                        $this->data['packages'][$package->packagetitle]['stars'] = com_meego_ratings_controllers_rating::draw_stars($stats['average_rating']);
+
+                        // set a longer description
+                        $this->data['packages'][$package->packagetitle]['description'] = $package->packagedescription;
+
+                        // set a screenshoturl if the package object has any
+                        $this->data['packages'][$package->packagetitle]['screenshoturl'] = false;
+
+                        $_package = new com_meego_package($package->packageid);
+                        $attachments = $_package->list_attachments();
+
+                        foreach ($attachments as $attachment)
+                        {
+                            $this->data['packages'][$package->packagetitle]['screenshoturl'] = $this->mvc->dispatcher->generate_url
+                            (
+                                'attachmentserver_variant',
+                                array
+                                (
+                                    'guid' => $attachment->guid,
+                                    'variant' => 'sidesquare',
+                                    'filename' => $attachment->name,
+                                ),
+                                '/'
+                            );
+                            break;
+                        }
+                    }
+
+                    // if the UX is empty then we consider the package to be good for all UXes
+                    // this value is used in the template to show a proper icon
+                    $package->ux = $package->repoosux;
+                    if ( ! strlen($package->ux) )
+                    {
+                        $package->ux = 'allux';
+                    }
+
+                    // provide a link to visit the page of a certain package variant
+                    $package->localurl = $this->mvc->dispatcher->generate_url
+                    (
+                        'package_instance',
+                        array
+                        (
+                            'package' => $package->packagetitle,
+                            'version' => $package->packageversion,
+                            'project' => $package->repoprojectname,
+                            'repository' => $package->reponame,
+                            'arch' => $package->repoarch
+                        ),
+                        $this->request
+                    );
+
+                    // we group the variants into providers. a provider is basically a project repository, e.g. home:fal
+                    $this->data['packages'][$package->packagetitle]['providers'][$package->repoprojectname]['projectname'] = $package->repoprojectname;
+
+                    // the variants are basically the versions built for different hardware architectures (not UXes)
+                    $this->data['packages'][$package->packagetitle]['providers'][$package->repoprojectname]['variants'][] = $package;
+
+                    // @todo: need to filter out variants in case there are multiple versions available
+                }
+            }
+        }
     }
 }
