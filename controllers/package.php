@@ -1026,7 +1026,7 @@ class com_meego_packages_controllers_package
             $package->ux = $package->repoosux;
             if ( ! strlen($package->ux) )
             {
-                $package->ux = 'allux';
+                $package->ux = 'universal';
             }
 
             // the variants are basically the versions built for different hardware architectures (not UXes)
