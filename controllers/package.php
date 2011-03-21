@@ -949,7 +949,7 @@ class com_meego_packages_controllers_package
                         {
                             $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
                             (
-                                'apps_package_basecategory_ux_overview',
+                                'apps_title_basecategory_ux',
                                 array
                                 (
                                     'ux' => $this->data['ux'],
