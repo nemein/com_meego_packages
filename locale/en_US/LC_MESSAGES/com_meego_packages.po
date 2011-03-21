@@ -37,6 +37,12 @@ msgstr "Repositories"
 msgid "title_no_ux_or_basecategory"
 msgstr "We are sorry, but there is no such UX or category: ${item}"
 
+msgid "title_latest_version"
+msgstr "Latest version: ${version}"
+
+msgid "title_older_versions"
+msgstr "Older version(s)"
+
 msgid "package_name"
 msgstr "Full Name"
 
@@ -107,7 +113,7 @@ msgid "title_tablet_ux"
 msgstr "Tablet"
 
 msgid "title_allux_ux"
-msgstr "All UX"
+msgstr "Universal"
 
 msgid "warning_no_base_categories"
 msgstr "There are no base categories defined in the system. Administrators need to create those before they will be visible."
@@ -186,3 +192,9 @@ msgstr "${mappings} package category(ies) are mapped to ${name} covering ${packa
 
 msgid "instruction_mapping"
 msgstr "Select the desired package categories that should be mapped to ${name}"
+
+msgid "tip_install"
+msgstr "Select the install file matching the hardware architecture of your device. To find out this information please refer to the user manual of the device."
+
+msgid "command_install"
+msgstr "Download to ${arch} architecture"
