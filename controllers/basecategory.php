@@ -715,7 +715,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function load_relations_for_basecategory($basecategory_id = null, $includedeleted = false)
     {
-        $relations = null;
+        $relations = array();
 
         if ($basecategory_id)
         {
