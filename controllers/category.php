@@ -23,7 +23,9 @@ class com_meego_packages_controllers_category
     }
 
     /**
-     * @todo: docs
+     * Action to get the list of all categorires
+     *
+     * @param array args passed to the action
      */
     public function get_categories_list(array $args = null)
     {
@@ -45,7 +47,7 @@ class com_meego_packages_controllers_category
 
         $relations = $q->list_objects();
 
-        if (count($relations))
+        if (count($relations) > 0)
         {
             // gather the base categories that have
             foreach($relations as $relation)
@@ -79,6 +81,8 @@ class com_meego_packages_controllers_category
 
     /**
      * Returns all package categories
+     *
+     * @return array of com_meego_package_category objects
      */
     public function get_all_package_categories()
     {
@@ -98,6 +102,7 @@ class com_meego_packages_controllers_category
 
     /**
      * Loads a particular package category specified by its id
+     *
      * @param integer id of the category
      * @return object the package category object
      */
@@ -161,6 +166,7 @@ class com_meego_packages_controllers_category
 
     /**
      * Prepares the data['categories'] array that is to be used by the templates
+     *
      * @param array of category objects
      */
     public function prepare_category_list($categories = null)
