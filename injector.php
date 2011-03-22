@@ -19,6 +19,9 @@ class com_meego_packages_injector
         $this->mvc->i18n->set_language($default_language, false);
     }
 
+    /**
+     * @todo: docs
+     */
     public function inject_process(midgardmvc_core_request $request)
     {
         // We inject the template to provide MeeGo styling
@@ -69,6 +72,9 @@ class com_meego_packages_injector
         self::set_breadcrumb($request);
     }
 
+    /**
+     * Adds js and css files to head
+     */
     private function add_head_elements()
     {
         $this->mvc->head->add_jsfile(MIDGARDMVC_STATIC_URL . '/eu_urho_widgets/js/jquery.rating/jquery.rating.pack.js');
