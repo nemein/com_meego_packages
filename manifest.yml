@@ -50,6 +50,13 @@ routes:
         template_aliases:
             content: cmp-show-application
 
+    apps_rating_create:
+        path: /rating/create/{$packagetitle}
+        controller: com_meego_packages_controllers_application
+        action: comment_application
+        template_aliases:
+            content: cmp-show-application
+
     # lists all base categories that are avaialable for a UX
     basecategories_for_ux_index:
         path: /basecategories/{$ux}
