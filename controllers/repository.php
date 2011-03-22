@@ -240,7 +240,7 @@ class com_meego_packages_controllers_repository
                 'package_instance',
                 array
                 (
-                    'package' => $package->title,
+                    'package' => $package->name,
                     'version' => $package->version,
                     'project' => $args['project'],
                     'repository' => $this->data['repository']->name,
@@ -318,7 +318,7 @@ class com_meego_packages_controllers_repository
 
             if (empty($package->title))
             {
-                $package->title = $package->name;
+                $package->title = ucfirst($package->name);
             }
 
             $package->localurl = $this->mvc->dispatcher->generate_url
@@ -326,7 +326,7 @@ class com_meego_packages_controllers_repository
                 'package_instance',
                 array
                 (
-                    'package' => $package->title,
+                    'package' => $package->name,
                     'version' => $package->version,
                     'project' => $args['project'],
                     'repository' => $this->data['repository']->name,
