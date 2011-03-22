@@ -397,36 +397,63 @@ class com_meego_packages_controllers_package
      */
     private function search_packages($query)
     {
-        if (isset($query['q'])
-            && !empty($query['q']))
+        if (   isset($query['q'])
+            && ! empty($query['q']))
         {
-            $qb = com_meego_package::new_query_builder();
+            $storage = new midgard_query_storage('com_meego_package_details');
+            $q = new midgard_query_select($storage);
+            $qc = new midgard_query_constraint_group('OR');
+
             if (isset($query['q']))
             {
                 // Text search
-                $qb->begin_group('OR');
-                $qb->add_constraint('name', 'LIKE', '%' . $query['q'] . '%');
-                $qb->add_constraint('title', 'LIKE', '%' . $query['q'] . '%');
-                $qb->add_constraint('summary', 'LIKE', '%' . $query['q'] . '%');
-                $qb->end_group();
+                $qc->add_constraint(new midgard_query_constraint(
+                    new midgard_query_property('packagename'),
+                    'LIKE',
+                    new midgard_query_value('%' . $query['q'] . '%')
+                ));
+                $qc->add_constraint(new midgard_query_constraint(
+                    new midgard_query_property('packagetitle'),
+                    'LIKE',
+                    new midgard_query_value('%' . $query['q'] . '%')
+                ));
+                $qc->add_constraint(new midgard_query_constraint(
+                    new midgard_query_property('packagesummary'),
+                    'LIKE',
+                    new midgard_query_value('%' . $query['q'] . '%')
+                ));
+                $qc->add_constraint(new midgard_query_constraint(
+                    new midgard_query_property('packagefilename'),
+                    'LIKE',
+                    new midgard_query_value('%' . $query['q'] . '%')
+                ));
             }
 
             //if repository is specified for search
             if (   isset($query['repository'])
-                && !empty($query['repository']))
+                && ! empty($query['repository']))
             {
-                $qb2 = com_meego_repository::new_query_builder();
-                $qb2->add_constraint('name', '=', $query['repository']);
-                $repository = $qb2->execute();
+                $qb = com_meego_repository::new_query_builder();
+                $qb->add_constraint('name', '=', $query['repository']);
+                $repository = $qb->execute();
                 if (count($repository) == 0)
                 {
                     throw new midgardmvc_exception_notfound("Repository not found");
                 }
-                $qb->add_constraint('repository', '=', $repository[0]->id);
-
+                $qc->add_constraint(new midgard_query_constraint(
+                    new midgard_query_property('repository'),
+                    '=',
+                    new midgard_query_value($repository[0]->id)
+                ));
             }
 
-            return $qb->execute();
+            $q->set_constraint($qc);
+            $q->execute();
+
+            // filter package names according to configuration
+            $packages = com_meego_packages_controllers_application::filter_names($q->list_objects(), $this->mvc->configuration->package_filters);
+
+            return $packages;
         }
     }
 
@@ -439,22 +466,27 @@ class com_meego_packages_controllers_package
 
         $query = $this->request->get_query();
         if (   isset($query['q'])
-            && !empty($query['q']))
+            && ! empty($query['q']))
         {
             $this->data['search'] = $query['q'];
             $this->data['packages'] = array();
+
             $packages = $this->search_packages($query);
+
             if (count($packages) == 1)
             {
+                $package = $package[0];
                 // Relocate to package directly
                 $this->mvc->head->relocate
                 (
                     $this->mvc->dispatcher->generate_url
                     (
-                        'package',
+                        'apps_title_basecategory_ux',
                         array
                         (
-                            'package' => $packages[0]->name,
+                            'ux' => $package->repoosux,
+                            'basecategory' => self::determine_base_category($package),
+                            'packagetitle' => $package->packagetitle
                         ),
                         $this->request
                     )
@@ -464,26 +496,28 @@ class com_meego_packages_controllers_package
             {
                 foreach ($packages as $package)
                 {
-                    if (isset($this->data['packages'][$package->name]))
+                    if (isset($this->data['packages'][$package->packagename]))
                     {
                         continue;
                     }
 
-                    if (empty($package->title))
+                    if (empty($package->packagetitle))
                     {
-                        $package->title = $package->name;
+                        $package->packagetitle = ucfirst($package->packagename);
                     }
 
                     $package->localurl = $this->mvc->dispatcher->generate_url
                     (
-                        'package',
+                        'apps_title_basecategory_ux',
                         array
                         (
-                            'package' => $package->name,
+                            'ux' => $package->repoosux,
+                            'basecategory' => self::determine_base_category($package),
+                            'packagetitle' => $package->packagetitle
                         ),
                         $this->request
                     );
-                    $this->data['packages'][$package->name] = $package;
+                    $this->data['packages'][$package->packagename] = $package;
                 }
             }
         }
