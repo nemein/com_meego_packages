@@ -412,7 +412,7 @@ class com_meego_packages_controllers_application
         #print_r($packages);
 
         // filter apps so that only the ones remain that are allowed by package filter configuration
-        $packages = self::filter_titles($q->list_objects(), $this->mvc->configuration->package_filters);
+        $packages = self::filter_names($q->list_objects(), $this->mvc->configuration->package_filters);
 
         #print_r($packages);
         #ob_flush();
@@ -422,13 +422,13 @@ class com_meego_packages_controllers_application
     }
 
     /**
-     * Filters out packages from an array using thepackage filter configuration
+     * Filters out packages from an array using the package filter configuration
      *
      * @param array with com_meego_package_details objects
      * @param array of filters as per configured
      * @return array the filtered associative array
      */
-    private static function filter_titles(array $packages, array $filters)
+    public static function filter_names(array $packages, array $filters)
     {
         $localpackages = array();
 
@@ -439,7 +439,7 @@ class com_meego_packages_controllers_application
             // filter packages by their titles (see configuration: package_filters)
             foreach ($filters as $filter)
             {
-                if (preg_match($filter, $package->packagetitle))
+                if (preg_match($filter, $package->packagename))
                 {
                     $filtered = true;
                     break;
