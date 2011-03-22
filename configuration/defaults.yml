@@ -17,9 +17,11 @@ workflows:
 # are meant for the non-techie audience.
 # these projects define the so called "downloads" area
 top_projects:
-#    home:feri: Some description
-#    home:xfade: Some description
-    home:zigbee: Some description
+    home:tthurman:rfk: Some description
+    home:feri: Some description
+    #home:xfade: Some description
+    #home:zigbee: Some description
+    #home:fal: Some description
 
 # list of base categories as name: description pairs
 # base categories are supposed to map all package categories that are
@@ -56,3 +58,6 @@ package_filters:
     - /^(.*)-debug\w*$/
     # libs are no apps
     - /^(.*)-lib[s]$/
+
+# the maximum rate that can be given to a package
+maxrate: 5
