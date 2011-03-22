@@ -199,6 +199,23 @@ class com_meego_packages_controllers_application
         // and variant names that don't fit the package filter criteria (see configuration)
         self::set_data($localpackages);
 
+        // if an exact application is shown
+        if (   $this->data['packagetitle']
+            && count($this->data['packages']))
+        {
+            // enable commenting
+            if ($this->mvc->authentication->is_user())
+            {
+                $this->data['can_post'] = true;
+                self::enable_commenting();
+            }
+            else
+            {
+                $this->data['can_post'] = false;
+            }
+
+        }
+
         // we return this counter as it is used by count_number_of_apps()
         return count($this->data['packages']);
     }
@@ -455,7 +472,7 @@ class com_meego_packages_controllers_application
             // check if the project that supplies this package is a top_project (see configuration)
             if (array_key_exists($package->repoprojectname, $this->mvc->configuration->top_projects))
             {
-                // include only the necassary variants
+                // include only the necessary variants
                 if (   $this->data['ux'] == false
                     || ($this->data['ux'] != ''
                         && (   strtolower($package->repoosux) == $this->data['ux'])
@@ -607,9 +624,132 @@ class com_meego_packages_controllers_application
                             $this->request
                         );
                     }
+
                 }
+
+                // collect ratings and comments (used in application detailed view)
+                if (! array_key_exists('ratings', $this->data['packages'][$package->packagetitle]))
+                {
+                    $this->data['packages'][$package->packagetitle]['ratings'] = array();
+                }
+
+                $ratings = com_meego_packages_controllers_package::prepare_ratings($package->packageguid);
+
+                $this->data['packages'][$package->packagetitle]['ratings'] = array_merge($this->data['packages'][$package->packagetitle]['ratings'], $ratings);
             }
         } //foreach
         unset($latest);
+    }
+
+    /**
+     * Adds a form to page if commenting is enabled
+     *
+     * Uses the data array that is set earlier for the templates
+     */
+    public function enable_commenting()
+    {
+        $this->data['relocate'] = $this->mvc->dispatcher->generate_url(
+            'apps_title_basecategory_ux', array
+            (
+                'ux' => $this->data['ux'],
+                'basecategory' => $this->data['basecategory'],
+                'packagetitle' => $this->data['packagetitle']
+            ),
+            $this->request
+        );
+
+        $this->data['postaction'] = $this->mvc->dispatcher->generate_url
+        (
+            'apps_rating_create', array
+            (
+                'packagetitle' => $this->data['packagetitle']
+            ),
+            $this->request
+        );
+
+        foreach ($this->data['packages'][$this->data['packagetitle']]['latest']['variants'] as $variant)
+        {
+            $this->data['architectures'][$variant->repoarch] = array
+            (
+                'name' => $variant->repoarch,
+                'packageguid' => $variant->packageguid
+            );
+        }
+    }
+
+    /**
+     * Process application comments and ratings
+     *
+     * It basically adds the comment and rating to each architecture variant of
+     * the latest version of the app, because these are the versions downloadable
+     * on the detailed apps view page
+     *
+     */
+    public function post_comment_application(array $args)
+    {
+        if (   ! is_array($_POST)
+            || ! isset($_POST['packageguid']))
+        {
+            midgardmvc_core::get_instance()->head->relocate($_POST['relocate']);
+        }
+
+        $this->data['feedback'] = false;
+
+        $guid = $_POST['packageguid'];
+
+        $comment = null;
+
+        // if comment is also given then create a new comment entry
+        if (isset($_POST['comment']))
+        {
+            $content = $_POST['comment'];
+            if (strlen($content))
+            {
+                // save comment only if it is not empty
+                $comment = new com_meego_comments_comment();
+
+                $comment->to = $guid;
+                $comment->content = $content;
+
+                if (! $comment->create())
+                {
+                    die ("can't create comment");
+                }
+            }
+        }
+
+        if (isset($_POST['rating']))
+        {
+            $rate = $_POST['rating'];
+
+            if ($rate > $this->mvc->configuration->maxrate)
+            {
+                $rate = $this->mvc->configuration->maxrate;
+            }
+
+            $rating = new com_meego_ratings_rating();
+
+            $rating->to = $guid;
+            $rating->rating = $rate;
+
+            if (is_object($comment))
+            {
+                $rating->comment = $comment->id;
+            }
+
+            if ($rating->create())
+            {
+                $this->data['feedback'] = 'ok';
+            }
+            else
+            {
+                $this->data['feedback'] = 'nok';
+            }
+        }
+
+        if (isset($_POST['relocate']))
+        {
+            midgardmvc_core::get_instance()->head->relocate($_POST['relocate']);
+        }
     }
 }

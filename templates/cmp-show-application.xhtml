@@ -47,11 +47,25 @@
             </ul>
         </div>
 
-        <!-- show all ratings and comments -->
-        <div class="ratings" tal:condition="true: package/ratings">
+        <div class="ratings">
+            <!-- ratings title -->
             <h2 i18n:domain="com_meego_ratings" i18n:translate="'ratings'"/>
 
-            <ul class="list">
+            <div class="status" tal:condition="not: com_meego_packages/can_post">
+                <!-- notice to login for commenting -->
+                <a tal:define="main_url php:midgardmvc.context.get_request(0).get_path(); url string:/mgd:login?redirect=$main_url" tal:attributes="href url" i18n:domain="com_meego_ratings" i18n:translate="'login_to_rate'"/>
+            </div>
+
+            <div class="status" tal:condition="not: package/ratings" i18n:domain="com_meego_ratings"  i18n:translate="'first_to_rate'">
+                <!-- be the 1st to rate -->
+            </div>
+
+            <div class="create-rating" tal:condition="true: com_meego_packages/can_post">
+                <mgd:include>cmp-application-comment-form</mgd:include>
+            </div>
+
+            <!-- list all ratings and comments -->
+            <ul class="list" tal:condition="true: package/ratings">
               <li tal:repeat="rating package/ratings">
                 <span class="firstname" tal:content="rating/authorfirstname">Firstname</span>
                 <span class="lastname" tal:content="rating/authorlastname">Lastname</span>
@@ -60,7 +74,6 @@
                 <div class="date" tal:content="rating/date">Date</div>
               </li>
             </ul>
-
         </div>
 
     </div>

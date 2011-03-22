@@ -1,0 +1,25 @@
+<form method="post" tal:attributes="action com_meego_packages/postaction">
+
+    <input type="hidden" name="relocate" tal:attributes="value com_meego_packages/relocate"/>
+
+    <div class="architectures" tal:condition="true: com_meego_packages/architectures">
+        <div class="instruction" i18n:domain="com_meego_packages" i18n:translate="'instruction_select_arch'" i18n:attributes="title tip_select_arch"></div>
+        <ul class="list">
+            <li tal:repeat="arch com_meego_packages/architectures">
+                <input class="architecture" type="radio" name="packageguid" tal:attributes="value arch/packageguid"/>
+                <span>${arch/name}</span>
+            </li>
+        </ul>
+    </div>
+
+    <input class="star" type="radio" name="rating" value="1"/>
+    <input class="star" type="radio" name="rating" value="2"/>
+    <input class="star" type="radio" name="rating" value="3"/>
+    <input class="star" type="radio" name="rating" value="4"/>
+    <input class="star" type="radio" name="rating" value="5"/>
+
+    <textarea name="comment"/>
+
+    <input type="submit" class="midgardmvc_helper_forms_form_save" i18n:domain="com_meego_packages" i18n:attributes="value command_save"/>
+
+</form>

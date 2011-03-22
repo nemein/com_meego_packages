@@ -340,3 +340,17 @@ span.catname {
 font-weight: bold;
 font-style: italic;
 }
+
+div.create-rating div.architectures {
+margin: 1em 0 1em 0;
+}
+
+div.create-rating div.architectures ul.list {
+margin: 0 0 0 0;
+}
+
+div.create-rating div.architectures ul.list li {
+margin: 0;
+list-style: none;
+padding-left: 1em;
+}
