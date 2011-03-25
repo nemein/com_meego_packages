@@ -29,7 +29,7 @@ class com_meego_packages_controllers_package
     public function get_package(array $args)
     {
         $qb = com_meego_package::new_query_builder();
-        $qb->add_constraint('title', '=', $args['package']);
+        $qb->add_constraint('name', '=', $args['package']);
         $qb->add_order('repository.name', 'ASC');
         $packages = $qb->execute();
         if (count($packages) == 0)
@@ -164,7 +164,7 @@ class com_meego_packages_controllers_package
         }
 
         $qb = com_meego_package::new_query_builder();
-        $qb->add_constraint('title', '=', $args['package']);
+        $qb->add_constraint('name', '=', $args['package']);
         $qb->add_constraint('version', '=', $args['version']);
         $qb->add_constraint('repository.project', '=', $project->id);
         $qb->add_constraint('repository.name', '=', $args['repository']);
