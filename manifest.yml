@@ -25,8 +25,7 @@ routes:
         template_aliases:
             content: cmp-show-index
 
-    # base categories are defined by admins
-    # base categories have one or more package categories mapped to them
+    # something can be either a UX or a base category
     applications_by_something:
         path: /applications/{$something}
         controller: com_meego_packages_controllers_application
@@ -50,6 +49,7 @@ routes:
         template_aliases:
             content: cmp-show-application
 
+    # application rating
     apps_rating_create:
         path: /rating/create/{$packagetitle}
         controller: com_meego_packages_controllers_application
