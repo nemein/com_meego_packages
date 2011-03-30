@@ -2,7 +2,7 @@
   <h1>
     <a tal:attributes="href com_meego_packages/package/localurl" title="See what other versions are available for this package."><span class="title" tal:content="com_meego_packages/package/title" property="v:name">Package title</span></a>
     <span class="version" tal:content="com_meego_packages/package/version">Package version</span>
-    <tal:block tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_ratings', 'get_average', array('to' => com_meego_packages['package'].guid))">Rating stars</tal:block>
+    <tal:block tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_ratings_caching', 'get_average', array('to' => com_meego_packages['package'].guid))">Rating stars</tal:block>
   </h1>
 
   <div class="screenshot" tal:condition="true:com_meego_packages/package/screenshoturl">
