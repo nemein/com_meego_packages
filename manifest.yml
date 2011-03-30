@@ -10,6 +10,8 @@ requires:
         - {type: github, user: bergie, repository: midgardmvc_helper_workflow, branch: master}
     midgardmvc_ui_forms:
         - {type: github, user: bergie, repository: midgardmvc_ui_forms, branch: master}
+    com_meego_ratings_caching:
+        - {type: github, user: nemein, repository: com_meego_ratings_caching, branch: master}
 
 routes:
     index:
