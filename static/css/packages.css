@@ -286,7 +286,7 @@ border-top: 1px dashed lightgrey;
 }
 
 form.admin div.map {
-height: 20em;
+max-height: 20em;
 width: 44em;
 overflow: auto;
 }

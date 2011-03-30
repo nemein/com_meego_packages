@@ -408,9 +408,6 @@ class com_meego_packages_controllers_application
 
         $q->execute();
 
-        #$packages = $q->list_objects();
-        #print_r($packages);
-
         // filter apps so that only the ones remain that are allowed by package filter configuration
         $packages = self::filter_titles($q->list_objects(), $this->mvc->configuration->package_filters);
 
