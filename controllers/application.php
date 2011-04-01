@@ -45,6 +45,10 @@ class com_meego_packages_controllers_application
 
     /**
      * Generates the content for the index page showing the icons of variants
+     * Here we gather the uxes from the latest version of the OS that is
+     * configurable
+     *
+     * @param array args
      */
     public function get_index(array $args)
     {
@@ -93,15 +97,27 @@ class com_meego_packages_controllers_application
 
         $repositories = $q->list_objects();
 
+
+        $this->data['latest'] = false;
+        $latest_os = $this->mvc->configuration->latest['os'];
+        $latest_os_version = $this->mvc->configuration->latest['version'];
+
         foreach ($repositories as $repository)
         {
-            if (   $repository->repoos == 'meego'
-                && $repository->repoosux)
+            if (   $repository->repoos == strtolower($latest_os)
+                && $repository->repoosversion == $latest_os_version)
             {
-                $repository->os = 'MeeGo';
-                $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['title'] = $repository->repoos . ' ' . $repository->repoosversion;
-                $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['uxes'][$repository->repoosux]['title'] = ucfirst($repository->repoosux);
-                $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['uxes'][$repository->repoosux]['css'] = $repository->repoosgroup . ' ' . $repository->repoosux;
+                $repository->os = $latest_os;
+
+                $this->data['latest']['title'] = $repository->repoos . ' ' . $repository->repoosversion;
+
+                $this->data['latest']['uxes'][$repository->repoosux]['title'] = $repository->repoosux;
+
+                $translated_title = $this->mvc->i18n->get('title_' . $repository->repoosux . '_ux');
+                $this->data['latest']['uxes'][$repository->repoosux]['translated_title'] = $translated_title;
+
+                $this->data['latest']['uxes'][$repository->repoosux]['css'] = $repository->repoosgroup . ' ' . $repository->repoosux;
+
                 $localurl = $this->mvc->dispatcher->generate_url
                 (
                     'basecategories_for_ux_index',
@@ -111,13 +127,13 @@ class com_meego_packages_controllers_application
                     ),
                     $this->request
                 );
-                $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['uxes'][$repository->repoosux]['url'] = $localurl;
+                $this->data['latest']['uxes'][$repository->repoosux]['url'] = $localurl;
             }
         }
     }
 
     /**
-     * Get applicarions (ie top packages) for a base category but
+     * Get applications (ie top packages) for a base category but
      * only if they belong to a certain ux and to a top project that is configurable
      *
      * This is eventually filters the results of

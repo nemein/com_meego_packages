@@ -101,13 +101,13 @@ msgid "title_handset_ux"
 msgstr "Handset"
 
 msgid "title_ivi_ux"
-msgstr "In Vehicle Infotainment"
+msgstr "In-Vehicle"
 
 msgid "title_smarttv_ux"
 msgstr "Smart TV"
 
 msgid "title_mediaphone_ux"
-msgstr "Media Phone"
+msgstr "Media phone"
 
 msgid "title_tablet_ux"
 msgstr "Tablet"
@@ -205,3 +205,5 @@ msgstr "Please select the hardware architecure for the application."
 msgid "tip_select_arch"
 msgstr "To find information about the hardware architecture please refer to the manual of your device."
 
+msgid "title_select_ux"
+msgstr "Select the UX"

@@ -149,6 +149,16 @@ li.ux a div.ivi {
 background-image: url(/midgardmvc-static/com_meego_packages/images/device-automotive.png);
 }
 
+li.ux div {
+text-align: center;
+}
+
+li.ux div span {
+position: relative;
+top: 63px;
+font-weight: bold;
+}
+
 div.list div.header {
 line-height: 2em;
 background: lightgrey;
