@@ -1,9 +1,15 @@
-<div class="os" tal:repeat="os com_meego_packages/oses">
+<tal:block tal:condition="true: com_meego_packages/latest">
+    <mgd:include>cmp-show-latest-uxes</mgd:include>
+</tal:block>
+
+<div class="os" tal:condition="com_meego_packages/oses" tal:repeat="os com_meego_packages/oses">
     <h2 tal:content="os/title">MeeGo 1.0</h2>
     <ul class="uxes">
         <li class="ux" tal:repeat="ux os/uxes">
             <a tal:attributes="href ux/url">
-                <div tal:attributes="class ux/css"></div>
+                <div tal:attributes="class ux/css">
+                    <span>${ux/translated_title}</span>
+                </div>
             </a>
         </li>
     </ul>
