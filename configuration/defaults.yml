@@ -17,17 +17,19 @@ workflows:
 # it is hard to determine automatically, so we let admins to configure
 latest:
     os: MeeGo
-    version: 1.1
+    version: current
+
+# map of os names used in the db and their pretty names used in the UI
+os_map:
+    meego: MeeGo
+    debian: Debian
 
 # define the projects here which holds package repositories that
 # are meant for the non-techie audience.
 # these projects define the so called "downloads" area
 top_projects:
-    home:tthurman:rfk: Some description
     home:feri: Some description
-    #home:xfade: Some description
-    #home:zigbee: Some description
-    #home:fal: Some description
+    home:xfade: Some description
 
 # list of base categories as name: description pairs
 # base categories are supposed to map all package categories that are
