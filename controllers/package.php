@@ -481,9 +481,11 @@ class com_meego_packages_controllers_package
                 (
                     $this->mvc->dispatcher->generate_url
                     (
-                        'apps_title_basecategory_ux',
+                        'apps_by_title',
                         array
                         (
+                            'os' => $package->repoos,
+                            'version' => $package->repoosversion,
                             'ux' => $package->repoosux,
                             'basecategory' => self::determine_base_category($package),
                             'packagetitle' => $package->packagetitle
@@ -508,9 +510,11 @@ class com_meego_packages_controllers_package
 
                     $package->localurl = $this->mvc->dispatcher->generate_url
                     (
-                        'apps_title_basecategory_ux',
+                        'apps_by_title',
                         array
                         (
+                            'os' => $package->repoos,
+                            'version' => $package->repoosversion,
                             'ux' => $package->repoosux,
                             'basecategory' => self::determine_base_category($package),
                             'packagetitle' => $package->packagetitle
@@ -953,9 +957,11 @@ class com_meego_packages_controllers_package
                         {
                             $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
                             (
-                                'apps_title_basecategory_ux',
+                                'apps_by_title',
                                 array
                                 (
+                                    'os' => $package->repoos,
+                                    'version' => $package->repoosversion,
                                     'ux' => $this->data['ux'],
                                     'basecategory' => $this->data['basecategory'],
                                     'packagetitle' => $package->packagetitle
