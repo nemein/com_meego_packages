@@ -48,6 +48,8 @@ class com_meego_packages_controllers_repository
 
         $qb = com_meego_repository::new_query_builder();
         $qb->add_constraint('disabledownload', '=', false);
+        $qb->add_order('osversion', 'DESC');
+
         $repositories = $qb->execute();
 
         $prefix = $this->mvc->dispatcher->generate_url(
@@ -58,11 +60,16 @@ class com_meego_packages_controllers_repository
 
         foreach ($repositories as $repository)
         {
-            if (   $repository->os == 'meego'
+            if (   $repository->os
                 && $repository->osux)
             {
-                $repository->os = 'MeeGo';
+                $repository->os = $this->mvc->configuration->os_map[$repository->os];
+
                 $this->data['oses'][$repository->os . ' ' . $repository->osversion]['title'] = $repository->os . ' ' . $repository->osversion;
+
+                $translated_title = $this->mvc->i18n->get('title_' . $repository->osux . '_ux');
+                $this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux]['translated_title'] = $translated_title;
+
                 $this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux]['title'] = ucfirst($repository->osux);
                 $this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux]['css'] = $repository->osgroup . ' ' . $repository->osux;
                 $this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux]['url'] = $prefix . mb_strtolower($repository->os) . '/' . $repository->osversion . '/' . $repository->osux;
