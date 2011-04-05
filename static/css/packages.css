@@ -333,3 +333,99 @@ margin: 0;
 list-style: none;
 padding-left: 1em;
 }
+
+div.os {
+margin: 3em 0 3em 0;
+}
+
+div.latest {
+margin: 2em 0 2em 0;
+}
+
+div.basecategories {
+margin: 2em 0 2em 0;
+}
+
+
+/** define basecategory icons from here **/
+div.basecategories  div.leaf {
+width: 85px;
+height: 60px;
+text-align: center;
+display: inline-table;
+margin: 2em;
+}
+
+div.basecategories  div.leaf a {
+display: block;
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+width: 85px;
+height: 60px;
+}
+
+div.basecategories  div.leaf a span {
+position: relative;
+top: 65px;
+}
+
+/*
+div.basecategories div.internet {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.office {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.graphics {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.games {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.multimedia {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.education {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.science {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.system {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.development {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.accessibility {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.network {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.location {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.utilities {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.other {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+*/
+
+
+
+
