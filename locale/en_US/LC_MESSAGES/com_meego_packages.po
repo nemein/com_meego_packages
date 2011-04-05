@@ -207,3 +207,9 @@ msgstr "To find information about the hardware architecture please refer to the 
 
 msgid "title_select_ux"
 msgstr "Select the UX"
+
+msgid "title_latest"
+msgstr "Latest"
+
+
+
