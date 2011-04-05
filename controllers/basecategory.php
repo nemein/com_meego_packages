@@ -154,17 +154,22 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
     /**
      * @todo: docs
      */
-    public function get_url_browse_basecategory($ux = null, $basecategory = null)
+    public function get_url_browse_basecategory($os = null, $os_version = null, $ux = null, $basecategory = null)
     {
-        return $this->mvc->dispatcher->generate_url
+        $url = $this->mvc->dispatcher->generate_url
         (
-            'apps_basecategory_ux_index', array
+            'apps_by_basecategory',
+            array
             (
+                'os' => $os,
+                'version' => (string) $os_version,
                 'ux' => $ux,
                 'basecategory' => $basecategory
             ),
             $this->request
         );
+
+        return $url;
     }
 
     /**
@@ -257,7 +262,10 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
     /**
      * Show a fancy list of basecategories
      *
-     * @param array args where the key 'ux' will contain the name of the UX
+     * @param array args where the key
+     *                                  'os' will contain the name of the OS
+     *                                  'version' will contain the versionof the UX
+     *                                  'ux' will contain the name of the UX
      *
      */
     public function get_basecategories_by_ux(array $args)
@@ -300,9 +308,9 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
             foreach ($basecategories as $basecategory)
             {
                 // set the url where to browse that category
-                $basecategory->localurl = $this->get_url_browse_basecategory($args['ux'], $basecategory->name);
+                $basecategory->localurl = $this->get_url_browse_basecategory($args['os'], $args['version'], $args['ux'], $basecategory->name);
                 // count all apps that are in this category for that UX
-                $basecategory->apps_counter = com_meego_packages_controllers_application::count_number_of_apps($basecategory->name, $args['ux']);
+                $basecategory->apps_counter = com_meego_packages_controllers_application::count_number_of_apps($args['os'], $args['version'], $basecategory->name, $args['ux']);
                 // set the css class to be used to display this base category
                 $basecategory->css = self::tidy_up($basecategory->name);
                 // populate data
