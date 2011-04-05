@@ -97,7 +97,6 @@ class com_meego_packages_controllers_application
 
         $repositories = $q->list_objects();
 
-
         $this->data['latest'] = false;
         $latest_os = $this->mvc->configuration->latest['os'];
         $latest_os_version = $this->mvc->configuration->latest['version'];
@@ -120,14 +119,37 @@ class com_meego_packages_controllers_application
 
                 $localurl = $this->mvc->dispatcher->generate_url
                 (
-                    'basecategories_for_ux_index',
+                    'basecategories_os_version_ux',
                     array
                     (
+                        'os' => $repository->repoos,
+                        'version' => $repository->repoosversion,
                         'ux' => $repository->repoosux
                     ),
                     $this->request
                 );
                 $this->data['latest']['uxes'][$repository->repoosux]['url'] = $localurl;
+            }
+            else
+            {
+                $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['title'] = $this->mvc->configuration->os_map[$repository->repoos] . ' ' . $repository->repoosversion;
+
+                $translated_title = $this->mvc->i18n->get('title_' . $repository->repoosux . '_ux');
+                $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['uxes'][$repository->repoosux]['translated_title'] = $translated_title;
+                $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['uxes'][$repository->repoosux]['title'] = ucfirst($repository->repoosux);
+                $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['uxes'][$repository->repoosux]['css'] = $repository->repoosgroup . ' ' . $repository->repoosux;
+                $localurl = $this->mvc->dispatcher->generate_url
+                (
+                    'basecategories_os_version_ux',
+                    array
+                    (
+                        'os' => $repository->repoos,
+                        'version' => $repository->repoosversion,
+                        'ux' => $repository->repoosux
+                    ),
+                    $this->request
+                );
+                $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['uxes'][$repository->repoosux]['url'] = $localurl;
             }
         }
     }
@@ -154,6 +176,8 @@ class com_meego_packages_controllers_application
 
         $localpackages = array();
 
+        $this->data['os'] = false;
+        $this->data['version'] = false;
         $this->data['ux'] = false;
         $this->data['base'] = true;
         $this->data['packages'] = array();
@@ -161,20 +185,24 @@ class com_meego_packages_controllers_application
         $this->data['categorytree'] = false;
         $this->data['packagetitle'] = false;
 
-        if (array_key_exists('something', $args))
+        if (   array_key_exists('os', $args)
+            && $args['os'])
         {
-            $args['ux'] = false;
-            $args['basecategory'] = false;
-            if (com_meego_packages_controllers_repository::ux_exists($args['something']))
-            {
-                // something identifies a ux
-                $args['ux'] = $args['something'];
-            }
-            elseif (com_meego_packages_controllers_basecategory::basecategory_exists($args['something']))
-            {
-                // something is a basecategory actually
-                $args['basecategory'] = $args['something'];
-            }
+            $this->data['os'] = strtolower($args['os']);
+        }
+        else
+        {
+            $args['os'] = $this->mvc->configuration->latest['os'];
+        }
+
+        if (   array_key_exists('version', $args)
+            && $args['version'])
+        {
+            $this->data['version'] = strtolower($args['version']);
+        }
+        else
+        {
+            $args['version'] = $this->mvc->configuration->latest['version'];;
         }
 
         if (   array_key_exists('ux', $args)
@@ -202,12 +230,12 @@ class com_meego_packages_controllers_application
         {
             $this->data['basecategory'] = strtolower($args['basecategory']);
             // this sets data['packages'] and we just need to filter that
-            $localpackages = self::get_applications_by_basecategory($args);
+            $localpackages = self::get_applications_by_criteria($args);
         }
         else
         {
             // this sets data['packages'] and we just need to filter that
-            $localpackages = self::get_filtered_applications(0, $this->data['ux']);
+            $localpackages = self::get_filtered_applications($this->data['os'], $this->data['version'], 0, $this->data['ux']);
         }
 
         // this will fill in providers, variants and statistics for each package
@@ -240,16 +268,20 @@ class com_meego_packages_controllers_application
      * Count number of apps (ie. packages group by package->title)
      * for the given basecategory and UX
      *
+     * @param string name os the os
+     * @param string version number of the os
      * @param string name of the basecategory
      * @param string name of the ux
      *
      * @return integer total amount of apps
      *
      */
-    public function count_number_of_apps($basecategory = '', $ux = '')
+    public function count_number_of_apps($os = '', $os_version = '', $basecategory = '', $ux = '')
     {
         $counter = self::get_applications(
             array(
+                'os' => $os,
+                'version' => $os_version,
                 'basecategory' => $basecategory,
                 'ux' => $ux
             )
@@ -259,12 +291,12 @@ class com_meego_packages_controllers_application
     }
 
     /**
-     * Returns all apps that belong to a certain base category
+     * Returns all apps that match the criteria specified by the args
      *
-     * @param array args; 'basecategory' argument can be like: Games
+     * @param array args
      * @return array of com_meego_package_details objects
      */
-    public function get_applications_by_basecategory(array $args)
+    public function get_applications_by_criteria(array $args)
     {
         // get the base category object
         $basecategory = com_meego_packages_controllers_basecategory::load_object($args);
@@ -279,7 +311,7 @@ class com_meego_packages_controllers_application
             // gather all packages from each relation
             foreach ($relations as $relation)
             {
-                $filtered = self::get_filtered_applications($relation->packagecategory, $args['ux'], $args['packagetitle']);
+                $filtered = self::get_filtered_applications($args['os'], $args['version'], $relation->packagecategory, $args['ux'], $args['packagetitle']);
                 $packages = array_merge($filtered, $packages);
             }
 
@@ -310,13 +342,17 @@ class com_meego_packages_controllers_application
      *  - the package category id (if given)
      *  - the ux name (if given)
      *
+     * @param string os name of the OS
+     * @param string version of the OS
      * @param integer package category id
      * @param string ux name
      * @return array of com_meego_package_details objects
      */
-    public function get_filtered_applications($packagecategory_id = 0, $ux_name = false, $package_title = false)
+    public function get_filtered_applications($os = null, $os_version = null, $packagecategory_id = 0, $ux_name = false, $package_title = false)
     {
         $packages = array();
+        $os_constraint = null;
+        $os_version_constraint = null;
         $repo_constraint = null;
         $packagecategory_constraint = null;
         $ux_constraint = null;
@@ -327,6 +363,24 @@ class com_meego_packages_controllers_application
             '=',
             new midgard_query_value(false)
         );
+
+        if ($os)
+        {
+            $os_constraint = new midgard_query_constraint(
+                new midgard_query_property('repoos'),
+                '=',
+                new midgard_query_value($os)
+            );
+        }
+
+        if ($os_version)
+        {
+            $os_version_constraint = new midgard_query_constraint(
+                new midgard_query_property('repoosversion'),
+                '=',
+                new midgard_query_value($os_version)
+            );
+        }
 
         if ($packagecategory_id)
         {
@@ -399,6 +453,14 @@ class com_meego_packages_controllers_application
 
         $qc->add_constraint($repo_constraint);
 
+        if ($os_constraint)
+        {
+            $qc->add_constraint($os_constraint);
+        }
+        if ($os_version_constraint)
+        {
+            $qc->add_constraint($os_version_constraint);
+        }
         if ($packagecategory_constraint)
         {
             $qc->add_constraint($packagecategory_constraint);
@@ -427,9 +489,9 @@ class com_meego_packages_controllers_application
         // filter apps so that only the ones remain that are allowed by package filter configuration
         $packages = self::filter_titles($q->list_objects(), $this->mvc->configuration->package_filters);
 
-        #print_r($packages);
-        #ob_flush();
-        #die;
+        //print_r($packages);
+        //ob_flush();
+        //die;
 
         return $packages;
     }
@@ -478,7 +540,7 @@ class com_meego_packages_controllers_application
     public function set_data(array $packages)
     {
         $older = array();
-        $latest = array('version' => '', 'variants' => array());
+        $latest = array('os' => '', 'version' => '', 'variants' => array());
 
         foreach ($packages as $package)
         {
@@ -627,9 +689,11 @@ class com_meego_packages_controllers_application
                     {
                         $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
                         (
-                            'apps_title_basecategory_ux',
+                            'apps_by_title',
                             array
                             (
+                                'os' => $package->repoos,
+                                'version' => $package->repoosversion,
                                 'ux' => $latest['ux'],
                                 'basecategory' => $this->data['basecategory'],
                                 'packagetitle' => $package->packagetitle
@@ -641,16 +705,20 @@ class com_meego_packages_controllers_application
                 }
 
                 // collect ratings and comments (used in application detailed view)
-                if (! array_key_exists('ratings', $this->data['packages'][$package->packagetitle]))
+                if (array_key_exists($package->packagetitle, $this->data['packages']))
                 {
-                    $this->data['packages'][$package->packagetitle]['ratings'] = array();
+                    if (! array_key_exists('ratings', $this->data['packages'][$package->packagetitle]))
+                    {
+                        $this->data['packages'][$package->packagetitle]['ratings'] = array();
+                    }
+
+                    $ratings = com_meego_packages_controllers_package::prepare_ratings($package->packageguid);
+
+                    $this->data['packages'][$package->packagetitle]['ratings'] = array_merge($this->data['packages'][$package->packagetitle]['ratings'], $ratings);
                 }
-
-                $ratings = com_meego_packages_controllers_package::prepare_ratings($package->packageguid);
-
-                $this->data['packages'][$package->packagetitle]['ratings'] = array_merge($this->data['packages'][$package->packagetitle]['ratings'], $ratings);
             }
         } //foreach
+
         unset($latest);
     }
 
@@ -662,8 +730,11 @@ class com_meego_packages_controllers_application
     public function enable_commenting()
     {
         $this->data['relocate'] = $this->mvc->dispatcher->generate_url(
-            'apps_title_basecategory_ux', array
+            'apps_by_title',
+            array
             (
+                'os' => $this->data['os'],
+                'version' => $this->data['version'],
                 'ux' => $this->data['ux'],
                 'basecategory' => $this->data['basecategory'],
                 'packagetitle' => $this->data['packagetitle']
