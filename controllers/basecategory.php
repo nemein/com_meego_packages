@@ -380,7 +380,13 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
             {
                 // create
                 $this->object->name = $category['name'];
+
+                $transaction = new midgard_transaction();
+                $transaction->begin();
+
                 $this->object->create();
+
+                $transaction->commit();
                 // @todo: try to do the mapping now
                 // $this->post_create_relations(array('basecategory' => $this->object->guid));
             }
@@ -393,9 +399,16 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
 
         if ($saved)
         {
-            // @todo: add an uimessage
-            $this->data['relocate'] = $this->get_url_admin_index();
-            $this->mvc->head->relocate($this->data['relocate']);
+            try
+            {
+                // @todo: add an uimessage
+                $this->data['relocate'] = $this->get_url_admin_index();
+                $this->mvc->head->relocate($this->data['relocate']);
+            }
+            catch (Exception $e)
+            {
+                // workaround for an MVC bug; this try - catch should not be needed
+            }
         }
         else
         {
