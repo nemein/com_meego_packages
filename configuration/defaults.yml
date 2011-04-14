@@ -21,6 +21,7 @@ latest:
 
 # map of os names used in the db and their pretty names used in the UI
 os_map:
+    maemo: Maemo
     meego: MeeGo
     debian: Debian
 
