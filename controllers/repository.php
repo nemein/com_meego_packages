@@ -357,6 +357,7 @@ class com_meego_packages_controllers_repository
         $storage = new midgard_query_storage('com_meego_repository');
 
         $q = new midgard_query_select($storage);
+
         $q->set_constraint(new midgard_query_constraint(
             new midgard_query_property('osux'),
             '=',
@@ -369,6 +370,15 @@ class com_meego_packages_controllers_repository
         {
             $retval = true;
         }
+
+        if (! $retval)
+        {
+            if (array_key_exists($ux, $this->mvc->configuration->os_ux))
+            {
+                $retval = true;
+            }
+        }
+
         return $retval;
     }
 }
