@@ -34,12 +34,21 @@ os_ux:
     smarttv: Smart TV
     ivi: In Vehicle
 
+# Allowed types of repositories from where packages can be imported
+os_groups:
+    core: Core repository
+    standard: Standard repository
+    surrounds: Surrounds repository
+    extras: Extras repository
+
 # define the projects here which holds package repositories that
 # are meant for the non-techie audience.
 # these projects define the so called "downloads" area
 top_projects:
+    MeeGo:1.2:Apps:Testing: Some description
     home:feri: Some description
     home:xfade: Some description
+    maemo-fremantle-extras: Some description
 
 # list of base categories as name: description pairs
 # base categories are supposed to map all package categories that are
