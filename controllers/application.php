@@ -44,6 +44,43 @@ class com_meego_packages_controllers_application
     }
 
     /**
+     * Prepares an array with important data of the repository
+     *
+     * @param object repository object
+     * @param string UX name, in case the repository has none
+     * @return array with data
+     */
+    private function populate_repo_ux($repository = null, $default_ux = null)
+    {
+        $retval = array();
+
+        if (strlen($repository->repoosux))
+        {
+            $default_ux = $repository->repoosux;
+        }
+
+        //$repository->os = strtolower($repository->repoos);
+        $retval['translated_title'] = ucwords($this->mvc->i18n->get('title_' . $default_ux . '_ux'));
+        $retval['title'] = ucwords($default_ux);
+        $retval['css'] = $repository->repoosgroup . ' ' . $default_ux;
+
+        $localurl = $this->mvc->dispatcher->generate_url
+        (
+            'basecategories_os_version_ux',
+            array
+            (
+                'os' => $repository->repoos,
+                'version' => $repository->repoosversion,
+                'ux' => $default_ux
+            ),
+            $this->request
+        );
+        $retval['url'] = $localurl;
+
+        return $retval;
+    }
+
+    /**
      * Generates the content for the index page showing the icons of variants
      * Here we gather the uxes from the latest version of the OS that is
      * configurable
@@ -106,52 +143,44 @@ class com_meego_packages_controllers_application
             if (   $repository->repoos == strtolower($latest_os)
                 && $repository->repoosversion == $latest_os_version)
             {
-                $repository->os = $latest_os;
+                $this->data['latest']['title'] = $this->mvc->configuration->os_map[$repository->repoos] . ' ' . $repository->repoosversion;
 
-                $this->data['latest']['title'] = $repository->repoos . ' ' . $repository->repoosversion;
-
-                $this->data['latest']['uxes'][$repository->repoosux]['title'] = $repository->repoosux;
-
-                $translated_title = $this->mvc->i18n->get('title_' . $repository->repoosux . '_ux');
-                $this->data['latest']['uxes'][$repository->repoosux]['translated_title'] = $translated_title;
-
-                $this->data['latest']['uxes'][$repository->repoosux]['css'] = $repository->repoosgroup . ' ' . $repository->repoosux;
-
-                $localurl = $this->mvc->dispatcher->generate_url
-                (
-                    'basecategories_os_version_ux',
-                    array
-                    (
-                        'os' => $repository->repoos,
-                        'version' => $repository->repoosversion,
-                        'ux' => $repository->repoosux
-                    ),
-                    $this->request
-                );
-                $this->data['latest']['uxes'][$repository->repoosux]['url'] = $localurl;
+                if (! strlen($repository->repoosux))
+                {
+                    // No UX means a core repo, so we populate all UXes
+                    foreach($this->mvc->configuration->os_ux as $configured_ux => $configured_ux_title)
+                    {
+                        #echo "add configured latest: " . $repository->repoos . ' ' . $repository->repoosversion . ': ' . $configured_ux . "\n";
+                        $this->data['latest']['uxes'][$configured_ux] = $this->populate_repo_ux($repository, $configured_ux);
+                    }
+                }
+                else
+                {
+                    $this->data['latest']['uxes'][$repository->repoosux] = $this->populate_repo_ux($repository);
+                    #echo "add latest: " . $repository->repoos . ' ' . $repository->repoosversion . ': ' . $repository->repoosux . "\n";
+                }
             }
             else
             {
                 $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['title'] = $this->mvc->configuration->os_map[$repository->repoos] . ' ' . $repository->repoosversion;
 
-                $translated_title = $this->mvc->i18n->get('title_' . $repository->repoosux . '_ux');
-                $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['uxes'][$repository->repoosux]['translated_title'] = $translated_title;
-                $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['uxes'][$repository->repoosux]['title'] = ucfirst($repository->repoosux);
-                $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['uxes'][$repository->repoosux]['css'] = $repository->repoosgroup . ' ' . $repository->repoosux;
-                $localurl = $this->mvc->dispatcher->generate_url
-                (
-                    'basecategories_os_version_ux',
-                    array
-                    (
-                        'os' => $repository->repoos,
-                        'version' => $repository->repoosversion,
-                        'ux' => $repository->repoosux
-                    ),
-                    $this->request
-                );
-                $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['uxes'][$repository->repoosux]['url'] = $localurl;
+                if (! strlen($repository->repoosux))
+                {
+                    // No UX means a core repo, so we populate all UXes
+                    foreach($this->mvc->configuration->os_ux as $configured_ux => $configured_ux_title)
+                    {
+                        $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['uxes'][$configured_ux] = $this->populate_repo_ux($repository, $configured_ux);
+                        #echo "add configured normal: " . $repository->repoos . ' ' . $repository->repoosversion . ': ' . $configured_ux . "\n";
+                    }
+                }
+                else
+                {
+                    $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['uxes'][$repository->repoosux] = $this->populate_repo_ux($repository);
+                    #echo "add normal: " . $repository->repoos . ' ' . $repository->repoosversion . ': ' . $repository->repoosux . "\n";
+                }
             }
         }
+        #ob_flush();
     }
 
     /**
