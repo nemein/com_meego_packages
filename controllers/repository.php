@@ -39,6 +39,38 @@ class com_meego_packages_controllers_repository
     }
 
     /**
+     * Prepares an array with important data of the repository
+     *
+     * @param object repository object
+     * @param string UX name, in case the repository has none
+     * @return array with data
+     */
+    private function populate_repo_ux($repository = null, $default_ux = null)
+    {
+        $retval = array();
+
+        if (strlen($repository->osux))
+        {
+            $default_ux = $repository->osux;
+        }
+
+        //$repository->os = strtolower($repository->repoos);
+        $retval['translated_title'] = ucwords($this->mvc->i18n->get('title_' . $default_ux . '_ux'));
+        $retval['title'] = ucwords($default_ux);
+        $retval['css'] = $repository->osgroup . ' ' . $default_ux;
+
+        $localurl = $this->mvc->dispatcher->generate_url(
+            'repositories',
+            array(),
+            $this->request
+        );
+
+        $retval['url'] = $localurl . mb_strtolower($repository->os) . '/' . $repository->osversion . '/' . $default_ux;
+
+        return $retval;
+    }
+
+    /**
      * Generates the content for the index page showing the icons of variants
      */
     public function get_index(array $args)
@@ -52,27 +84,34 @@ class com_meego_packages_controllers_repository
 
         $repositories = $qb->execute();
 
-        $prefix = $this->mvc->dispatcher->generate_url(
-            'repositories',
-            array(),
-            $this->request
-        );
-
         foreach ($repositories as $repository)
         {
-            if (   $repository->os
-                && $repository->osux)
+            if ($repository->os)
             {
                 $repository->os = $this->mvc->configuration->os_map[$repository->os];
 
                 $this->data['oses'][$repository->os . ' ' . $repository->osversion]['title'] = $repository->os . ' ' . $repository->osversion;
 
+                if (! strlen($repository->osux))
+                {
+                    // No UX means a core repo, so we populate all UXes
+                    foreach($this->mvc->configuration->os_ux as $configured_ux => $configured_ux_title)
+                    {
+                        $this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$configured_ux] = $this->populate_repo_ux($repository, $configured_ux);
+                    }
+                }
+                else
+                {
+                    $this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux] = $this->populate_repo_ux($repository);
+                }
+/*
                 $translated_title = $this->mvc->i18n->get('title_' . $repository->osux . '_ux');
                 $this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux]['translated_title'] = $translated_title;
 
                 $this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux]['title'] = ucfirst($repository->osux);
                 $this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux]['css'] = $repository->osgroup . ' ' . $repository->osux;
                 $this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux]['url'] = $prefix . mb_strtolower($repository->os) . '/' . $repository->osversion . '/' . $repository->osux;
+*/
                 //$this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux]['groups'][$repository->osgroup]['title'] = ucfirst($repository->osgroup);
                 //$this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux]['groups'][$repository->osgroup]['repositories'][] = $repository;
             }
@@ -123,21 +162,15 @@ class com_meego_packages_controllers_repository
         ));
 
         $qc4 = new midgard_query_constraint_group('OR');
-        $qc4->add_constraint(new midgard_query_constraint(
-            new midgard_query_property('osgroup', $storage),
-            '=',
-            new midgard_query_value('core')
-        ));
-        $qc4->add_constraint(new midgard_query_constraint(
-            new midgard_query_property('osgroup', $storage),
-            '=',
-            new midgard_query_value('extras')
-        ));
-        $qc4->add_constraint(new midgard_query_constraint(
-            new midgard_query_property('osgroup', $storage),
-            '=',
-            new midgard_query_value('surrounds')
-        ));
+
+        foreach ($this->mvc->configuration->os_groups as $os_group => $os_group_title)
+        {
+            $qc4->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('osgroup', $storage),
+                '=',
+                new midgard_query_value($os_group)
+            ));
+        }
 
         $qc3->add_constraint($qc4);
         $qc2->add_constraint($qc3);
