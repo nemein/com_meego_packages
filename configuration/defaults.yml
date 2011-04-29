@@ -17,13 +17,22 @@ workflows:
 # it is hard to determine automatically, so we let admins to configure
 latest:
     os: MeeGo
-    version: current
+    version: 1.2
 
 # map of os names used in the db and their pretty names used in the UI
 os_map:
     maemo: Maemo
     meego: MeeGo
     debian: Debian
+
+# UX defintions in case we have none available
+os_ux:
+    netbook: Netbook
+    handset: Handset
+    tablet: Tablet
+    mediaphone: Media Phone
+    smarttv: Smart TV
+    ivi: In Vehicle
 
 # define the projects here which holds package repositories that
 # are meant for the non-techie audience.
