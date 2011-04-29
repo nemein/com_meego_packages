@@ -139,14 +139,24 @@ li.ux a div.netbook {
 background-image: url(/midgardmvc-static/com_meego_packages/images/device-netbooks.png);
 }
 
-li.ux a div.core.tv,
-li.ux a div.tv {
+li.ux a div.core.smarttv,
+li.ux a div.smarttv {
 background-image: url(/midgardmvc-static/com_meego_packages/images/device-tv.png);
 }
 
 li.ux a div.core.ivi,
 li.ux a div.ivi {
 background-image: url(/midgardmvc-static/com_meego_packages/images/device-automotive.png);
+}
+
+li.ux a div.core.mediaphone,
+li.ux a div.mediaphone {
+background-image: url(/midgardmvc-static/com_meego_packages/images/device-media-phones.png);
+}
+
+li.ux a div.core.tablet,
+li.ux a div.tablet {
+background-image: url(/midgardmvc-static/com_meego_packages/images/device-tablets.png);
 }
 
 li.ux div {
