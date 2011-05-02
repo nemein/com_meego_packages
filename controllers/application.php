@@ -488,7 +488,7 @@ class com_meego_packages_controllers_application
         }
         if ($os_version_constraint)
         {
-            #$qc->add_constraint($os_version_constraint);
+            $qc->add_constraint($os_version_constraint);
         }
         if ($packagecategory_constraint)
         {
@@ -680,14 +680,23 @@ class com_meego_packages_controllers_application
                             $older[$package->packageversion]['providers'][$package->repoprojectname]['variants'] = array_merge($older[$package->packageversion]['providers'][$package->repoprojectname]['variants'], $latest['variants']);
                             $latest['variants'] = array();
                         }
-                        $latest['variants'][] = $package;
+                        if (   $this->data['ux']
+                            && $this->data['ux'] == $package->ux)
+                        {
+                            // add the variant that has the same UX as requested
+                            $latest['variants'][$package->repoarch] = $package;
+                        }
                         $latest['version'] = $package->packageversion;
                         $latest['ux'] = $package->ux;
                     }
                     elseif ($latest['version'] == $package->packageversion)
                     {
-                        // same version, but probably different arch
-                        $latest['variants'][] = $package;
+                        if (   $this->data['ux']
+                            && $this->data['ux'] == $package->ux)
+                        {
+                            // same version, but probably different arch
+                            $latest['variants'][$package->repoarch] = $package;
+                        }
                     }
                     elseif ($latest['version'] > $package->packageversion)
                     {
@@ -717,9 +726,11 @@ class com_meego_packages_controllers_application
                     $this->data['packages'][$package->packagetitle]['older'] = $older;
 
                     // a hack to get a ux for linking to detailed package view
-                    if ($latest['ux'] != '')
+/*
+                    if (   isset($latest['ux'])
+                        && $latest['ux'] != '')
                     {
-                        $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
+*/                        $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
                         (
                             'apps_by_title',
                             array
@@ -732,7 +743,7 @@ class com_meego_packages_controllers_application
                             ),
                             $this->request
                         );
-                    }
+//                    }
 
                 //}
 
@@ -796,7 +807,7 @@ class com_meego_packages_controllers_application
             }
 
             // get the 1st variant and set packageguid variable, in case we don't offer choosing a variant
-            $variant = $this->data['packages'][$this->data['packagetitle']]['latest']['variants'][0];
+            $variant = reset($this->data['packages'][$this->data['packagetitle']]['latest']['variants']);
             $this->data['packageguid'] = $variant->packageguid;
         }
     }
