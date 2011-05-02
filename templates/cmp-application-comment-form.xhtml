@@ -2,6 +2,8 @@
 
     <input type="hidden" name="relocate" tal:attributes="value com_meego_packages/relocate"/>
 
+    <!-- Pick an arch -->
+    <!--
     <div class="architectures" tal:condition="true: com_meego_packages/architectures">
         <div class="instruction" i18n:domain="com_meego_packages" i18n:translate="'instruction_select_arch'" i18n:attributes="title tip_select_arch"></div>
         <ul class="list">
@@ -11,6 +13,10 @@
             </li>
         </ul>
     </div>
+    -->
+
+    <!-- Add the 1st available package GUID to the form instead of picking an arch -->
+    <input type="hidden" name="packageguid" tal:attributes="value com_meego_packages/packageguid"/>
 
     <input class="star" type="radio" name="rating" value="1"/>
     <input class="star" type="radio" name="rating" value="2"/>
