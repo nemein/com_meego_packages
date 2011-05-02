@@ -645,20 +645,24 @@ class com_meego_packages_controllers_application
                         $package->ux = 'universal';
                     }
 
-                    // provide a link to visit the page of a certain package variant
-                    $package->localurl = $this->mvc->dispatcher->generate_url
-                    (
-                        'package_instance',
-                        array
+                    if (   $this->data['ux']
+                        && $this->data['ux'] == $package->ux)
+                    {
+                        // provide a link to visit the page of a certain package variant
+                        $package->localurl = $this->mvc->dispatcher->generate_url
                         (
-                            'package' => $package->packagetitle,
-                            'version' => $package->packageversion,
-                            'project' => $package->repoprojectname,
-                            'repository' => $package->reponame,
-                            'arch' => $package->repoarch
-                        ),
-                        $this->request
-                    );
+                            'package_instance',
+                            array
+                            (
+                                'package' => $package->packagetitle,
+                                'version' => $package->packageversion,
+                                'project' => $package->repoprojectname,
+                                'repository' => $package->reponame,
+                                'arch' => $package->repoarch
+                            ),
+                            $this->request
+                        );
+                    }
 
                     // set the latest version of the package
                     // and also maintain an array with older versions (could be used in some templates)
@@ -726,25 +730,23 @@ class com_meego_packages_controllers_application
                     $this->data['packages'][$package->packagetitle]['older'] = $older;
 
                     // a hack to get a ux for linking to detailed package view
-/*
-                    if (   isset($latest['ux'])
-                        && $latest['ux'] != '')
+                    if (   isset($this->data['ux'])
+                        && $this->data['ux'] == $package->repoosux)
                     {
-*/                        $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
+                        $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
                         (
                             'apps_by_title',
                             array
                             (
                                 'os' => $package->repoos,
                                 'version' => $package->repoosversion,
-                                'ux' => $latest['ux'],
+                                'ux' => $package->repoosux,//$latest['ux'],
                                 'basecategory' => $this->data['basecategory'],
                                 'packagetitle' => $package->packagetitle
                             ),
                             $this->request
                         );
-//                    }
-
+                    }
                 //}
 
                 // collect ratings and comments (used in application detailed view)
