@@ -595,19 +595,19 @@ class com_meego_packages_controllers_application
 */
                     if (! isset($this->data['packages'][$package->packagetitle]['name']))
                     {
+                        $this->data['basecategory'] = com_meego_packages_controllers_package::determine_base_category($package);
+
+                        // if could not determine the basecategory then skip the rest; this package should not be listed
+                        if (! strlen($this->data['basecategory']))
+                        {
+                            continue;
+                        }
+
                         // set the name
                         $this->data['packages'][$package->packagetitle]['name'] = $package->packagetitle;
 
-                        if (! strlen($this->data['basecategory']))
-                        {
-                            $this->data['basecategory'] = com_meego_packages_controllers_package::determine_base_category($package);
-                        }
-
                         // check if we have ux
-                        if ( ! strlen($this->data['ux']))
-                        {
-                            $this->data['ux'] = strtolower($package->repoosux);
-                        }
+                        //$this->data['ux'] = strtolower($package->repoosux);
 
                         // gather some basic stats
                         $stats = com_meego_packages_controllers_package::get_statistics($package->packagetitle);
@@ -647,14 +647,17 @@ class com_meego_packages_controllers_application
                     // if the UX is empty then we consider the package to be good for all UXes
                     // this value is used in the template to show a proper icon
                     $package->ux = $package->repoosux;
+
                     if ( ! strlen($package->ux) )
                     {
                         $package->ux = 'universal';
                     }
 
-                    if (   $this->data['ux']
-                        && $this->data['ux'] == $package->ux)
-                    {
+                    $this->data['ux'] = $package->ux;
+
+#                    if (   $this->data['ux']
+#                        && $this->data['ux'] == $package->ux)
+#                    {
                         // provide a link to visit the page of a certain package variant
                         $package->localurl = $this->mvc->dispatcher->generate_url
                         (
@@ -669,7 +672,7 @@ class com_meego_packages_controllers_application
                             ),
                             $this->request
                         );
-                    }
+#                    }
 
                     // set the latest version of the package
                     // and also maintain an array with older versions (could be used in some templates)
@@ -691,28 +694,15 @@ class com_meego_packages_controllers_application
                             $older[$package->packageversion]['providers'][$package->repoprojectname]['variants'] = array_merge($older[$package->packageversion]['providers'][$package->repoprojectname]['variants'], $latest['variants']);
                             $latest['variants'] = array();
                         }
-                        if (   (   $this->data['ux']
-                                && $this->data['ux'] == $package->ux)
-                            || $package->ux == 'universal')
-
-                        {
-                            // add the variant that has the same UX as requested
-                            $latest['variants'][$package->repoarch] = $package;
-                        }
+                        // add the variant that has the same UX as requested
+                        $latest['variants'][$package->repoarch] = $package;
                         $latest['version'] = $package->packageversion;
                         $latest['ux'] = $package->ux;
                     }
                     elseif ($latest['version'] == $package->packageversion)
                     {
-/*
-                        if (   (   $this->data['ux']
-                                && $this->data['ux'] == $package->ux)
-                            || $package->ux == 'universal')
-                        {
-*/
-                            // same version, but probably different arch
-                            $latest['variants'][$package->repoarch] = $package;
-//                        }
+                        // same version, but probably different arch
+                        $latest['variants'][$package->repoarch] = $package;
                     }
                     elseif ($latest['version'] > $package->packageversion)
                     {
@@ -741,24 +731,19 @@ class com_meego_packages_controllers_application
                     // always keep it up-to-date
                     $this->data['packages'][$package->packagetitle]['older'] = $older;
 
-                    // a hack to get a ux for linking to detailed package view
-                    if (   isset($this->data['ux'])
-                        && $this->data['ux'] == $package->repoosux)
-                    {
-                        $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
+                    $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
+                    (
+                        'apps_by_title',
+                        array
                         (
-                            'apps_by_title',
-                            array
-                            (
-                                'os' => $package->repoos,
-                                'version' => $package->repoosversion,
-                                'ux' => $package->repoosux,//$latest['ux'],
-                                'basecategory' => $this->data['basecategory'],
-                                'packagetitle' => $package->packagetitle
-                            ),
-                            $this->request
-                        );
-                    }
+                            'os' => $package->repoos,
+                            'version' => $package->repoosversion,
+                            'ux' => $package->ux,//$latest['ux'],
+                            'basecategory' => com_meego_packages_controllers_package::determine_base_category($package), //$this->data['basecategory'],
+                            'packagetitle' => $package->packagetitle
+                        ),
+                        $this->request
+                    );
                 //}
 
                 // collect ratings and comments (used in application detailed view)
@@ -774,25 +759,6 @@ class com_meego_packages_controllers_application
                     $this->data['packages'][$package->packagetitle]['ratings'] = array_merge($this->data['packages'][$package->packagetitle]['ratings'], $ratings);
                 }
             }
-
-            // make sure there is a localurl even for core packages where UX is not set
-            if (! isset($this->data['packages'][$package->packagetitle]['localurl']))
-            {
-                $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
-                (
-                    'apps_by_title',
-                    array
-                    (
-                        'os' => $package->repoos,
-                        'version' => $package->repoosversion,
-                        'ux' => $this->data['ux'],
-                        'basecategory' => $this->data['basecategory'],
-                        'packagetitle' => $package->packagetitle
-                    ),
-                    $this->request
-                );
-            }
-
         } //foreach
 
         unset($latest);
