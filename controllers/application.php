@@ -576,13 +576,16 @@ class com_meego_packages_controllers_application
             // check if the project that supplies this package is a top_project (see configuration)
             if (array_key_exists($package->repoprojectname, $this->mvc->configuration->top_projects))
             {
+                // if we to gather versions from the same UX then uncomment these lines
                 // include only the necessary variants
+/*
                 if (   $this->data['ux'] == false
-                    || ($this->data['ux'] != ''
-                        && (   strtolower($package->repoosux) == $this->data['ux'])
+                    || ($this->data['ux'] != '')
+                        && (   strtolower($package->repoosux) == $this->data['ux']
                             || strtolower($package->repoosux) == 'universal'
                             || strtolower($package->repoosux) == ''))
                 {
+*/
                     if (! isset($this->data['packages'][$package->packagetitle]['name']))
                     {
                         // set the name
@@ -731,7 +734,7 @@ class com_meego_packages_controllers_application
                         );
                     }
 
-                }
+                //}
 
                 // collect ratings and comments (used in application detailed view)
                 if (array_key_exists($package->packagetitle, $this->data['packages']))
