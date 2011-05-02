@@ -340,7 +340,14 @@ class com_meego_packages_controllers_application
             // gather all packages from each relation
             foreach ($relations as $relation)
             {
-                $filtered = self::get_filtered_applications($args['os'], $args['version'], $relation->packagecategory, $args['ux'], $args['packagetitle']);
+                if ($args['packagetitle'])
+                {
+                    $filtered = self::get_filtered_applications($args['os'], null, $relation->packagecategory, null, $args['packagetitle']);
+                }
+                else
+                {
+                    $filtered = self::get_filtered_applications($args['os'], $args['version'], $relation->packagecategory, null, $args['packagetitle']);
+                }
                 $packages = array_merge($filtered, $packages);
             }
 
@@ -496,7 +503,7 @@ class com_meego_packages_controllers_application
         }
         if ($ux_constraint)
         {
-            #$qc->add_constraint($ux_constraint);
+            $qc->add_constraint($ux_constraint);
         }
         if ($packagetitle_constraint)
         {
@@ -697,13 +704,15 @@ class com_meego_packages_controllers_application
                     }
                     elseif ($latest['version'] == $package->packageversion)
                     {
+/*
                         if (   (   $this->data['ux']
                                 && $this->data['ux'] == $package->ux)
                             || $package->ux == 'universal')
                         {
+*/
                             // same version, but probably different arch
                             $latest['variants'][$package->repoarch] = $package;
-                        }
+//                        }
                     }
                     elseif ($latest['version'] > $package->packageversion)
                     {
