@@ -488,7 +488,7 @@ class com_meego_packages_controllers_application
         }
         if ($os_version_constraint)
         {
-            $qc->add_constraint($os_version_constraint);
+            #$qc->add_constraint($os_version_constraint);
         }
         if ($packagecategory_constraint)
         {
@@ -496,7 +496,7 @@ class com_meego_packages_controllers_application
         }
         if ($ux_constraint)
         {
-            $qc->add_constraint($ux_constraint);
+            #$qc->add_constraint($ux_constraint);
         }
         if ($packagetitle_constraint)
         {
