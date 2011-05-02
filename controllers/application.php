@@ -684,8 +684,10 @@ class com_meego_packages_controllers_application
                             $older[$package->packageversion]['providers'][$package->repoprojectname]['variants'] = array_merge($older[$package->packageversion]['providers'][$package->repoprojectname]['variants'], $latest['variants']);
                             $latest['variants'] = array();
                         }
-                        if (   $this->data['ux']
-                            && $this->data['ux'] == $package->ux)
+                        if (   (   $this->data['ux']
+                                && $this->data['ux'] == $package->ux)
+                            || $package->ux == 'universal')
+
                         {
                             // add the variant that has the same UX as requested
                             $latest['variants'][$package->repoarch] = $package;
@@ -695,8 +697,9 @@ class com_meego_packages_controllers_application
                     }
                     elseif ($latest['version'] == $package->packageversion)
                     {
-                        if (   $this->data['ux']
-                            && $this->data['ux'] == $package->ux)
+                        if (   (   $this->data['ux']
+                                && $this->data['ux'] == $package->ux)
+                            || $package->ux == 'universal')
                         {
                             // same version, but probably different arch
                             $latest['variants'][$package->repoarch] = $package;
@@ -762,6 +765,25 @@ class com_meego_packages_controllers_application
                     $this->data['packages'][$package->packagetitle]['ratings'] = array_merge($this->data['packages'][$package->packagetitle]['ratings'], $ratings);
                 }
             }
+
+            // make sure there is a localurl even for core packages where UX is not set
+            if (! isset($this->data['packages'][$package->packagetitle]['localurl']))
+            {
+                $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
+                (
+                    'apps_by_title',
+                    array
+                    (
+                        'os' => $package->repoos,
+                        'version' => $package->repoosversion,
+                        'ux' => $this->data['ux'],
+                        'basecategory' => $this->data['basecategory'],
+                        'packagetitle' => $package->packagetitle
+                    ),
+                    $this->request
+                );
+            }
+
         } //foreach
 
         unset($latest);
