@@ -780,13 +780,21 @@ class com_meego_packages_controllers_application
             $this->request
         );
 
-        foreach ($this->data['packages'][$this->data['packagetitle']]['latest']['variants'] as $variant)
+        if (count($this->data['packages'][$this->data['packagetitle']]['latest']['variants']))
         {
-            $this->data['architectures'][$variant->repoarch] = array
-            (
-                'name' => $variant->repoarch,
-                'packageguid' => $variant->packageguid
-            );
+            // set all variants so user can choose
+            foreach ($this->data['packages'][$this->data['packagetitle']]['latest']['variants'] as $variant)
+            {
+                $this->data['architectures'][$variant->repoarch] = array
+                (
+                    'name' => $variant->repoarch,
+                    'packageguid' => $variant->packageguid
+                );
+            }
+
+            // get the 1st variant and set packageguid variable, in case we don't offer choosing a variant
+            $variant = $this->data['packages'][$this->data['packagetitle']]['latest']['variants'][0];
+            $this->data['packageguid'] = $variant->packageguid;
         }
     }
 
