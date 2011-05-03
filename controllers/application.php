@@ -267,6 +267,28 @@ class com_meego_packages_controllers_application
             $localpackages = self::get_filtered_applications($this->data['os'], $this->data['version'], 0, $this->data['ux']);
         }
 
+        // do the paging
+        // unfortunately we can't implement this using SQL constraint
+        // because we have a title filter feature that uses regexps
+        // and Midgard does not support REGEXP or RLIKE operators
+        // so it is easier to do the paging on the ready result set
+        $limit = $this->mvc->configuration->items_per_page;
+
+        if (   array_key_exists('page', $_GET)
+            && is_numeric($_GET['page'])
+            && $_GET['page'] > 0
+            && count($localpackages) > $limit)
+        {
+            // we cut the result set according to paging request
+            $offset = ($_GET['page'] - 1) * $this->mvc->configuration->items_per_page;
+
+            if ($offset > count($localpackages))
+            {
+                $offset = count($localpackages) - $limit;
+            }
+            $localpackages = array_slice($localpackages, $offset, $limit);
+        }
+
         // this will fill in providers, variants and statistics for each package
         // by filtering out those projects that are not top_projects (see configuration)
         // and variant names that don't fit the package filter criteria (see configuration)

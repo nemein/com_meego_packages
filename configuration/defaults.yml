@@ -49,6 +49,7 @@ top_projects:
     home:feri: Some description
     home:xfade: Some description
     maemo-fremantle-extras: Some description
+    home:zigbee: Some description
 
 # list of base categories as name: description pairs
 # base categories are supposed to map all package categories that are
@@ -88,3 +89,7 @@ package_filters:
 
 # the maximum rate that can be given to a package
 maxrate: 5
+
+# the amount of items that are shown on a page when listing objects
+items_per_page: 10
+
