@@ -636,7 +636,16 @@ class com_meego_packages_controllers_application
         $all_objects = $q->list_objects();
 
         // filter apps so that only the ones remain that are allowed by package filter configuration
-        $apps = self::filter_titles($all_objects, $this->mvc->configuration->package_filters);
+        if ($packagetitle_constraint)
+        {
+            // no unique array in case an exact package was requested
+            // otherwise we will loose the available arhces
+            $apps = self::filter_titles($all_objects, $this->mvc->configuration->package_filters, false);
+        }
+        else
+        {
+            $apps = self::filter_titles($all_objects, $this->mvc->configuration->package_filters, true);
+        }
 
         //echo 'all packages: ' . count($all_objects) . ', apps after filtering: ' . count($apps) . "\n";
         //ob_flush();
@@ -650,9 +659,10 @@ class com_meego_packages_controllers_application
      *
      * @param array with com_meego_package_details objects
      * @param array of filters as per configured
+     * @param boolean make the return array contain unique items only
      * @return array associative array of com_meego_package_details objects
      */
-    public static function filter_titles(array $packages, array $filters)
+    public static function filter_titles(array $packages, array $filters, $unique = false)
     {
         $apps = array();
         $localpackages = array();
@@ -683,7 +693,15 @@ class com_meego_packages_controllers_application
             {
                 continue;
             }
-            $localpackages[] = $package;
+
+            if ($unique)
+            {
+                $localpackages[$package->packagetitle] = $package;
+            }
+            else
+            {
+                $localpackages[] = $package;
+            }
         }
 
         return $localpackages;
