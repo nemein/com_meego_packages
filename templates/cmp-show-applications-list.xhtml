@@ -1,5 +1,19 @@
 <div class="nohits" tal:condition="not: com_meego_packages/packages" i18n:domain="com_meego_packages" i18n:translate="'no_available_packages'"></div>
 
+<div class="pager">
+    <div class="previous disable" tal:condition="not: com_meego_packages/previous_page" i18n:domain="com_meego_packages" i18n:translate="'label_previous_page'"></div>
+    <div class="previous" tal:condition="true: com_meego_packages/previous_page">
+        <a tal:attributes="href com_meego_packages/previous_page" i18n:domain="com_meego_packages" i18n:translate="'label_previous_page'"></a>
+    </div>
+
+    <div class="items">${com_meego_packages/items_shown} (${com_meego_packages/total_apps})</div>
+
+    <div class="next disable" tal:condition="not: com_meego_packages/next_page" i18n:domain="com_meego_packages" i18n:translate="'label_next_page'"></div>
+    <div class="next" tal:condition="true: com_meego_packages/next_page">
+        <a tal:attributes="href com_meego_packages/next_page" i18n:domain="com_meego_packages" i18n:translate="'label_next_page'"></a>
+    </div>
+</div>
+
 <div class="packages" tal:condition="true: com_meego_packages/packages">
     <div class="package" tal:condition="true: com_meego_packages/packages" tal:repeat="package com_meego_packages/packages">
 

@@ -211,5 +211,12 @@ msgstr "Select the UX"
 msgid "title_latest"
 msgstr "Latest"
 
+msgid "label_previous_page"
+msgstr "Previous Page"
+
+msgid "label_next_page"
+msgstr "Next Page"
+
+
 
 

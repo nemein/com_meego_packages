@@ -436,6 +436,28 @@ background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_8
 }
 */
 
+div.pager {
+margin: 1em 1em 0 8em;
+font-weight: bold;
+text-align: center;
+}
 
+div.pager div {
+display: inline-block;
+}
 
+div.pager .disable {
+color: grey;
+}
 
+div.pager div.previous {
+float: left;
+}
+
+div.pager div.next {
+float: right;
+}
+
+div.pager div.items {
+color: grey;
+}
