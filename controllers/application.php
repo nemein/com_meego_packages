@@ -727,9 +727,6 @@ class com_meego_packages_controllers_application
                 // set the name
                 $this->data['packages'][$package->packagetitle]['name'] = $package->packagetitle;
 
-                // check if we have ux
-                //$this->data['ux'] = strtolower($package->repoosux);
-
                 // gather some basic stats
                 $stats = com_meego_packages_controllers_package::get_statistics($package->packagetitle);
 
@@ -738,6 +735,14 @@ class com_meego_packages_controllers_application
 
                 // the stars as html snippet for the average rating; should be used as-is in the template
                 $this->data['packages'][$package->packagetitle]['stars'] = com_meego_ratings_controllers_rating::draw_stars($stats['average_rating']);
+
+                // collect ratings and comments (used in application detailed view)
+                if (! array_key_exists('ratings', $this->data['packages'][$package->packagetitle]))
+                {
+                    $this->data['packages'][$package->packagetitle]['ratings'] = array();
+                }
+
+                $this->data['packages'][$package->packagetitle]['ratings'] = self::prepare_ratings($package->packagetitle);
 
                 // set a longer description
                 $this->data['packages'][$package->packagetitle]['description'] = $package->packagedescription;
@@ -862,18 +867,6 @@ class com_meego_packages_controllers_application
                 $this->request
             );
 
-            // collect ratings and comments (used in application detailed view)
-            if (array_key_exists($package->packagetitle, $this->data['packages']))
-            {
-                if (! array_key_exists('ratings', $this->data['packages'][$package->packagetitle]))
-                {
-                    $this->data['packages'][$package->packagetitle]['ratings'] = array();
-                }
-
-                $ratings = com_meego_packages_controllers_package::prepare_ratings($package->packageguid);
-
-                $this->data['packages'][$package->packagetitle]['ratings'] = array_merge($this->data['packages'][$package->packagetitle]['ratings'], $ratings);
-            }
         } //foreach
 
         unset($latest);
@@ -1000,5 +993,58 @@ class com_meego_packages_controllers_application
         {
             midgardmvc_core::get_instance()->head->relocate($_POST['relocate']);
         }
+    }
+
+    /**
+     * Gathers ratings and appends them to data
+     *
+     * @param string title of the application
+     * @return array of ratings together with their comments
+     */
+    public function prepare_ratings($application_title = null)
+    {
+        $retval = array();
+
+        $storage = new midgard_query_storage('com_meego_package_ratings');
+        $q = new midgard_query_select($storage);
+
+        $q->set_constraint
+        (
+            new midgard_query_constraint
+            (
+                new midgard_query_property('title'),
+                '=',
+                new midgard_query_value($application_title)
+            )
+        );
+
+        $q->add_order(new midgard_query_property('posted', $storage), SORT_DESC);
+        $q->execute();
+
+        $ratings = $q->list_objects();
+
+        if (count($ratings))
+        {
+            foreach ($ratings as $rating)
+            {
+                $rating->stars = '';
+                if ($rating->commentid)
+                {
+                    $rating->ratingcommentcontent = $rating->comment;
+                }
+                if (   $rating->rating
+                    || $rating->commentid)
+                {
+                    // add a new property containing the stars to the rating object
+                    $rating->stars = com_meego_ratings_controllers_rating::draw_stars($rating->rating);
+                    // pimp the posted date
+                    $rating->date = gmdate('Y-m-d H:i e', strtotime($rating->posted));
+                }
+                array_push($retval, $rating);
+            }
+            unset ($ratings);
+        }
+
+        return $retval;
     }
 }
