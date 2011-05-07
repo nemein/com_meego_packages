@@ -691,7 +691,6 @@ class com_meego_packages_controllers_package
 
             // set ratings to the template
             $this->data['packages'][$this->data['packagetitle']]['ratings'] = $local_ratings;
-
         }
     }
 
@@ -850,30 +849,10 @@ class com_meego_packages_controllers_package
 
             if ($package->commentid)
             {
-                // now search for comments
-                // unfortunately this can not be done in the com_meego_package_ratings view
-                // because if a rating has a comment with ID 0 then SQL JOINs will skip that
-                $storage = new midgard_query_storage('com_meego_comments_comment_author');
-                $q = new midgard_query_select($storage);
-
-                $qc = new midgard_query_constraint(
-                    new midgard_query_property('commentid'),
-                    '=',
-                    new midgard_query_value($package->commentid)
-                );
-
-                $q->set_constraint($qc);
-                $q->execute();
-
-                $comments = $q->list_objects();
-
-                if (count($comments))
+                // do not count empty comments
+                if (strlen($package->comment))
                 {
-                    // do not count empty comments
-                    if (strlen($comments[0]->content))
-                    {
-                        $retval['number_of_comments']++;
-                    }
+                    $retval['number_of_comments']++;
                 }
             }
         }
@@ -1122,13 +1101,14 @@ class com_meego_packages_controllers_package
     {
         $retval = array();
 
-        $storage = new midgard_query_storage('com_meego_ratings_rating_author');
+        $storage = new midgard_query_storage('com_meego_package_ratings');
         $q = new midgard_query_select($storage);
+
         $q->set_constraint
         (
             new midgard_query_constraint
             (
-                new midgard_query_property('to'),
+                new midgard_query_property('guid'),
                 '=',
                 new midgard_query_value($package_guid)
             )
@@ -1139,28 +1119,21 @@ class com_meego_packages_controllers_package
 
         $ratings = $q->list_objects();
 
-        if (count($ratings))
+        foreach ($ratings as $rating)
         {
-            foreach ($ratings as $rating)
+            $rating->stars = '';
+
+            if (   $rating->rating
+                || $rating->commentid)
             {
-                $rating->stars = '';
-                if ($rating->ratingcomment)
-                {
-                    $comment = new com_meego_comments_comment($rating->ratingcomment);
-                    $rating->ratingcommentcontent = $comment->content;
-                }
-                if (   $rating->rating
-                    || $rating->ratingcomment)
-                {
-                    // add a new property containing the stars to the rating object
-                    $rating->stars = com_meego_ratings_controllers_rating::draw_stars($rating->rating);
-                    // pimp the posted date
-                    $rating->date = gmdate('Y-m-d H:i e', strtotime($rating->posted));
-                }
-                array_push($retval, $rating);
+                // add a new property containing the stars to the rating object
+                $rating->stars = com_meego_ratings_controllers_rating::draw_stars($rating->rating);
+                // pimp the posted date
+                $rating->date = gmdate('Y-m-d H:i e', strtotime($rating->posted));
             }
-            unset ($ratings);
+            array_push($retval, $rating);
         }
+        unset ($ratings);
 
         return $retval;
     }
