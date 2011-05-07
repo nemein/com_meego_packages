@@ -1028,10 +1028,7 @@ class com_meego_packages_controllers_application
             foreach ($ratings as $rating)
             {
                 $rating->stars = '';
-                if ($rating->commentid)
-                {
-                    $rating->ratingcommentcontent = $rating->comment;
-                }
+
                 if (   $rating->rating
                     || $rating->commentid)
                 {
@@ -1040,6 +1037,7 @@ class com_meego_packages_controllers_application
                     // pimp the posted date
                     $rating->date = gmdate('Y-m-d H:i e', strtotime($rating->posted));
                 }
+
                 array_push($retval, $rating);
             }
             unset ($ratings);
