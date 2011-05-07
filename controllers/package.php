@@ -1131,6 +1131,7 @@ class com_meego_packages_controllers_package
                 // pimp the posted date
                 $rating->date = gmdate('Y-m-d H:i e', strtotime($rating->posted));
             }
+
             array_push($retval, $rating);
         }
         unset ($ratings);
