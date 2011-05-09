@@ -50,10 +50,10 @@ msgid "tip_package_name"
 msgstr "Full package name including version number and supported CPU architecture"
 
 msgid "no_available_packages"
-msgstr "There are no available packages."
+msgstr "There are no packages available."
 
 msgid "no_such_package"
-msgstr "There is no such available package."
+msgstr "There is no such package available."
 
 msgid "os_release"
 msgstr "MeeGo Release"

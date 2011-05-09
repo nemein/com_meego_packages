@@ -368,6 +368,22 @@ class com_meego_packages_controllers_application
 
         }
 
+        // if have no apps then return a 404
+        if (! count($this->data['packages']))
+        {
+            if ($this->data['packagetitle'])
+            {
+                $error_msg = $this->mvc->i18n->get('no_such_package');
+            }
+            else
+            {
+                $error_msg = $this->mvc->i18n->get('no_available_packages');
+            }
+
+            // oops, there are no packages for this base category..
+            throw new midgardmvc_exception_notfound($error_msg);
+        }
+
         // we return this counter as it is used by count_number_of_apps()
         return $apps_counter;
     }
