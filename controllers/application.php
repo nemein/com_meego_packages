@@ -892,15 +892,6 @@ class com_meego_packages_controllers_application
             $this->request
         );
 
-        $this->data['postaction'] = $this->mvc->dispatcher->generate_url
-        (
-            'apps_rating_create', array
-            (
-                'packagetitle' => $this->data['packagetitle']
-            ),
-            $this->request
-        );
-
         if (count($this->data['packages'][$this->data['packagetitle']]['latest']['variants']))
         {
             // set all variants so user can choose
@@ -917,6 +908,15 @@ class com_meego_packages_controllers_application
             $variant = reset($this->data['packages'][$this->data['packagetitle']]['latest']['variants']);
             $this->data['packageguid'] = $variant->packageguid;
         }
+
+        $this->data['postaction'] = $this->mvc->dispatcher->generate_url
+        (
+            'rating_create', array
+            (
+                'to' => $this->data['packageguid']
+            ),
+            'com_meego_ratings_caching'
+        );
     }
 
     /**
