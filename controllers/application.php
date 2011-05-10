@@ -190,8 +190,8 @@ class com_meego_packages_controllers_application
      * This is eventually filters the results of
      * get_packages_by_basecategory()
      *
-     * @param string name of base category
-     * @param string name of ux
+     * @param array of args (os, version, ux, basecategory, packagetitle)
+     * @param boolean true indicates the need of the counter only
      *
      * @return array of packagedetails objects
      *
@@ -199,7 +199,7 @@ class com_meego_packages_controllers_application
      * https://github.com/midgardproject/midgard-core/issues#issue/86
      * is fixed and we can define joined views
      */
-    public function get_applications(array $args)
+    public function get_applications(array $args, $counter = false)
     {
         $cnt = 0;
 
@@ -369,7 +369,8 @@ class com_meego_packages_controllers_application
         }
 
         // if have no apps then return a 404
-        if (! count($this->data['packages']))
+        if (   ! count($this->data['packages'])
+            && ! $counter)
         {
             if ($this->data['packagetitle'])
             {
@@ -408,7 +409,8 @@ class com_meego_packages_controllers_application
                 'version' => $os_version,
                 'basecategory' => $basecategory,
                 'ux' => $ux
-            )
+            ),
+            true
         );
 
         return $counter;
