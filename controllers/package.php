@@ -202,7 +202,6 @@ class com_meego_packages_controllers_package
               throw new midgardmvc_exception_notfound("Package category not found");
             }
 
-
             $this->data['package']->category_name = $categories[0]->name;
 
             while ($categories[0]->up != 0)
@@ -390,6 +389,10 @@ class com_meego_packages_controllers_package
                 )
             );
         }
+
+        // get the ratings for this package
+        // enable if the template does not use dynamic loading
+        // $this->data['package']->ratings = self::prepare_ratings($this->data['package']->guid);
     }
 
     /**
@@ -1130,6 +1133,45 @@ class com_meego_packages_controllers_package
                 $rating->stars = com_meego_ratings_controllers_rating::draw_stars($rating->rating);
                 // pimp the posted date
                 $rating->date = gmdate('Y-m-d H:i e', strtotime($rating->posted));
+                // avatar part
+                $rating->avatar = false;
+                if ($rating->authorguid)
+                {
+                    $username = null;
+
+                    // get the midgard user name from rating->authorguid
+                    $qb = new midgard_query_builder('midgard_user');
+                    $qb->add_constraint('person', '=', $rating->authorguid);
+
+                    $users = $qb->execute();
+
+                    if (count($users))
+                    {
+                        $username = $users[0]->login;
+                    }
+
+                    unset($qb);
+
+                    if (count($users) > 0)
+                    {
+                        $username = $users[0]->login;
+                    }
+
+                    if (   $username
+                        && $username != 'admin')
+                    {
+                        // get avatar and url to user profile page only if the user is not the midgard admin
+                        try
+                        {
+                            $rating->avatar = $this->mvc->dispatcher->generate_url('meego_avatar', array('username' => $username), '/');
+                            $rating->avatarurl = $this->mvc->configuration->user_profile_prefix . $username;
+                        }
+                        catch (Exception $e)
+                        {
+                            // no avatar
+                        }
+                    }
+                }
             }
 
             array_push($retval, $rating);
