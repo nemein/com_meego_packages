@@ -365,7 +365,6 @@ class com_meego_packages_controllers_application
             {
                 $this->data['can_post'] = false;
             }
-
         }
 
         // if have no apps then return a 404
@@ -950,7 +949,7 @@ class com_meego_packages_controllers_application
         if (   ! is_array($_POST)
             || ! isset($_POST['packageguid']))
         {
-            midgardmvc_core::get_instance()->head->relocate($_POST['relocate']);
+            $this->mvc->head->relocate($_POST['relocate']);
         }
 
         $this->data['feedback'] = false;
@@ -1054,6 +1053,45 @@ class com_meego_packages_controllers_application
                     $rating->stars = com_meego_ratings_controllers_rating::draw_stars($rating->rating);
                     // pimp the posted date
                     $rating->date = gmdate('Y-m-d H:i e', strtotime($rating->posted));
+                    // avatar part
+                    $rating->avatar = false;
+                    if ($rating->authorguid)
+                    {
+                        $username = null;
+
+                        // get the midgard user name from rating->authorguid
+                        $qb = new midgard_query_builder('midgard_user');
+                        $qb->add_constraint('person', '=', $rating->authorguid);
+
+                        $users = $qb->execute();
+
+                        if (count($users))
+                        {
+                            $username = $users[0]->login;
+                        }
+
+                        unset($qb);
+
+                        if (count($users) > 0)
+                        {
+                            $username = $users[0]->login;
+                        }
+
+                        if (   $username
+                            && $username != 'admin')
+                        {
+                            // get avatar and url to user profile page only if the user is not the midgard admin
+                            try
+                            {
+                                $rating->avatar = $this->mvc->dispatcher->generate_url('meego_avatar', array('username' => $username), '/');
+                                $rating->avatarurl = $this->mvc->configuration->user_profile_prefix . $username;
+                            }
+                            catch (Exception $e)
+                            {
+                                // no avatar
+                            }
+                        }
+                    }
                 }
 
                 array_push($retval, $rating);
