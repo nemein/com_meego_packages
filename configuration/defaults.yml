@@ -1,3 +1,7 @@
+# user profile URL prefix
+user_profile_prefix: http://meego.com/users/
+
+# thumbnail sizes for screenshots
 attachmentserver_variants:
     sidesquare:
         croppedThumbnail:
@@ -8,6 +12,7 @@ attachmentserver_variants:
             width: 100
             height: 100
 
+# available workflows
 workflows:
     review:
         label: Review
