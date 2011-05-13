@@ -1,0 +1,31 @@
+<h2 i18n:domain="com_meego_packages" i18n:translate="'title_admin_base_categories'"></h2>
+
+<div tal:attributes="class com_meego_packages/status" tal:condition="true: com_meego_packages/feedback" i18n:domain="com_meego_packages" i18n:translate="com_meego_packages/feedback">
+    <tal:block i18n:name="name">${com_meego_packages/feedback_objectname}</tal:block>
+</div>
+
+<div>
+    <tal:block tal:condition="not: com_meego_packages/basecategories">
+        <div class="warning" i18n:domain="com_meego_packages" i18n:translate="'warning_no_base_categories'"></div>
+        <mgd:include>cmp-admin-populate-default-basecategories</mgd:include>
+    </tal:block>
+
+    <ul class="defaults" tal:condition="true: com_meego_packages/basecategories">
+        <li class="basecategory" tal:attributes="id php: 'base_' . category.id" tal:repeat="category com_meego_packages/basecategories">
+            <div class="name"><a tal:attributes="href category/localurl">${category/name}</a></div>
+
+            <div class="info" tal:condition="not: category/mapping_counter" i18n:domain="com_meego_packages" i18n:translate="'no_mappings_for_basecategory'">
+            </div>
+
+            <div class="info" tal:condition="true: category/mapping_counter">
+                <div i18n:domain="com_meego_packages" i18n:translate="'number_of_mappings_for_basecategory'">
+                    <tal:block i18n:name="name"><span class="catname">${category/name}</span></tal:block>
+                    <tal:block i18n:name="mappings">${category/mapping_counter}</tal:block>
+                    <tal:block i18n:name="packages">${category/package_counter}</tal:block>
+                </div>
+            </div>
+
+            <div class="description">${category/description}</div>
+        </li>
+    </ul>
+</div>

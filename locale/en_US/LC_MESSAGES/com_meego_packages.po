@@ -1,0 +1,222 @@
+msgid ""
+msgstr ""
+
+"Project-Id-Version: com_meego_packages\n"
+"Report-Msgid-Bugs-To:\n"
+"PO-Revision-Date:\n"
+"Last-Translator:\n"
+"Language-Team: info <info@urho.eu>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "welcome"
+msgstr "Welcome!"
+
+msgid "title_apps"
+msgstr "MeeGo Applications"
+
+msgid "title_package_list"
+msgstr "Packages in ${categorytree}"
+
+msgid "title_application_list"
+msgstr "Applications in ${basecategory}"
+
+msgid "title_tip_package_list"
+msgstr "Listing all packages available in the given category"
+
+msgid "title_package"
+msgstr "Package"
+
+msgid "title_tip_package"
+msgstr "Short package name"
+
+msgid "title_repositories"
+msgstr "Repositories"
+
+msgid "title_no_ux_or_basecategory"
+msgstr "We are sorry, but there is no such UX or category: ${item}"
+
+msgid "title_latest_version"
+msgstr "Latest version: ${version}"
+
+msgid "title_older_versions"
+msgstr "Older version(s)"
+
+msgid "package_name"
+msgstr "Full Name"
+
+msgid "tip_package_name"
+msgstr "Full package name including version number and supported CPU architecture"
+
+msgid "no_available_packages"
+msgstr "There are no packages available."
+
+msgid "no_such_package"
+msgstr "There is no such package available."
+
+msgid "os_release"
+msgstr "MeeGo Release"
+
+msgid "os_release_tip"
+msgstr "Shows the MeeGo release required by the application"
+
+msgid "maintainer"
+msgstr "Maintainer"
+
+msgid "rating"
+msgstr "Rating"
+
+msgid "comments"
+msgstr "Comments: ${number}"
+
+msgid "providers"
+msgstr "Version(s) available in ${projectname}"
+
+msgid "providers_tip"
+msgstr "Available versions are from providers who have public repositories where the package(s) can be downloaded from"
+
+msgid "variants"
+msgstr "Variants"
+
+msgid "tip_variants"
+msgstr "A variant is simply a different version of the application"
+
+msgid "title_default_base_categories"
+msgstr "Default Base Categories"
+
+msgid "title_admin_base_categories"
+msgstr "Base Category Administration"
+
+msgid "title_categories"
+msgstr "Categories"
+
+msgid "title_base_category"
+msgstr "Category: ${name}"
+
+msgid "title_netbook_ux"
+msgstr "Netbook"
+
+msgid "title_handset_ux"
+msgstr "Handset"
+
+msgid "title_ivi_ux"
+msgstr "In-Vehicle"
+
+msgid "title_smarttv_ux"
+msgstr "Smart TV"
+
+msgid "title_mediaphone_ux"
+msgstr "Media phone"
+
+msgid "title_tablet_ux"
+msgstr "Tablet"
+
+msgid "title_allux_ux"
+msgstr "Universal"
+
+msgid "warning_no_base_categories"
+msgstr "There are no base categories defined in the system. Administrators need to create those before they will be visible."
+
+msgid "instruction_populate_default_base_categories"
+msgstr "You can create default base categories in the database using the list below. We will try doing the initial mapping between these and the real package categories. However you can always change the mappings later on."
+
+msgid "instruction_manage_base_category"
+msgstr "Here you can update or delete an existing base category. If you delete it, then all mappings will be deleted as well."
+
+msgid "command_populate_default_base_categories"
+msgstr "Populate the default base categories"
+
+msgid "command_edit_mappings"
+msgstr "Edit category mappings"
+
+msgid "command_fetch_mappings_for_basecategory"
+msgstr "Fetch mappings for this base category"
+
+msgid "command_hide_mappings_for_basecategory"
+msgstr "Hide mappings for this base category"
+
+msgid "command_save"
+msgstr "Save"
+
+msgid "command_update"
+msgstr "Update"
+
+msgid "command_update_mapping"
+msgstr "Update Mapping"
+
+msgid "command_delete"
+msgstr "Delete"
+
+msgid "command_undelete"
+msgstr "Undelete"
+
+msgid "command_basecategory_index"
+msgstr "Back to base categories"
+
+msgid "command_browse"
+msgstr "Browse"
+
+msgid "feedback_basecategory_does_not_exist"
+msgstr "The base category has been deleted or does not exist"
+
+msgid "feedback_basecategory_update_ok"
+msgstr "'${name}' base category was successfuly updated"
+
+msgid "feedback_basecategory_delete_ok"
+msgstr "'${name}' base category was successfuly deleted"
+
+msgid "feedback_basecategory_undelete_ok"
+msgstr "'${name}' base category was successfuly restored"
+
+msgid "feedback_basecategory_undelete_failed"
+msgstr "'${name}' base category could not be restored"
+
+msgid "feedback_basecategory_no_change"
+msgstr "No change(s) recorded for base category ${name}"
+
+msgid "feedback_category_mapping_updated_ok"
+msgstr "Mapping is successfuly updated for base category ${name}"
+
+msgid "error_basecategory_name_empty"
+msgstr "The name of a base category can not be empty"
+
+msgid "no_description"
+msgstr "No description"
+
+msgid "no_mappings_for_basecategory"
+msgstr "There are no mappings yet for this base category"
+
+msgid "number_of_mappings_for_basecategory"
+msgstr "${mappings} package category(ies) are mapped to ${name} covering ${packages} package(s)"
+
+msgid "instruction_mapping"
+msgstr "Select the desired package categories that should be mapped to ${name}"
+
+msgid "tip_install"
+msgstr "Select the install file matching the hardware architecture of your device. To find out this information please refer to the manual of the device."
+
+msgid "command_install"
+msgstr "Download to ${arch} architecture"
+
+msgid "instruction_select_arch"
+msgstr "Please select the hardware architecure for the application."
+
+msgid "tip_select_arch"
+msgstr "To find information about the hardware architecture please refer to the manual of your device."
+
+msgid "title_select_ux"
+msgstr "Select the UX"
+
+msgid "title_latest"
+msgstr "Latest"
+
+msgid "label_previous_page"
+msgstr "Previous Page"
+
+msgid "label_next_page"
+msgstr "Next Page"
+
+
+
+

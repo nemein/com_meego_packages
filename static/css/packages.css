@@ -1,53 +1,105 @@
-.splash {
-background:url("http://meego.com/sites/all/themes/meego/images/splash-garage.png") no-repeat scroll right bottom transparent;
-height: 140px;
-}
-
-#drupal_content .section{
-margin-left:200px;
-margin-right:-760px;
+.package_instance, div.packages .package {
 width:560px;
-float: left;
+border-bottom: 1px dashed lightgrey;
+margin: 0 0 2em;
+padding: 0 0 2em;
 }
 
-#drupal_content .region .section {
-float: left;
-border:1px solid #CCCCCC;
-margin:1px;
-padding:2px;
-width:180px;
-margin-top:-45px;
-}
-
-.region .section li
-{
-list-style:none;
-padding-left:5px;
-}
-
-.package_instance, .package
-{
-width:560px;
-}
-
-.package_instance .summary, .package .summary
-{
+.package_instance .summary, .package .summary {
 font-style: italic;
 }
 
-.package_instance div, .package div
-{
+.package_instance div {
 margin-bottom: 10px;
 }
 
-.package_instance .screenshot
-{
+.package_instance .screenshot {
 border:2px solid #CCCCCC;
 width:250px;
 height:250px;
 float:right;
 margin-left: 10px;
 margin-bottom: 10px;
+}
+
+div.section div.package {
+margin: 2em 0 1em 0;
+}
+
+.package div.screenshot,
+.package div.details {
+display: inline-block;
+}
+
+.package div.screenshot {
+float: left;
+margin: 0 1em 0 0;
+}
+
+.package div.screenshot img {
+width: 85px;
+}
+
+.package div.details {
+width: 460px;
+}
+
+.package div.screenshot.missing {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+width: 85px;
+height: 60px;
+}
+
+.package div.details h3 {
+margin: 0;
+padding: 0;
+}
+
+.package div.details h3.name span,
+.package div.details h3.name a {
+color: #0098f8;
+text-decoration: none;
+font-size: 2em;
+font-weight: bold;
+}
+
+.package div.details div.maintainer,
+.package div.details div.ratcomm {
+color: #938c93;
+}
+
+.package div.details div.ratcomm div.rating,
+.package div.details div.ratcomm div.comments {
+display: inline-block;
+}
+
+.package div.details div.ratcomm div.rating {
+margin: 0 2em 0 0;
+}
+
+/* the span of the stars */
+.package div.details div.ratcomm div.rating span {
+position: relative;
+top: 3px;
+}
+
+.package div.details div.description {
+margin: 1em 0 1em 0;
+}
+
+.package div.details div.providers h4 {
+padding: 0;
+margin: 1em 0 0 0;
+}
+
+.package div.details div.providers ul {
+margin: 0.5em 0 0 0;
+padding: 0;
+list-style: none;
+}
+
+.package div.details div.providers ul li {
+margin: 0 0 0.5em 0;
 }
 
 ul.uxes {
@@ -87,12 +139,325 @@ li.ux a div.netbook {
 background-image: url(/midgardmvc-static/com_meego_packages/images/device-netbooks.png);
 }
 
-li.ux a div.core.tv,
-li.ux a div.tv {
+li.ux a div.core.smarttv,
+li.ux a div.smarttv {
 background-image: url(/midgardmvc-static/com_meego_packages/images/device-tv.png);
 }
 
 li.ux a div.core.ivi,
 li.ux a div.ivi {
 background-image: url(/midgardmvc-static/com_meego_packages/images/device-automotive.png);
+}
+
+li.ux a div.core.mediaphone,
+li.ux a div.mediaphone {
+background-image: url(/midgardmvc-static/com_meego_packages/images/device-media-phones.png);
+}
+
+li.ux a div.core.tablet,
+li.ux a div.tablet {
+background-image: url(/midgardmvc-static/com_meego_packages/images/device-tablets.png);
+}
+
+li.ux div {
+text-align: center;
+}
+
+li.ux div span {
+position: relative;
+top: 63px;
+font-weight: bold;
+}
+
+div.list div.header {
+line-height: 2em;
+background: lightgrey;
+border-bottom: 1px solid grey;
+font-weight: bold;
+}
+
+div.element {
+line-height: 1.5em;
+}
+
+div.element.odd {
+background-color: white;
+}
+
+div.element.even {
+background-color: lightgrey;
+}
+
+div.list div.header div,
+div.list div.element div {
+display: inline-block;
+margin: 0 0 0.1em 0;
+}
+
+div.list div.header .title,
+div.list div.element .title {
+width: 25em;
+}
+
+div.list div.header .projectname,
+div.list div.element .projectname {
+width: 20em;
+}
+
+div.nohits,
+div.warning,
+div.error,
+div.status {
+background-image: url(/midgardmvc-static/com_meego_packages/images/messages-status.png);
+background-color: #EAEAEA;
+background-position: 5px 5px;
+background-repeat: no-repeat;
+border: 2px solid #E3038D;
+color: #333333;
+margin: 1em 1em 1em 0;
+min-height: 21px;
+padding: 5px 5px 5px 35px;
+}
+
+div.instruction {
+background-image: url(/midgardmvc-static/com_meego_packages/images/messages-status.png);
+background-repeat: no-repeat;
+min-height: 21px;
+padding: 5px 5px 5px 35px;
+margin: 1em 1em 1em 0;
+}
+
+div.status {
+border-color: #5dba7c;
+}
+
+div.warning {
+background-image: url(/midgardmvc-static/com_meego_packages/images/messages-error.png);
+border-color: #ff6d34;
+}
+
+div.error {
+background-image: url(/midgardmvc-static/com_meego_packages/images/messages-error.png);
+border-color: #CC0000;
+}
+
+ul.defaults {
+list-style: none;
+padding: 0;
+}
+
+ul.defaults li.basecategory {
+border-bottom: 1px dashed lightgrey;
+margin: 0 0 1em;
+padding: 0 0 1em;
+}
+
+ul.defaults li.basecategory .name,
+div.basecategory .name {
+font-weight: bold;
+}
+
+ul.defaults li.basecategory .description,
+div.basecategory .description {
+font-style: italic;
+width: 28em;
+}
+
+div.basecategory {
+margin: 0 0 1em 0;
+}
+
+a.back {
+padding: 3px 10px;
+}
+
+form.admin {
+display: inline-block;
+}
+
+input.form-submit {
+padding: 2px 10px;
+}
+
+a.back,
+input.form-submit {
+background-color: #E3038D;
+border: 2px solid #E3038D;
+color: #FFFFFF;
+cursor: pointer;
+font-weight: bold;
+text-align: center;
+}
+
+a.back:hover,
+input.form-submit:hover {
+background-color: #5DBA7C;
+border: 2px solid #5DBA7C;
+color: #FFFFFF;
+}
+
+form.admin div.map {
+margin: 1em 0 1em 0;
+}
+
+form.admin.map {
+margin: 2em 0 0 0;
+border-top: 1px dashed lightgrey;
+}
+
+form.admin div.map {
+max-height: 20em;
+width: 44em;
+overflow: auto;
+}
+
+form.admin div.map div.category {
+margin: 0 0 0.5em 0;
+}
+
+form.admin div.map input {
+margin: 0 2em 0 1em;
+}
+
+div.info {
+color: grey;
+font-style: italic;
+margin: 0 0 1em 0;
+}
+
+span.catname {
+font-weight: bold;
+font-style: italic;
+}
+
+div.create-rating div.architectures {
+margin: 1em 0 1em 0;
+}
+
+div.create-rating div.architectures ul.list {
+margin: 0 0 0 0;
+}
+
+div.create-rating div.architectures ul.list li {
+margin: 0;
+list-style: none;
+padding-left: 1em;
+}
+
+div.os {
+margin: 3em 0 3em 0;
+}
+
+div.latest {
+margin: 2em 0 2em 0;
+}
+
+div.basecategories {
+margin: 2em 0 2em 0;
+}
+
+
+/** define basecategory icons from here **/
+div.basecategories  div.leaf {
+width: 85px;
+height: 60px;
+text-align: center;
+display: inline-table;
+margin: 2em;
+}
+
+div.basecategories  div.leaf a {
+display: block;
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+width: 85px;
+height: 60px;
+}
+
+div.basecategories  div.leaf a span {
+position: relative;
+top: 65px;
+}
+
+/*
+div.basecategories div.internet {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.office {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.graphics {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.games {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.multimedia {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.education {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.science {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.system {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.development {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.accessibility {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.network {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.location {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.utilities {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+
+div.basecategories div.other {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+}
+*/
+
+div.pager {
+margin: 1em 1em 0 8em;
+font-weight: bold;
+text-align: center;
+}
+
+div.pager div {
+display: inline-block;
+}
+
+div.pager .disable {
+color: grey;
+}
+
+div.pager div.previous {
+float: left;
+}
+
+div.pager div.next {
+float: right;
+}
+
+div.pager div.items {
+color: grey;
 }

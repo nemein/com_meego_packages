@@ -1,6 +1,8 @@
-<h1 tal:condition="com_meego_packages/repository/title" tal:content="com_meego_packages/repository/title">MeeGo 1.2 Netbook</h1>
+<h1>Latest Packages</h1>
 
-<h2 tal:condition="true:com_meego_packages/projectname">Project: ${com_meego_packages/projectname}</h2>
+<h2 tal:content="com_meego_packages/repository/title">MeeGo 1.2 Netbook</h2>
+
+<h3 tal:condition="true:com_meego_packages/projectname">Project: ${com_meego_packages/projectname}</h3>
 
 <div class="list">
     <div class="header">

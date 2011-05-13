@@ -1,7 +1,5 @@
 <h1>Welcome to MeeGo Community Applications!</h1>
 
-<div class="splash"></div>
-
 <div class="warning">
     This site serves as a demo site. It contains some data imported from the
 <a href="https://build.pub.meego.com">MeeGo Community OBS</a>. As we don't
@@ -9,16 +7,10 @@ have any packages in the Extras repositories, some packages were imported
 from user home projects. The interface shown here is intended for MeeGo
 community application developers and serves as a starting point for the
 community QA process for apps. This is NOT the Apps area for end-users.
-Apps will be a separate view on top of this data.
+Apps will be a separate view on top of this data..
 </div>
 
-<div class="os" tal:repeat="os com_meego_packages/oses">
-    <h2 tal:content="os/title">MeeGo 1.0</h2>
-    <ul class="uxes">
-        <li class="ux" tal:repeat="ux os/uxes">
-            <a tal:attributes="href ux/url">
-                <div tal:attributes="class ux/css"></div>
-            </a>
-        </li>
-    </ul>
-</div>
+<mgd:include>cmp-show-os-version-ux-index</mgd:include>
+
+<div class="splash"></div>
+

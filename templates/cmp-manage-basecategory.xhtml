@@ -1,0 +1,56 @@
+<h3 i18n:domain="com_meego_packages" i18n:translate="'title_base_category'">
+    <tal:block i18n:name="name">${com_meego_packages/feedback_objectname}</tal:block>
+</h3>
+
+<div class="info">
+    <div i18n:domain="com_meego_packages" i18n:translate="'number_of_mappings_for_basecategory'">
+        <tal:block i18n:name="name">${com_meego_packages/feedback_objectname}</tal:block>
+        <tal:block i18n:name="mappings">${com_meego_packages/mapping_counter}</tal:block>
+        <tal:block i18n:name="packages">${com_meego_packages/package_counter}</tal:block>
+    </div>
+</div>
+
+<div tal:attributes="class com_meego_packages/status" tal:condition="true: com_meego_packages/feedback" i18n:domain="com_meego_packages" i18n:translate="com_meego_packages/feedback">
+    <tal:block i18n:name="name"><span class="catname">${com_meego_packages/feedback_objectname}</span></tal:block>
+</div>
+
+<div class="instruction" tal:condition="not: com_meego_packages/undelete" i18n:domain="com_meego_packages" i18n:translate="'instruction_manage_base_category'"></div>
+
+<form class="admin" method="post" accept-charset="UTF-8" tal:condition="true: com_meego_packages/undelete" tal:attributes="action com_meego_packages/form_action">
+    <a class="back" i18n:domain="com_meego_packages" tal:condition="true: com_meego_packages/indexurl" tal:attributes="href com_meego_packages/indexurl" i18n:translate="'command_basecategory_index'"></a>
+    <input tal:condition="not: com_meego_packages/undelete_error" type="submit" name="undelete" i18n:domain="com_meego_packages" i18n:attributes="value command_undelete" class="form-submit"/>
+</form>
+
+<form class="admin" method="post" accept-charset="UTF-8" tal:condition="not: com_meego_packages/undelete" tal:attributes="action com_meego_packages/form_action">
+
+    <div class="basecategory" tal:condition="true: com_meego_packages/category" tal:define="category com_meego_packages/category">
+        <tal:block tal:define="name category/name; description category/description">
+            <input class="name" type="text" tal:attributes="value name; name php: 'categories[' . name . '][name]'"/>
+            <input class="description" type="text" tal:attributes="value description; name php: 'categories[' . name . '][description]'"/>
+        </tal:block>
+    </div>
+
+    <a class="back" i18n:domain="com_meego_packages" tal:condition="true: com_meego_packages/indexurl" tal:attributes="href com_meego_packages/indexurl" i18n:translate="'command_basecategory_index'"></a>
+
+    <tal:block tal:condition="true: com_meego_packages/category">
+        <input type="submit" name="update" i18n:domain="com_meego_packages" i18n:attributes="value command_update" class="form-submit"/>
+        <input type="submit" name="delete" i18n:domain="com_meego_packages" i18n:attributes="value command_delete" class="form-submit"/>
+    </tal:block>
+
+</form>
+
+<form class="admin map" method="post" accept-charset="UTF-8" tal:condition="true: com_meego_packages/map" tal:attributes="action com_meego_packages/form_action">
+    <div class="instruction" i18n:domain="com_meego_packages" i18n:translate="'instruction_mapping'">
+        <tal:block i18n:name="name"><span class="catname">${com_meego_packages/feedback_objectname}</span></tal:block>
+    </div>
+    <div class="map">
+        <div class="category" tal:repeat="category com_meego_packages/map">
+            <input name="mapped[]" tal:condition="not: category/mapped" tal:attributes="value category/id" type="checkbox"/>
+            <input name="mapped[]" tal:condition="true: category/mapped" tal:attributes="value category/id; checked string:'checked'" type="checkbox"/>
+            ${category/tree}
+        </div>
+    </div>
+
+    <a class="back" i18n:domain="com_meego_packages" tal:condition="true: com_meego_packages/indexurl" tal:attributes="href com_meego_packages/indexurl" i18n:translate="'command_basecategory_index'"></a>
+    <input type="submit" name="updatemapping" i18n:domain="com_meego_packages" i18n:attributes="value command_update_mapping" class="form-submit"/>
+</form>

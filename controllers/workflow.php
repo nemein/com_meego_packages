@@ -1,9 +1,25 @@
 <?php
 class com_meego_packages_controllers_workflow
 {
+    var $mvc = null;
+    var $request = null;
+
     public function __construct(midgardmvc_core_request $request)
     {
         $this->request = $request;
+
+        $this->mvc = midgardmvc_core::get_instance();
+
+        $this->mvc->i18n->set_translation_domain('com_meego_packages');
+
+        $default_language = $this->mvc->configuration->default_language;
+
+        if (! isset($default_language))
+        {
+            $default_language = 'en_US';
+        }
+
+        $this->mvc->i18n->set_language($default_language, false);
     }
 
     public function post_start_package_instance(array $args)
@@ -11,16 +27,16 @@ class com_meego_packages_controllers_workflow
         $this->package = $this->load_package_instance($args);
         $workflow_class = $this->load_workflow($args);
 
-        midgardmvc_core::get_instance()->component->load_library('Workflow');
+        $this->mvc->component->load_library('Workflow');
 
         $workflow = new $workflow_class();
         $values = $workflow->start($this->package);
         if (isset($values['execution']))
         {
             // Workflow suspended and needs input, redirect to workflow page
-            midgardmvc_core::get_instance()->head->relocate
+            $this->mvc->head->relocate
             (
-                midgardmvc_core::get_instance()->dispatcher->generate_url
+                $this->mvc->dispatcher->generate_url
                 (
                     'package_instance_workflow_resume',
                     array
@@ -37,9 +53,9 @@ class com_meego_packages_controllers_workflow
         }
 
         // Workflow completed, redirect to package instance
-        midgardmvc_core::get_instance()->head->relocate
+        $this->mvc->head->relocate
         (
-            midgardmvc_core::get_instance()->dispatcher->generate_url
+            $this->mvc->dispatcher->generate_url
             (
                 'package_instance',
                 array
@@ -58,26 +74,20 @@ class com_meego_packages_controllers_workflow
         $this->package = $this->load_package_instance($args);
         $workflow_class = $this->load_workflow($args);
 
-        midgardmvc_core::get_instance()->component->load_library('Workflow');
+        $this->mvc->component->load_library('Workflow');
 
         $this->workflow_definition = new $workflow_class();
         $workflow = $this->workflow_definition->get();
         try
         {
-            $this->execution = new midgardmvc_helper_workflow_execution_interactive($workflow, $args['execution']);
-        
+            $this->execution = new midgardmvc_helper_workflow_execution_interactive($workflow, $args['execution']);        
         }
         catch (ezcWorkflowExecutionException $e)
         {
             throw new midgardmvc_exception_notfound("Workflow {$args['workflow']} {$args['execution']} not found: " . $e->getMessage());
         }
 
-
-        var_dump($this->execution->getWaitingFor());
         $this->execution->resume();
-        var_dump($this->execution->hasEnded());
-        var_dump($this->execution->getWaitingFor());
-        die();
 
         $waiting_for = $this->execution->getWaitingFor();
         $this->data['forms'] = array();

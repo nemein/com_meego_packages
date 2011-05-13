@@ -1,3 +1,7 @@
+# user profile URL prefix
+user_profile_prefix: http://meego.com/users/
+
+# thumbnail sizes for screenshots
 attachmentserver_variants:
     sidesquare:
         croppedThumbnail:
@@ -7,7 +11,90 @@ attachmentserver_variants:
         croppedThumbnail:
             width: 100
             height: 100
+
+# available workflows
 workflows:
     review:
         label: Review
         provider: com_meego_packages_workflow_review
+
+# define the latest OS and its version
+# it is hard to determine automatically, so we let admins to configure
+latest:
+    os: MeeGo
+    version: 1.2
+
+# map of os names used in the db and their pretty names used in the UI
+os_map:
+    maemo: Maemo
+    meego: MeeGo
+    debian: Debian
+
+# UX defintions in case we have none available
+os_ux:
+    netbook: Netbook
+    handset: Handset
+    tablet: Tablet
+    mediaphone: Media Phone
+    smarttv: Smart TV
+    ivi: In Vehicle
+
+# Allowed types of repositories from where packages can be imported
+os_groups:
+    core: Core repository
+    standard: Standard repository
+    surrounds: Surrounds repository
+    extras: Extras repository
+
+# define the projects here which holds package repositories that
+# are meant for the non-techie audience.
+# these projects define the so called "downloads" area
+top_projects:
+    MeeGo:1.2:Apps:Testing: Some description
+    home:feri: Some description
+    home:xfade: Some description
+    maemo-fremantle-extras: Some description
+    home:zigbee: Some description
+
+# list of base categories as name: description pairs
+# base categories are supposed to map all package categories that are
+# defined in the individual rpm or deb packages
+base_categories:
+    Internet: Some description
+    Office: Some description
+    Graphics: Some description
+    Games: Some description
+    Multimedia: Some description
+    Education: Some description
+    Science: Some description
+    System: Some description
+    Development: Some description
+    Accessibility: Some description
+    Network: Some description
+    Location & Navigation: Some description
+    Utilities: Some description
+    Other: Some description
+
+# package filter regular expression
+# package title matching the filters will not shown in the "downloads" area
+# filters need delimeters e.g. / character at the beginning and at the end
+package_filters:
+    # no source packages
+    - /^(.*)\-src$/
+    # no data packages
+    - /^(.*)\-data$/
+    # no dev packages
+    - /^(.*)\-dev$/
+    # no dev packages
+    - /^(.*)\-devel$/
+    # no debug packages
+    - /^(.*)-debug\w*$/
+    # libs are no apps
+    - /^(.*)-lib[s]$/
+
+# the maximum rate that can be given to a package
+maxrate: 5
+
+# the amount of items that are shown on a page when listing objects
+items_per_page: 10
+

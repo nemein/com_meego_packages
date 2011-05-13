@@ -1,0 +1,7 @@
+<div class="basecategories" tal:condition="true: com_meego_packages/basecategories">
+    <div tal:attributes="class php:'leaf ' . basecategory.css" tal:repeat="basecategory com_meego_packages/basecategories">
+        <a tal:attributes="href basecategory/localurl; title php: 'id: ' . basecategory.id . ', packages: ' . basecategory.apps_counter">
+            <span>${basecategory/name} : ${basecategory/apps_counter}</span>
+        </a>
+    </div>
+</div>

@@ -1,4 +1,8 @@
-version: 0.0.1
+version: 0.0.4
+
+process_injector: com_meego_packages_injector
+template_injector: com_meego_packages_injector
+
 requires:
     com_meego_obsconnector:
         - {type: github, user: nemein, repository: com_meego_obsconnector, branch: master}
@@ -6,73 +10,240 @@ requires:
         - {type: github, user: bergie, repository: midgardmvc_helper_workflow, branch: master}
     midgardmvc_ui_forms:
         - {type: github, user: bergie, repository: midgardmvc_ui_forms, branch: master}
+    com_meego_ratings_caching:
+        - {type: github, user: nemein, repository: com_meego_ratings_caching, branch: master}
+
 routes:
     index:
         path: /
-        controller: com_meego_packages_controllers_repository
+        controller: com_meego_packages_controllers_application
         action: redirect
-    repositories:
-        path: /repository
-        controller: com_meego_packages_controllers_repository
+
+    # lists all UXes starting with the latest
+    apps_index:
+        path: /applications
+        controller: com_meego_packages_controllers_application
         action: index
         template_aliases:
             content: cmp-show-index
+
+    # redirect if only os is given
+    apps_os:
+        path: /applications/{$os}
+        controller: com_meego_packages_controllers_application
+        action: applications
+        template_aliases:
+            content: cmp-show-applications-list
+#       action: redirect
+
+    # redirect if only os and version are given
+    apps_os_version:
+        path: /applications/{$os}/{$version}
+        controller: com_meego_packages_controllers_application
+        action: applications
+        template_aliases:
+            content: cmp-show-applications-list
+#        action: redirect
+
+    # try to show apps list if no basecatgory is given
+    apps_os_version_ux:
+        path: /applications/{$os}/{$version}/{$ux}
+        controller: com_meego_packages_controllers_application
+        action: applications
+        template_aliases:
+            content: cmp-show-applications-list
+
+   # lists all packages that are avaialable for a UX / basecategory
+    apps_by_basecategory:
+        path: /applications/{$os}/{$string:version}/{$ux}/{$basecategory}
+        controller: com_meego_packages_controllers_application
+        action: applications
+        template_aliases:
+            content: cmp-show-applications-list
+
+    # show a package overview based on UX / basecategory / packagetitle
+    apps_by_title:
+        path: /applications/{$os}/{$string:version}/{$ux}/{$basecategory}/{$packagetitle}
+        controller: com_meego_packages_controllers_application
+        action: applications
+        template_aliases:
+            content: cmp-show-application
+
+    # application rating
+    apps_rating_create:
+        path: /rating/create/{$packagetitle}
+        controller: com_meego_packages_controllers_application
+        action: comment_application
+        template_aliases:
+            content: cmp-show-application
+
+    # redirect if nothing is given
+    basecategories:
+        path: /basecategories
+        controller: com_meego_packages_controllers_application
+        action: redirect
+
+    # redirect if only os is given
+    basecategories_os:
+        path: /basecategories/{$os}
+        controller: com_meego_packages_controllers_application
+        action: redirect
+
+    # redirect if only os and version are given
+    basecategories_os_version:
+        path: /basecategories/{$os}/{$version}
+        controller: com_meego_packages_controllers_application
+        action: redirect
+
+    # lists all base categories that are avaialable for a UX
+    basecategories_os_version_ux:
+        path: /basecategories/{$os}/{$string:version}/{$ux}
+        controller: com_meego_packages_controllers_basecategory
+        action: basecategories_by_ux
+        template_aliases:
+            content: cmp-show-fancy-basecategories-list
+
+    # lists all package categories (for now)
+    # @todo: it should probably list only base categories later
+    categories:
+        path: /categories
+        controller: com_meego_packages_controllers_category
+        action: categories_list
+        template_aliases:
+            content: cmp-show-categories-list
+
+    # admin UI for base categories
+    # meant only for managing base categories
+    # and their mappings to real package categories
+    basecategories_admin_index:
+        path: /basecategories/admin
+        controller: com_meego_packages_controllers_basecategory
+        action: admin_index
+        template_aliases:
+            content: cmp-admin-index-basecategories
+
+    basecategories_admin_create:
+        path: /basecategories/admin/create/
+        controller: com_meego_packages_controllers_basecategory
+        action: create_basecategory
+        template_aliases:
+            content: cmp-create-basecategory
+
+    basecategories_admin_manage:
+        path: /basecategories/admin/manage/{$basecategory}
+        controller: com_meego_packages_controllers_basecategory
+        action: manage_basecategory
+        template_aliases:
+            content: cmp-manage-basecategory
+
+    basecategories_admin_create_relations:
+        path: /basecategories/admin/manage/createrelations/{$basecategory}
+        controller: com_meego_packages_controllers_basecategory
+        action: post_create_relations
+        template_aliases:
+            content: cmp-manage-basecategory
+
+    repositories:
+        path: /repositories
+        controller: com_meego_packages_controllers_repository
+        action: index
+        template_aliases:
+            content: cmp-show-os-version-ux-index
+
+    repositories_os_version_ux:
+        path: /repositories/{$os}/{$version}/{$ux}
+        controller: com_meego_packages_controllers_repository
+        action: repositories_list
+        template_aliases:
+            content: cmp-show-repositories-list
+
     repository:
-        path: /repository/{$repository}
+        path: /repository/{$project}/{$repository}/{$arch}
         controller: com_meego_packages_controllers_repository
         action: repository
         template_aliases:
             content: cmp-show-repository
-    repository_os_version:
-        path: /repository/{$os}/{$version}/{$ux}
-        controller: com_meego_packages_controllers_repository
-        action: repository_os_version
-        template_aliases:
-            content: cmp-show-repository-os-version
+
     repository_latest:
-        path: /repository/{$repository}/latest
+        path: /repository/{$project}/{$repository}/{$arch}/latest
         controller: com_meego_packages_controllers_repository
         action: repository_latest
         template_aliases:
-            content: cmp-show-repository
+            content: cmp-show-repository-latest
+
     repository_latest_amount:
-        path: /repository/{$repository}/latest/{$amount}
+        path: /repository/{$project}/{$repository}/{$arch}/latest/{$amount}
         controller: com_meego_packages_controllers_repository
         action: repository_latest
         template_aliases:
-            content: cmp-show-repository
+            content: cmp-show-repository-latest
+
     search:
         path: /search
         controller: com_meego_packages_controllers_package
         action: search
         template_aliases:
             content: cmp-show-search
+
+    # base categories are defined by admins
+    # base categories have one or more package categories mapped to them
+    packages_by_basecategory:
+        path: /packages/base/{$basecategory}
+        controller: com_meego_packages_controllers_package
+        action: packages_by_basecategory
+        template_aliases:
+            content: cmp-show-packages-list
+
+    # category tree is coming from the packages itself.
+    # it is a : separated list, such as Amusements:Games, Development:Libraries
+    packages_by_categorytree:
+        path: /packages/tree/{$categorytree}
+        controller: com_meego_packages_controllers_package
+        action: packages_by_categorytree
+        template_aliases:
+            content: cmp-show-packages-list
+
+    # to give an overview of a package by listing all
+    # the comments / ratings that each of its variants received
+    package_overview_tree:
+        path: /packages/tree/{$categorytree}/{$packagetitle}
+        controller: com_meego_packages_controllers_package
+        action: package_overview
+        template_aliases:
+            content: cmp-show-package-overview
+
+    # display a uniquely identified package
+    # @todo: refine this
     package:
         path: /package/{$package}
         controller: com_meego_packages_controllers_package
         action: package
         template_aliases:
             content: cmp-show-package
+
     package_repository:
         path: /package/{$package}/{$repository}
         controller: com_meego_packages_controllers_package
         action: repository
         template_aliases:
             content: cmp-show-package_repository
+
     package_instance:
-        path: /package/{$package}/{$repository}/{$version}
+        path: /package/{$package}/{$version}/{$project}/{$repository}/{$arch}
         controller: com_meego_packages_controllers_package
         action: instance
         template_aliases:
             content: cmp-show-package_instance
+
     package_instance_workflow_start:
-        path: /package/{$package}/{$repository}/{$version}/workflow/{$workflow}
+        path: /package/{$package}/{$version}/{$project}/{$repository}/{$arch}/workflow/{$workflow}
         controller: com_meego_packages_controllers_workflow
         action: start_package_instance
         template_aliases:
             content: cmp-show-package_instance_workflow
+
     package_instance_workflow_resume:
-        path: /package/{$package}/{$repository}/{$version}/workflow/{$workflow}/{$execution}
+        path: /package/{$package}/{$version}/{$project}/{$repository}/{$arch}/workflow/{$workflow}/{$execution}
         controller: com_meego_packages_controllers_workflow
         action: resume_package_instance
         template_aliases:
