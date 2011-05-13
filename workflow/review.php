@@ -57,15 +57,7 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
             )
         );
         $get_form->addOutNode($get_review);
- 
-        $save_review = new ezcWorkflowNodeAction
-        (
-            array
-            (
-                'class' => 'com_meego_packages_workflow_action_savereview'
-            )
-        );
-        $save_review->addoutNode($workflow->endNode);
+        $get_review->addoutNode($workflow->endNode);
 
         return $workflow;
     }

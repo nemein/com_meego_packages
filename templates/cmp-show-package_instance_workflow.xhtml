@@ -1,2 +1,5 @@
-<div tal:content="structure current_component/form">
+<div tal:repeat="form current_component/forms">
+    <h2 tal:content="form/db_form/title">Form title</h2>
+    <div tal:content="form/form">
+    </div>
 </div>

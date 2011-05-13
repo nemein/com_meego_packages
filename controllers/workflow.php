@@ -60,11 +60,11 @@ class com_meego_packages_controllers_workflow
 
         midgardmvc_core::get_instance()->component->load_library('Workflow');
 
-        $workflow_definition = new $workflow_class();
-        $workflow = $workflow_definition->get();
+        $this->workflow_definition = new $workflow_class();
+        $workflow = $this->workflow_definition->get();
         try
         {
-            $execution = new midgardmvc_helper_workflow_execution_interactive($workflow, $args['execution']);
+            $this->execution = new midgardmvc_helper_workflow_execution_interactive($workflow, $args['execution']);
         
         }
         catch (ezcWorkflowExecutionException $e)
@@ -72,16 +72,77 @@ class com_meego_packages_controllers_workflow
             throw new midgardmvc_exception_notfound("Workflow {$args['workflow']} {$args['execution']} not found: " . $e->getMessage());
         }
 
-        $waiting_for = $execution->getWaitingFor();
+
+        var_dump($this->execution->getWaitingFor());
+        $this->execution->resume();
+        var_dump($this->execution->hasEnded());
+        var_dump($this->execution->getWaitingFor());
+        die();
+
+        $waiting_for = $this->execution->getWaitingFor();
+        $this->data['forms'] = array();
         foreach ($waiting_for as $variable => $variable_information)
         {
             switch (get_class($variable_information['condition']))
             {
                 case 'midgardmvc_ui_forms_workflow_condition_instance':
-                    $this->get_form($execution);
+                    $form_for_variable = $this->get_form($this->execution);
+                    if (!is_null($form_for_variable))
+                    {
+                        $this->data['forms'][$variable] = $form_for_variable;
+                    }
                     break;
                 // TODO: Handle other typical workflow input types
             }
+        }
+    }
+
+    public function post_resume_package_instance(array $args)
+    {
+        $this->get_resume_package_instance($args);
+
+        if (empty($this->data['forms']))
+        {
+            throw new midgardmvc_exception_httperror('POST not allowed when there are no forms for the workflow', 405);
+        }
+
+        $list_of_variables = array();
+        foreach ($this->data['forms'] as $variable => $formdata)
+        {
+            $formdata['form']->process_post();
+
+            $instance = new midgardmvc_ui_forms_form_instance();
+            $instance->form = $formdata['db_form']->id;
+            $instance->relatedobject = $this->package->guid;
+            $instance->create();
+
+            if (!midgardmvc_ui_forms_store::store_form($formdata['form'], $instance))
+            {
+                $instance->delete();
+                continue;
+            }
+
+            $list_of_variables[$variable] = $instance->guid;
+        }
+
+        $values = $this->workflow_definition->resume($this->execution->guid, $list_of_variables);
+        if (!isset($values['execution']))
+        {
+            // Workflow completed, redirect to package instance
+            midgardmvc_core::get_instance()->head->relocate
+            (
+                midgardmvc_core::get_instance()->dispatcher->generate_url
+                (
+                    'package_instance',
+                    array
+                    (
+                        'package' => $this->package->name,
+                        'version' => $this->package->version,
+                        'repository' => $args['repository'],
+                    ),
+                    $this->request
+                )
+            );
         }
     }
 
@@ -94,13 +155,23 @@ class com_meego_packages_controllers_workflow
             {
                 continue;
             }
-            $form = midgardmvc_ui_forms_generator::get_by_guid($value);
-            if (!$form)
+
+            try
+            {
+                $db_form = new midgardmvc_ui_forms_form($value);
+            }
+            catch (midgard_error_exception $e)
             {
                 continue;
             }
-            $this->data['form'] = $form;
+
+            return array
+            (
+                'db_form' => $db_form,
+                'form' => midgardmvc_ui_forms_generator::get_by_form($db_form)
+            );
         }
+        return null;
     }
 
     private function load_package_instance(array $args)
