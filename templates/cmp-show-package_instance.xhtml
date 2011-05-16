@@ -1,6 +1,6 @@
 <div class="package_instance" xmlns:v="http://rdf.data-vocabulary.org/#" typeof="v:Product" tal:condition="true: com_meego_packages/package" tal:define="package com_meego_packages/package">
   <h1>
-    <a tal:attributes="href com_meego_packages/package/localurl" title="See what other versions are available for this package."><span class="title" tal:content="com_meego_packages/package/title" property="v:name">Package title</span></a>
+    <span class="title" tal:content="com_meego_packages/package/title" property="v:name">Package title</span>
     <span class="version" tal:content="com_meego_packages/package/version">Package version</span>
     <tal:block tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_ratings_caching', 'get_average', array('to' => package.guid))">Rating stars</tal:block>
   </h1>
