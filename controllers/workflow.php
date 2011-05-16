@@ -31,6 +31,7 @@ class com_meego_packages_controllers_workflow
 
         $workflow = new $workflow_class();
         $values = $workflow->start($this->package);
+
         if (isset($values['execution']))
         {
             // Workflow suspended and needs input, redirect to workflow page
@@ -43,7 +44,9 @@ class com_meego_packages_controllers_workflow
                     (
                         'package' => $this->package->name,
                         'version' => $this->package->version,
+                        'project' => $args['project'],
                         'repository' => $args['repository'],
+                        'arch' => $args['arch'],
                         'workflow' => $args['workflow'],
                         'execution' => $values['execution'],
                     ),
@@ -62,7 +65,9 @@ class com_meego_packages_controllers_workflow
                 (
                     'package' => $this->package->name,
                     'version' => $this->package->version,
+                    'project' => $args['project'],
                     'repository' => $args['repository'],
+                    'arch' => $args['arch']
                 ),
                 $this->request
             )
@@ -80,7 +85,7 @@ class com_meego_packages_controllers_workflow
         $workflow = $this->workflow_definition->get();
         try
         {
-            $this->execution = new midgardmvc_helper_workflow_execution_interactive($workflow, $args['execution']);        
+            $this->execution = new midgardmvc_helper_workflow_execution_interactive($workflow, $args['execution']);
         }
         catch (ezcWorkflowExecutionException $e)
         {
@@ -148,7 +153,9 @@ class com_meego_packages_controllers_workflow
                     (
                         'package' => $this->package->name,
                         'version' => $this->package->version,
+                        'project' => $args['project'],
                         'repository' => $args['repository'],
+                        'arch' => $args['arch']
                     ),
                     $this->request
                 )
