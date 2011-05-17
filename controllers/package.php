@@ -925,7 +925,7 @@ class com_meego_packages_controllers_package
                         // ok, so we got a base category, let's form the url
 
                         // check if we have ux
-                        if ( ! strlen($this->data['ux']))
+                        if (! array_key_exists('ux', $this->data))
                         {
                             $this->data['ux'] = strtolower($package->repoosux);
                         }

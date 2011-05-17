@@ -249,7 +249,6 @@ class com_meego_packages_controllers_repository
 
         $this->data['packages'] = array();
 
-
         $storage = new midgard_query_storage('com_meego_package');
         $q = new midgard_query_select($storage);
 
@@ -289,6 +288,25 @@ class com_meego_packages_controllers_repository
                 $this->request
             );
             $this->data['packages'][] = $package;
+        }
+
+        // set a flag to allow workflow management
+        $this->request->set_data_item('manage_workflows', false);
+
+        if ($this->mvc->authentication->get_user()->is_admin())
+        {
+            $this->request->set_data_item('manage_workflows', true);
+
+            $this->request->set_data_item('create_form_url', $this->mvc->dispatcher->generate_url
+            (
+                'form_create',
+                array
+                (
+                    'parent' => $this->data['repository']->guid
+                ),
+                'midgardmvc_ui_forms'
+            ));
+            // @todo: get a list of workflows and forms
         }
     }
 

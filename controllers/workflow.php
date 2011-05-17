@@ -131,7 +131,7 @@ class com_meego_packages_controllers_workflow
             $instance->relatedobject = $this->package->guid;
             $instance->create();
 
-            if (!midgardmvc_ui_forms_store::store_form($formdata['form'], $instance))
+            if ( ! midgardmvc_ui_forms_store::store_form($formdata['form'], $instance) )
             {
                 $instance->delete();
                 continue;

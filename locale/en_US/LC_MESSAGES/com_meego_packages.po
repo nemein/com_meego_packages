@@ -217,6 +217,8 @@ msgstr "Previous Page"
 msgid "label_next_page"
 msgstr "Next Page"
 
+msgid "title_workflows"
+msgstr "Workflows"
 
-
-
+msgid "title_create_new_form"
+msgstr "Create new form"
