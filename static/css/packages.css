@@ -196,12 +196,12 @@ margin: 0 0 0.1em 0;
 
 div.list div.header .title,
 div.list div.element .title {
-width: 25em;
+width: 22em;
 }
 
 div.list div.header .projectname,
 div.list div.element .projectname {
-width: 20em;
+width: 22em;
 }
 
 div.nohits,
