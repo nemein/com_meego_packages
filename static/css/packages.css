@@ -473,4 +473,11 @@ width: 35em;
 height: 10em;
 }
 
+div.edit_form form label input {
+display: block;
+}
 
+div.edit_field form label input,
+div.edit_field form label select {
+margin: 0 1em 0 1em;
+}
