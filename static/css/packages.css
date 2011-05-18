@@ -462,12 +462,14 @@ div.pager div.items {
 color: grey;
 }
 
-div.workflow form span {
+div.workflow form span,
+div.show_form form span {
 display: block;
 margin: 0 0 1em 0;
 }
 
-div.workflow form textarea {
+div.workflow form textarea,
+div.show_form form textarea {
 display: block;
 width: 35em;
 height: 10em;

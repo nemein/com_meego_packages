@@ -22,12 +22,25 @@
                 <div class="section" tal:condition="true: manage_workflows">
                     <div id="block-menu_block-1" class="block block-menu_block region-odd odd region-count-1 count-1 block-garage">
                         <h2 class="title" i18n:domain="com_meego_packages" i18n:translate="'title_workflows'"></h2>
-                        <div class="menu-block-1 menu-name-primary-links parent-mlid-0 menu-level-2">
-                            <ul class="menu">
-                                <li class="leaf first last menu-mlid-986">
-                                    <a tal:condition="true: create_form_url" tal:attributes="href create_form_url" i18n:domain="com_meego_packages" i18n:translate="'title_create_new_form'"></a>
-                                </li>
-                            </ul>
+                        <div class="content">
+                            <div class="menu-block-1 menu-name-primary-links parent-mlid-0 menu-level-2">
+                                <ul class="menu">
+                                    <li class="leaf first last menu-mlid-986">
+                                        <a tal:condition="true: create_form_url" tal:attributes="href create_form_url" i18n:domain="com_meego_packages" i18n:translate="'title_create_new_form'"></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="content"  tal:condition="true: forms">
+                            <div class="menu-block-1 menu-name-primary-links parent-mlid-0 menu-level-2">
+                                <ul class="menu">
+                                    <li class="leaf" tal:repeat="form forms">
+                                        <a tal:attributes="href form/edit_url" i18n:domain="midgardmvc_ui_forms" i18n:translate="'label_edit_form'">
+                                            <tal:block i18n:name="title">${form/title}</tal:block>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
