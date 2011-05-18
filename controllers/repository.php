@@ -306,7 +306,41 @@ class com_meego_packages_controllers_repository
                 ),
                 'midgardmvc_ui_forms'
             ));
-            // @todo: get a list of workflows and forms
+            // @todo: get a list of forms
+            $forms = null;
+
+            $storage = new midgard_query_storage('midgardmvc_ui_forms_form');
+
+            $q = new midgard_query_select($storage);
+
+            $q->set_constraint(new midgard_query_constraint(
+                new midgard_query_property('parent'),
+                '=',
+                new midgard_query_value($this->data['repository']->guid)
+            ));
+
+            $q->execute();
+
+            $items = $q->list_objects();
+
+            foreach($items as $item)
+            {
+                $form = $item;
+
+                $form->edit_url = $this->mvc->dispatcher->generate_url
+                (
+                    'form_update',
+                    array
+                    (
+                        'form' => $item->guid,
+                    ),
+                    'midgardmvc_ui_forms'
+                );
+
+                $forms[] = $form;
+            }
+
+            $this->request->set_data_item('forms', $forms);
         }
     }
 
