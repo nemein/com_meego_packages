@@ -483,3 +483,8 @@ div.edit_field form label input,
 div.edit_field form label select {
 margin: 0 1em 0 1em;
 }
+
+form label {
+margin-top: 1em;
+display: block;
+}
