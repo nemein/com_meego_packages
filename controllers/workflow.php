@@ -141,8 +141,8 @@ class com_meego_packages_controllers_workflow
         }
 
         $values = $this->workflow_definition->resume($this->execution->guid, $list_of_variables);
-        if (!isset($values['execution']))
-        {
+        //        if (!isset($values['execution']))
+        //{
             // Workflow completed, redirect to package instance
             midgardmvc_core::get_instance()->head->relocate
             (
@@ -160,7 +160,7 @@ class com_meego_packages_controllers_workflow
                     $this->request
                 )
             );
-        }
+            //}
     }
 
     private function get_form(ezcWorkflowExecution $execution)
