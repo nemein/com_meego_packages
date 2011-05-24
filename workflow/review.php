@@ -15,7 +15,41 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
 
         // Check that the package's repository has a form
         $repository = new com_meego_repository($object->repository);
-        return midgardmvc_ui_forms_generator::has_object_forms($repository);
+        if (!midgardmvc_ui_forms_generator::has_object_forms($repository))
+        {
+          return false;
+        }
+
+        //TODO: Check that object is reviewable
+
+        $user = midgardmvc_core::get_instance()->authentication->get_person();
+
+        //Hasn't reviewed yet
+        $storage = new midgard_query_storage('midgardmvc_ui_forms_form_instance');
+        $q = new midgard_query_select($storage);
+
+        $qc = new midgard_query_constraint_group('AND');
+
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('relatedobject', $storage),
+            '=',
+            new midgard_query_value($object->guid)
+        ));
+
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('metadata.creator', $storage),
+            '=',
+            new midgard_query_value($user->guid)
+        ));
+        $q->set_constraint($qc);
+
+        $res = $q->execute();
+        if ($q->get_results_count() != 0)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     public function get()
@@ -58,6 +92,7 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
         );
         $get_form->addOutNode($get_review);
         $get_review->addoutNode($workflow->endNode);
+        //TODO: Add workflow action for notifying BOSS
 
         return $workflow;
     }
