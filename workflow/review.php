@@ -31,13 +31,13 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
         $qc = new midgard_query_constraint_group('AND');
 
         $qc->add_constraint(new midgard_query_constraint(
-            new midgard_query_property('relatedobject', $storage),
+            new midgard_query_property('relatedobject'),
             '=',
             new midgard_query_value($object->guid)
         ));
 
         $qc->add_constraint(new midgard_query_constraint(
-            new midgard_query_property('metadata.creator', $storage),
+            new midgard_query_property('metadata.creator'),
             '=',
             new midgard_query_value($user->guid)
         ));
