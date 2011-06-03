@@ -293,7 +293,10 @@ class com_meego_packages_controllers_repository
         // set a flag to allow workflow management
         $this->request->set_data_item('manage_workflows', false);
 
-        if ($this->mvc->authentication->get_user()->is_admin())
+        $user = $this->mvc->authentication->get_user();
+
+        if (   $user
+            && $user->is_admin())
         {
             $this->request->set_data_item('manage_workflows', true);
 
