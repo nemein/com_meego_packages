@@ -41,23 +41,26 @@ class com_meego_packages_controllers_repository
     /**
      * Prepares an array with important data of the repository
      *
-     * @param object repository object
+     * @param object com_meego_os object
+     * @param object com_meego_ux object
+     * @param string OS group the repo belongs to, e.g. extras
      * @param string UX name, in case the repository has none
+     *
      * @return array with data
      */
-    private function populate_repo_ux($repository = null, $default_ux = null)
+    private function populate_repo_ux($os = null, $ux = null, $group = '', $default_ux = null)
     {
         $retval = array();
 
-        if (strlen($repository->osux))
+        if (strlen($ux->name))
         {
-            $default_ux = $repository->osux;
+            $default_ux = $ux->name;
         }
 
         //$repository->os = strtolower($repository->repoos);
         $retval['translated_title'] = ucwords($this->mvc->i18n->get('title_' . $default_ux . '_ux'));
         $retval['title'] = ucwords($default_ux);
-        $retval['css'] = $repository->osgroup . ' ' . $default_ux;
+        $retval['css'] = $group . ' ' . $default_ux;
 
         $localurl = $this->mvc->dispatcher->generate_url(
             'repositories',
@@ -65,7 +68,7 @@ class com_meego_packages_controllers_repository
             $this->request
         );
 
-        $retval['url'] = $localurl . mb_strtolower($repository->os) . '/' . $repository->osversion . '/' . $default_ux;
+        $retval['url'] = $localurl . mb_strtolower($os->name) . '/' . $os->version . '/' . $default_ux;
 
         return $retval;
     }
@@ -90,30 +93,24 @@ class com_meego_packages_controllers_repository
             {
                 $repository->os = $this->mvc->configuration->os_map[$repository->os];
 
-                $this->data['oses'][$repository->os . ' ' . $repository->osversion]['title'] = $repository->os . ' ' . $repository->osversion;
+                $os = new com_meego_os($repository->osversion);
 
-                if (! strlen($repository->osux))
+                $this->data['oses'][$repository->os . ' ' . $os->version]['title'] = $repository->os . ' ' . $os->version;//$repository->osversion;
+
+                $ux = new com_meego_ux($repository->osux);
+
+                if (! strlen($ux->name))
                 {
                     // No UX means a core repo, so we populate all UXes
                     foreach($this->mvc->configuration->os_ux as $configured_ux => $configured_ux_title)
                     {
-                        $this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$configured_ux] = $this->populate_repo_ux($repository, $configured_ux);
+                        $this->data['oses'][$repository->os . ' ' . $os->version]['uxes'][$configured_ux] = $this->populate_repo_ux($os, $ux,  $repository->osgroup, $configured_ux);
                     }
                 }
                 else
                 {
-                    $this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux] = $this->populate_repo_ux($repository);
+                    $this->data['oses'][$repository->os . ' ' . $os->version]['uxes'][$ux->name] = $this->populate_repo_ux($os, $ux, $repository->osgroup);
                 }
-/*
-                $translated_title = $this->mvc->i18n->get('title_' . $repository->osux . '_ux');
-                $this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux]['translated_title'] = $translated_title;
-
-                $this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux]['title'] = ucfirst($repository->osux);
-                $this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux]['css'] = $repository->osgroup . ' ' . $repository->osux;
-                $this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux]['url'] = $prefix . mb_strtolower($repository->os) . '/' . $repository->osversion . '/' . $repository->osux;
-*/
-                //$this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux]['groups'][$repository->osgroup]['title'] = ucfirst($repository->osgroup);
-                //$this->data['oses'][$repository->os . ' ' . $repository->osversion]['uxes'][$repository->osux]['groups'][$repository->osgroup]['repositories'][] = $repository;
             }
         }
     }
@@ -128,35 +125,35 @@ class com_meego_packages_controllers_repository
 
         $this->data['repositories'] = array();
 
-        $storage = new midgard_query_storage('com_meego_repository');
+        $storage = new midgard_query_storage('com_meego_package_repository_project');
 
         $qc = new midgard_query_constraint_group('AND');
         $qc->add_constraint(new midgard_query_constraint(
-            new midgard_query_property('disabledownload', $storage),
+            new midgard_query_property('repodisabledownload', $storage),
             '=',
             new midgard_query_value(false)
         ));
         $qc->add_constraint(new midgard_query_constraint(
-            new midgard_query_property('os', $storage),
+            new midgard_query_property('repoos', $storage),
             '=',
             new midgard_query_value($args['os'])
         ));
         $qc->add_constraint(new midgard_query_constraint(
-            new midgard_query_property('osversion', $storage),
+            new midgard_query_property('repoosversion', $storage),
             '=',
             new midgard_query_value($args['version'])
         ));
 
         $qc2 = new midgard_query_constraint_group('OR');
         $qc2->add_constraint(new midgard_query_constraint(
-            new midgard_query_property('osux', $storage),
+            new midgard_query_property('repoosux', $storage),
             '=',
             new midgard_query_value($args['ux'])
         ));
 
         $qc3 = new midgard_query_constraint_group('AND');
         $qc3->add_constraint(new midgard_query_constraint(
-            new midgard_query_property('osux', $storage),
+            new midgard_query_property('repoosux', $storage),
             '=',
             new midgard_query_value('')
         ));
@@ -166,11 +163,17 @@ class com_meego_packages_controllers_repository
         foreach ($this->mvc->configuration->os_groups as $os_group => $os_group_title)
         {
             $qc4->add_constraint(new midgard_query_constraint(
-                new midgard_query_property('osgroup', $storage),
+                new midgard_query_property('repoosgroup', $storage),
                 '=',
                 new midgard_query_value($os_group)
             ));
         }
+
+        $qc4->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('repoosgroup', $storage),
+            '=',
+            new midgard_query_value('')
+        ));
 
         $qc3->add_constraint($qc4);
         $qc2->add_constraint($qc3);
@@ -179,7 +182,7 @@ class com_meego_packages_controllers_repository
         $q = new midgard_query_select($storage);
 
         $q->set_constraint($qc);
-        $q->add_order(new midgard_query_property('title', $storage), SORT_ASC);
+        $q->add_order(new midgard_query_property('repotitle', $storage), SORT_ASC);
         $q->execute();
 
         $repositories = $q->list_objects();
@@ -189,18 +192,14 @@ class com_meego_packages_controllers_repository
         {
             (++$cnt % 2 == 0) ? $repository->rawclass = 'even' : $repository->rawclass = 'odd';
 
-            // get the name of the project the repository belongs to
-            $project = new com_meego_project($repository->project);
-            $repository->projectname = $project->name;
-
             $repository->localurl = $this->mvc->dispatcher->generate_url
             (
                 'repository',
                 array
                 (
-                    'project' => $project->name,
-                    'repository' => $repository->name,
-                    'arch' => $repository->arch
+                    'project' => $repository->projectname,
+                    'repository' => $repository->reponame,
+                    'arch' => $repository->repoarch
                 ),
                 $this->request
             );
