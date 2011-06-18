@@ -32,9 +32,9 @@
     <a class="url" tal:attributes="href com_meego_packages/package/repositoryobject/localurl"><span class="repository" tal:content="com_meego_packages/package/repositoryobject/title">MeeGo 1.1 Netbook</span></a>
   </div>
 
-  <div tal:condition="com_meego_packages/package/license" class="license">
+  <div tal:condition="com_meego_packages/package/licensename" class="license">
     <span class="label">License: </span>
-    <span class="license" tal:content="com_meego_packages/package/license">GPL</span>
+    <span class="license" tal:content="com_meego_packages/package/licensename">GPL</span>
   </div>
 
   <mgd:include>cmp-show-package_relations</mgd:include>
