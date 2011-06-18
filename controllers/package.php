@@ -222,6 +222,11 @@ class com_meego_packages_controllers_package
           $this->data['package']->category_name = "";
         }
 
+        // get license info
+        $license = new com_meego_license($this->data['package']->license);
+        $this->data['package']->licensename = $license->name;
+        $this->data['package']->licenseurl = $license->url;
+
         $this->data['package']->localurl = $this->mvc->dispatcher->generate_url
         (
             'package',
