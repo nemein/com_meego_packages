@@ -47,12 +47,6 @@ class com_meego_packages_controllers_package
         $this->data['packages'] = array();
         foreach ($packages as $package)
         {
-            // if user is not logged in then don't show the installfileurl link
-            if ( ! $this->mvc->authentication->is_user() )
-            {
-                $package->installfileurl = false;
-            }
-
             if (empty($package->title))
             {
                 $package->title = $package->name;
@@ -186,12 +180,6 @@ class com_meego_packages_controllers_package
 
         $this->data['package']->description = str_replace("\n\n","<br /><br />",($this->data['package']->description));
 
-        // if user is not logged in then don't show the installfileurl link
-        if ( ! $this->mvc->authentication->is_user() )
-        {
-            $this->data['package']->installfileurl = false;
-        }
-
         if ($this->data['package']->category)
         {
             $qb = com_meego_package_category::new_query_builder();
@@ -256,18 +244,21 @@ class com_meego_packages_controllers_package
 
         foreach ($attachments as $attachment)
         {
-            $this->data['package']->screenshoturl = $this->mvc->dispatcher->generate_url
-            (
-                'attachmentserver_variant',
-                array
+            if (   $attachment->mimetype == 'image/png'
+                && ! $this->data['package']->screenshoturl)
+            {
+                $this->data['package']->screenshoturl = $this->mvc->dispatcher->generate_url
                 (
-                    'guid' => $attachment->guid,
-                    'variant' => 'sidesquare',
-                    'filename' => $attachment->name,
-                ),
-                '/'
-            );
-            break;
+                    'attachmentserver_variant',
+                    array
+                    (
+                        'guid' => $attachment->guid,
+                        'variant' => 'sidesquare',
+                        'filename' => $attachment->name,
+                    ),
+                    '/'
+                );
+            }
         }
 
         $storage = new midgard_query_storage('com_meego_package_relation');
@@ -985,18 +976,22 @@ class com_meego_packages_controllers_package
 
                 foreach ($attachments as $attachment)
                 {
-                    $this->data['packages'][$package->packagetitle]['screenshoturl'] = $this->mvc->dispatcher->generate_url
-                    (
-                        'attachmentserver_variant',
-                        array
+                    if (   $attachment->mimetype == 'image/png'
+                        && ! $this->data['packages'][$package->packagetitle]['screenshoturl'])
+                    {
+                        $this->data['packages'][$package->packagetitle]['screenshoturl'] = $this->mvc->dispatcher->generate_url
                         (
-                            'guid' => $attachment->guid,
-                            'variant' => 'sidesquare',
-                            'filename' => $attachment->name,
-                        ),
-                        '/'
-                    );
-                    break;
+                            'attachmentserver_variant',
+                            array
+                            (
+                                'guid' => $attachment->guid,
+                                'variant' => 'sidesquare',
+                                'filename' => $attachment->name,
+                            ),
+                            '/'
+                        );
+                        break;
+                    }
                 }
             }
 

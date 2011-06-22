@@ -772,18 +772,21 @@ class com_meego_packages_controllers_application
 
                 foreach ($attachments as $attachment)
                 {
-                    $this->data['packages'][$package->packagetitle]['screenshoturl'] = $this->mvc->dispatcher->generate_url
-                    (
-                        'attachmentserver_variant',
-                        array
+                    if (   $attachment->mimetype == 'image/png'
+                        && ! $this->data['packages'][$package->packagetitle]['screenshoturl'])
+                    {
+                        $this->data['packages'][$package->packagetitle]['screenshoturl'] = $this->mvc->dispatcher->generate_url
                         (
-                            'guid' => $attachment->guid,
-                            'variant' => 'sidesquare',
-                            'filename' => $attachment->name,
-                        ),
-                        '/'
-                    );
-                    break;
+                            'attachmentserver_variant',
+                            array
+                            (
+                                'guid' => $attachment->guid,
+                                'variant' => 'sidesquare',
+                                'filename' => $attachment->name,
+                            ),
+                            '/'
+                        );
+                    }
                 }
             }
 
