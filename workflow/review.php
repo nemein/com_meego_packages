@@ -82,7 +82,6 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
             )
         );
         $find_form_action->addOutNode($get_form);
-
         $get_review = new ezcWorkflowNodeInput
         (
             array
@@ -91,8 +90,34 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
             )
         );
         $get_form->addOutNode($get_review);
-        $get_review->addoutNode($workflow->endNode);
-        //TODO: Add workflow action for notifying BOSS
+        $distill_review = new ezcWorkflowNodeAction
+        (
+            array
+            (
+                'class' => 'com_meego_packages_workflow_action_distillreview'
+            )
+        ); 
+        $get_review->addoutNode($distill_review);
+
+        $check_boolean = new ezcWorkflowNodeInput
+        (
+            array
+            (
+                'distilled_review' => new ezcWorkflowConditionIsBool()
+            )
+        );
+        $distill_review->addoutNode($check_boolean);
+
+        $notify_boss = new ezcWorkflowNodeAction
+        (
+            array
+            (
+                'class' => 'com_meego_packages_workflow_action_notifyboss',
+            )
+        );
+        $check_boolean->addoutNode($notify_boss);
+
+        $notify_boss->addoutNode($workflow->endNode);
 
         return $workflow;
     }
@@ -119,7 +144,6 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
         $workflow = $this->get();
 
         $execution = new midgardmvc_helper_workflow_execution_interactive($workflow, $execution_guid);
-
         $execution->resume($args);
 
         $values = array();
