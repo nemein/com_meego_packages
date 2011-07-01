@@ -3,21 +3,22 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
 {
     public function can_handle(midgard_object $object)
     {
-        if (!$object instanceof com_meego_package)
+        if (! $object instanceof com_meego_package)
         {
             return false;
         }
 
-        if (!midgardmvc_core::get_instance()->authentication->is_user())
+        if (! midgardmvc_core::get_instance()->authentication->is_user())
         {
             return false;
         }
 
         // Check that the package's repository has a form
         $repository = new com_meego_repository($object->repository);
-        if (!midgardmvc_ui_forms_generator::has_object_forms($repository))
+
+        if (! midgardmvc_ui_forms_generator::has_object_forms($repository))
         {
-          return false;
+            return false;
         }
 
         //TODO: Check that object is reviewable
@@ -44,6 +45,7 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
         $q->set_constraint($qc);
 
         $res = $q->execute();
+
         if ($q->get_results_count() != 0)
         {
             return false;
