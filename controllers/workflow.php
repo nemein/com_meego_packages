@@ -3,6 +3,7 @@ class com_meego_packages_controllers_workflow
 {
     var $mvc = null;
     var $request = null;
+    var $package = null;
 
     public function __construct(midgardmvc_core_request $request)
     {
@@ -25,6 +26,7 @@ class com_meego_packages_controllers_workflow
     public function post_start_package_instance(array $args)
     {
         $this->package = $this->load_package_instance($args);
+
         $workflow_class = $this->load_workflow($args);
 
         $this->mvc->component->load_library('Workflow');
@@ -167,9 +169,10 @@ class com_meego_packages_controllers_workflow
     private function get_form(ezcWorkflowExecution $execution)
     {
         $list_of_variables = $execution->getVariables();
+
         foreach ($list_of_variables as $name => $value)
         {
-            if (!mgd_is_guid($value))
+            if (! mgd_is_guid($value))
             {
                 continue;
             }
@@ -186,33 +189,41 @@ class com_meego_packages_controllers_workflow
             return array
             (
                 'db_form' => $db_form,
-                'form' => midgardmvc_ui_forms_generator::get_by_form($db_form)
+                'form' => midgardmvc_ui_forms_generator::get_by_form($db_form, false)
             );
         }
+
         return null;
     }
 
     private function load_package_instance(array $args)
     {
         $qb = com_meego_package::new_query_builder();
+
         $qb->add_constraint('name', '=', $args['package']);
         $qb->add_constraint('version', '=', $args['version']);
         $qb->add_constraint('repository.name', '=', $args['repository']);
+        $qb->add_constraint('repository.arch', '=', $args['arch']);
+
         $packages = $qb->execute();
+
         if (count($packages) == 0)
         {
             throw new midgardmvc_exception_notfound("Package not found");
         }
+
         return $packages[0];
     }
 
     private function load_workflow(array $args)
     {
         $list_of_workflows = midgardmvc_helper_workflow_utils::get_workflows_for_object($this->package);
-        if (!isset($list_of_workflows[$args['workflow']]))
+
+        if (! isset($list_of_workflows[$args['workflow']]))
         {
             throw new midgardmvc_exception_notfound("Unable to run workflow {$args['workflow']} for this package instance");
         }
+
         return $list_of_workflows[$args['workflow']]['provider'];
     }
 }
