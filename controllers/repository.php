@@ -95,7 +95,7 @@ class com_meego_packages_controllers_repository
 
                 $os = new com_meego_os($repository->osversion);
 
-                $this->data['oses'][$repository->os . ' ' . $os->version]['title'] = $repository->os . ' ' . $os->version;//$repository->osversion;
+                $this->data['oses'][$repository->os . ' ' . $os->version]['title'] = $repository->os . ' ' . ucfirst($os->version);//$repository->osversion;
 
                 $ux = new com_meego_ux($repository->osux);
 
