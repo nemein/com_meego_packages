@@ -83,6 +83,11 @@ position: relative;
 top: 3px;
 }
 
+span.stars img {
+position: relative;
+top: 2px;
+}
+
 .package div.details div.description {
 margin: 1em 0 1em 0;
 }
