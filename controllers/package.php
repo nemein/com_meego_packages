@@ -238,26 +238,49 @@ class com_meego_packages_controllers_package
             $this->request
         );
 
+        $this->data['package']->iconurl = false;
         $this->data['package']->screenshoturl = false;
 
         $attachments = $this->data['package']->list_attachments();
 
+        $_icon_marker = 'icon.png';
+        $_screenshot_marker = 'screenshot.png';
+
         foreach ($attachments as $attachment)
         {
-            if (   $attachment->mimetype == 'image/png'
-                && ! $this->data['package']->screenshoturl)
+            if ($attachment->mimetype == 'image/png')
             {
-                $this->data['package']->screenshoturl = $this->mvc->dispatcher->generate_url
-                (
-                    'attachmentserver_variant',
-                    array
+                if (    strrpos($attachment->name, $_screenshot_marker) !== false
+                     && ! $this->data['package']->screenshoturl)
+                {
+                    $this->data['package']->screenshoturl = $this->mvc->dispatcher->generate_url
                     (
-                        'guid' => $attachment->guid,
-                        'variant' => 'sidesquare',
-                        'filename' => $attachment->name,
-                    ),
-                    '/'
-                );
+                        'attachmentserver_variant',
+                        array
+                        (
+                            'guid' => $attachment->guid,
+                            'variant' => 'sidesquare',
+                            'filename' => $attachment->name,
+                        ),
+                        '/'
+                    );
+                }
+
+                if (    strrpos($attachment->name, $_icon_marker) !== false
+                     && ! $this->data['package']->iconurl)
+                {
+                    $this->data['package']->iconurl = $this->mvc->dispatcher->generate_url
+                    (
+                        'attachmentserver_variant',
+                        array
+                        (
+                            'guid' => $attachment->guid,
+                            'variant' => '',
+                            'filename' => $attachment->name,
+                        ),
+                        '/'
+                    );
+                }
             }
         }
 
@@ -363,7 +386,12 @@ class com_meego_packages_controllers_package
         unset($relations, $relation, $_relation, $_url, $typemap);
 
         $list_of_workflows = midgardmvc_helper_workflow_utils::get_workflows_for_object($this->data['package']);
+
+        // @todo: get completed workflows and offer an index page for admins
+        // to list of forms and get an accumulated result
+
         $this->data['workflows'] = array();
+
         foreach ($list_of_workflows as $workflow => $workflow_data)
         {
             $this->data['workflows'][] = array
