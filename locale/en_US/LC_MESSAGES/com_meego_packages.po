@@ -115,6 +115,9 @@ msgstr "Tablet"
 msgid "title_allux_ux"
 msgstr "Universal"
 
+msgid "title_harmattan_ux"
+msgstr "Harmattan"
+
 msgid "warning_no_base_categories"
 msgstr "There are no base categories defined in the system. Administrators need to create those before they will be visible."
 
