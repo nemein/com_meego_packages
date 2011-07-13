@@ -764,28 +764,50 @@ class com_meego_packages_controllers_application
                 // set a longer description
                 $this->data['packages'][$package->packagetitle]['description'] = $package->packagedescription;
 
-                // set a screenshoturl if the package object has any
+                $this->data['packages'][$package->packagetitle]['iconurl'] = false;
                 $this->data['packages'][$package->packagetitle]['screenshoturl'] = false;
 
                 $_package = new com_meego_package($package->packageid);
                 $attachments = $_package->list_attachments();
 
+                $_icon_marker = 'icon.png';
+                $_screenshot_marker = 'screenshot.png';
+
                 foreach ($attachments as $attachment)
                 {
-                    if (   $attachment->mimetype == 'image/png'
-                        && ! $this->data['packages'][$package->packagetitle]['screenshoturl'])
+                    if ($attachment->mimetype == 'image/png')
                     {
-                        $this->data['packages'][$package->packagetitle]['screenshoturl'] = $this->mvc->dispatcher->generate_url
-                        (
-                            'attachmentserver_variant',
-                            array
+                        if (    strrpos($attachment->name, $_screenshot_marker) !== false
+                             && ! $this->data['packages'][$package->packagetitle]['screenshoturl'])
+                        {
+                            $this->data['packages'][$package->packagetitle]['screenshoturl'] = $this->mvc->dispatcher->generate_url
                             (
-                                'guid' => $attachment->guid,
-                                'variant' => 'sidesquare',
-                                'filename' => $attachment->name,
-                            ),
-                            '/'
-                        );
+                                'attachmentserver_variant',
+                                array
+                                (
+                                    'guid' => $attachment->guid,
+                                    'variant' => 'sidesquare',
+                                    'filename' => $attachment->name,
+                                ),
+                                '/'
+                            );
+                        }
+
+                        if (    strrpos($attachment->name, $_icon_marker) !== false
+                             && ! $this->data['packages'][$package->packagetitle]['iconurl'])
+                        {
+                            $this->data['packages'][$package->packagetitle]['iconurl'] = $this->mvc->dispatcher->generate_url
+                            (
+                                'attachmentserver_variant',
+                                array
+                                (
+                                    'guid' => $attachment->guid,
+                                    'variant' => '',
+                                    'filename' => $attachment->name,
+                                ),
+                                '/'
+                            );
+                        }
                     }
                 }
             }
