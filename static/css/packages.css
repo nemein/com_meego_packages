@@ -159,6 +159,11 @@ li.ux a div.tablet {
 background-image: url(/midgardmvc-static/com_meego_packages/images/device-tablets.png);
 }
 
+li.ux a div.core.harmattan,
+li.ux a div.harmattan {
+background-image: url(/midgardmvc-static/com_meego_packages/images/device-handsets.png);
+}
+
 li.ux div {
 text-align: center;
 }
