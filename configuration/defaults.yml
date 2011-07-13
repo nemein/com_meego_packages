@@ -1,7 +1,7 @@
 # user profile URL prefix
 user_profile_prefix: http://meego.com/users/
 
-# thumbnail sizes for screenshots
+# thumbnail sizes for screenshots and icons
 attachmentserver_variants:
     sidesquare:
         croppedThumbnail:
@@ -11,11 +11,15 @@ attachmentserver_variants:
         croppedThumbnail:
             width: 100
             height: 100
+    icon:
+        croppedThumbnail:
+            width: 80
+            height: 80
 
 # available workflows
 workflows:
     review:
-        label: Review
+        label: Community QA
         provider: com_meego_packages_workflow_review
 
 # define the latest OS and its version
@@ -26,7 +30,8 @@ latest:
 
 # map of os names used in the db and their pretty names used in the UI
 os_map:
-    maemo: Maemo
+    maemo.org: Harmattan
+    maemo: Harmattan
     meego: MeeGo
     debian: Debian
 
