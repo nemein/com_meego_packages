@@ -5,12 +5,16 @@
 <div class="list">
     <div class="header">
         <div class="title">Title</div>
-        <div class="projectname">Version</div>
+        <div class="version">Version</div>
+        <div class="posts" tal:condition="true:manage_workflows">Posted Forms</div>
     </div>
     <div tal:attributes="class php:'element ' . package.rawclass" tal:repeat="package com_meego_packages/packages">
         <div class="title">
             <a tal:attributes="href package/localurl" tal:content="package/title">Chromium</a>
         </div>
         <div class="version" tal:content="package/version">1.0</div>
+        <div class="posts" tal:condition="true:manage_workflows">
+            <a tal:condition="true:package/posts" tal:attributes="href package/posts">See posts</a>
+        </div>
     </div>
 </div>
