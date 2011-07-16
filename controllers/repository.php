@@ -263,9 +263,15 @@ class com_meego_packages_controllers_repository
 
         $packages = $q->list_objects();
 
+        // by default noone can manage workflows
+        $this->request->set_data_item('manage_workflows', false);
+
         $cnt = 0;
         foreach ($packages as $package)
         {
+            // by default there are no posted forms
+            $package->posts = false;
+
             (++$cnt % 2 == 0) ? $package->rawclass = 'even' : $package->rawclass = 'odd';
 
             if (empty($package->title))
@@ -286,11 +292,37 @@ class com_meego_packages_controllers_repository
                 ),
                 $this->request
             );
+
+            // see if packages in this repo have forms submitted
+            $storage = new midgard_query_storage('com_meego_package_forms_posted');
+
+            $q = new midgard_query_select($storage);
+
+            $q->set_constraint(new midgard_query_constraint(
+                new midgard_query_property('packageguid'),
+                '=',
+                new midgard_query_value($package->guid)
+            ));
+
+            $q->execute();
+
+            if ($q->get_results_count())
+            {
+                $_url = $this->mvc->dispatcher->generate_url
+                (
+                    'package_posted_forms',
+                    array
+                    (
+                        'package' => $package->guid,
+                    ),
+                    'com_meego_packages'
+                );
+                $package->posts = $_url;
+            }
+
+
             $this->data['packages'][] = $package;
         }
-
-        // set a flag to allow workflow management
-        $this->request->set_data_item('manage_workflows', false);
 
         $user = $this->mvc->authentication->get_user();
 
