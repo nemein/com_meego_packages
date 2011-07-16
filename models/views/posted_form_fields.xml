@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Schema xmlns="http://www.midgard-project.org/repligard/1.4">
+
+    <view name="com_meego_package_form_posted_fields" table="midgardmvc_ui_forms_form_instance_field">
+
+        <join type="left" class="midgardmvc_ui_forms_form_instance">
+            <condition left="midgardmvc_ui_forms_form_instance_field:form" right="midgardmvc_ui_forms_form_instance:id" />
+        </join>
+
+        <join type="left" class="midgardmvc_ui_forms_form_field">
+            <condition left="midgardmvc_ui_forms_form_instance_field:field" right="midgardmvc_ui_forms_form_field:guid" />
+        </join>
+
+        <property name="forminstance" use="midgardmvc_ui_forms_form_instance:id">
+            <description>ID of form instance</description>
+        </property>
+
+        <property name="forminstanceguid" use="midgardmvc_ui_forms_form_instance:guid">
+            <description>GUID of form instance</description>
+        </property>
+
+        <property name="title" use="midgardmvc_ui_forms_form_field:title">
+            <description>Title of the field</description>
+        </property>
+        <property name="field" use="midgardmvc_ui_forms_form_field:field">
+            <description>Field type</description>
+        </property>
+        <property name="widget" use="midgardmvc_ui_forms_form_field:widget">
+            <description>Widget type</description>
+        </property>
+
+        <property name="stringvalue" use="midgardmvc_ui_forms_form_instance_field:stringvalue">
+            <description>String value</description>
+        </property>
+        <property name="booleanvalue" use="midgardmvc_ui_forms_form_instance_field:booleanvalue">
+            <description>Boolean value</description>
+        </property>
+    </view>
+
+</Schema>
