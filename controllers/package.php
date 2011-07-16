@@ -1208,4 +1208,87 @@ class com_meego_packages_controllers_package
 
         return $retval;
     }
+
+
+    /**
+     * generates index of posted forms for the given package
+     */
+    public function get_posted_forms_index(array $args)
+    {
+        // @todo: check user
+
+        $cnt = 0;
+
+        $this->data['title'] = "Posted Forms";
+
+        $storage = new midgard_query_storage('com_meego_package_forms_posted');
+
+        $q = new midgard_query_select($storage);
+
+        $q->set_constraint(new midgard_query_constraint(
+            new midgard_query_property('packageguid'),
+            '=',
+            new midgard_query_value($args['package'])
+        ));
+
+        $q->execute();
+
+        $posts = $q->list_objects();
+
+        foreach ($posts as $post)
+        {
+            (++$cnt % 2 == 0) ? $post->rawclass = 'even' : $post->rawclass = 'odd';
+
+            $post->localurl = $this->mvc->dispatcher->generate_url
+            (
+                'package_posted_form_instance',
+                array
+                (
+                    'forminstance' => $post->forminstanceguid,
+                ),
+                $this->request
+            );
+
+            // get the login name for the submitter
+            $qb = new midgard_query_builder('midgard_user');
+            $qb->add_constraint('person', '=', $post->submitterguid);
+
+            $users = $qb->execute();
+
+            if (count($users))
+            {
+                $post->submitter = $users[0]->login;
+            }
+
+            unset($qb);
+
+            $this->data['posts'][] = $post;
+        }
+    }
+
+    /**
+     * retreives a form instance
+     */
+    public function get_posted_form_instance(array $args)
+    {
+        // @todo: check user
+        $this->forminstance = new midgardmvc_ui_forms_form_instance($args['forminstance']);
+        $form = new midgardmvc_ui_forms_form($this->forminstance->form);
+
+        $qb = new midgard_query_builder('midgard_user');
+        $qb->add_constraint('person', '=', $this->forminstance->metadata->creator);
+
+        $users = $qb->execute();
+
+        if (count($users))
+        {
+            $submitter = $users[0]->login;
+        }
+
+        unset($qb);
+
+        $this->data['title'] = $form->title . " submitted by " . $submitter;
+        $this->data['form'] = midgardmvc_ui_forms_load::load_form(midgardmvc_ui_forms_generator::get_by_guid($form->guid), $this->forminstance);
+        $this->data['form']->set_readonly(true);
+    }
 }

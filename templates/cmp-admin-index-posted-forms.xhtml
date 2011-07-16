@@ -1,0 +1,20 @@
+<h1 tal:condition="com_meego_packages/title" tal:content="com_meego_packages/title">title</h1>
+
+<h2 tal:condition="true:com_meego_packages/packagename">Package: ${com_meego_packages/packagename} in repository: ....</h2>
+
+<div class="list">
+    <div class="header">
+        <div class="title">Form Title</div>
+        <div class="version">Submitter</div>
+        <div class="posts">Result</div>
+    </div>
+    <div tal:attributes="class php:'element ' . post.rawclass" tal:repeat="post com_meego_packages/posts">
+        <div class="title">
+            <a tal:attributes="href post/localurl" tal:content="post/formtitle">form title</a>
+        </div>
+        <div class="version" tal:content="post/submitter">submitter</div>
+        <div class="posts">
+            <a tal:condition="true:post/localurl" tal:attributes="href post/localurl">See posted form</a>
+        </div>
+    </div>
+</div>
