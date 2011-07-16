@@ -26,14 +26,20 @@ div.section div.package {
 margin: 2em 0 1em 0;
 }
 
+.package div.icon,
 .package div.screenshot,
 .package div.details {
 display: inline-block;
 }
 
+.package div.icon,
 .package div.screenshot {
 float: left;
 margin: 0 1em 0 0;
+}
+
+.package div.icon img {
+width: 80px;
 }
 
 .package div.screenshot img {
@@ -45,6 +51,12 @@ width: 460px;
 }
 
 .package div.screenshot.missing {
+background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
+width: 85px;
+height: 60px;
+}
+
+.package div.icon.missing {
 background-image: url(/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png);
 width: 85px;
 height: 60px;
@@ -211,7 +223,12 @@ width: 22em;
 
 div.list div.header .projectname,
 div.list div.element .projectname {
-width: 22em;
+width: 15em;
+}
+
+div.list div.header .version,
+div.list div.element .version {
+width: 10em;
 }
 
 div.nohits,
