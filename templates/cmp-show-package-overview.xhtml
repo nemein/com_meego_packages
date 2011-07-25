@@ -69,7 +69,19 @@
                 <div class="date" tal:content="rating/date">Date</div>
               </li>
             </ul>
+        </div>
 
+        <!-- show results of submitted forms -->
+        <div class="forms" tal:condition="true: package/submitted_forms">
+            <h2 i18n:domain="com_meego_" i18n:translate="'title_submitted_forms'"/>
+
+            <ul class="list">
+              <li tal:repeat="form package/submitted_forms">
+                <h3 tal:content="form/title"></h3>
+                <div tal:condition="true: form/submitters" class="submitters">
+                </div>
+              </li>
+            </ul>
         </div>
 
     </div>
