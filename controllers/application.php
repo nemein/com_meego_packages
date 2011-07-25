@@ -317,7 +317,8 @@ class com_meego_packages_controllers_application
 
             // make sure we have enough unique apps for set_data()
             $cnt = $limit;
-            do {
+            do
+            {
                 $localpackages = array_slice($packages, $offset, $cnt, true);
             } while (   self::count_unique_apps($localpackages) < $limit
                      && ($offset + $cnt++) <= count($packages));
@@ -481,7 +482,8 @@ class com_meego_packages_controllers_application
                 $packages,
                 function($a, $b)
                 {
-                    if ($a->packagetitle == $b->packagetitle) {
+                    if ($a->packagetitle == $b->packagetitle)
+                    {
                         return 0;
                     }
                     return ($a->packagetitle < $b->packagetitle) ? -1 : 1;
