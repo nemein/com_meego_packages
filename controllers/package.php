@@ -1209,61 +1209,30 @@ class com_meego_packages_controllers_package
         return $retval;
     }
 
-
     /**
      * generates index of posted forms for the given package
      */
     public function get_posted_forms_index(array $args)
     {
         // @todo: check user
+        // @todo: localize title
+        $current_page = 1;
 
-        $cnt = 0;
+        if (   array_key_exists('page', $_GET)
+            && is_numeric($_GET['page'])
+            && $_GET['page'] > 0)
+        {
+            $current_page = $_GET['page'];
+        }
+
+        $forms = com_meego_packages_forms::get_posted_forms($args['package'], $current_page);
 
         $this->data['title'] = "Posted Forms";
-
-        $storage = new midgard_query_storage('com_meego_package_forms_posted');
-
-        $q = new midgard_query_select($storage);
-
-        $q->set_constraint(new midgard_query_constraint(
-            new midgard_query_property('packageguid'),
-            '=',
-            new midgard_query_value($args['package'])
-        ));
-
-        $q->execute();
-
-        $posts = $q->list_objects();
-
-        foreach ($posts as $post)
-        {
-            (++$cnt % 2 == 0) ? $post->rawclass = 'even' : $post->rawclass = 'odd';
-
-            $post->localurl = $this->mvc->dispatcher->generate_url
-            (
-                'package_posted_form_instance',
-                array
-                (
-                    'forminstance' => $post->forminstanceguid,
-                ),
-                $this->request
-            );
-
-            // get the login name for the submitter
-            $qb = new midgard_query_builder('midgard_user');
-            $qb->add_constraint('person', '=', $post->submitterguid);
-
-            $users = $qb->execute();
-
-            if (count($users))
-            {
-                $post->submitter = $users[0]->login;
-            }
-
-            unset($qb);
-
-            $this->data['posts'][] = $post;
-        }
+        $this->data['forms'] = $forms['forms'];
+        $this->data['previous_page'] = $forms['previous_page'];
+        $this->data['next_page'] = $forms['next_page'];
+        $this->data['items_shown'] = $forms['items_shown'];
+        $this->data['total_apps'] = $forms['total'];
     }
 
     /**
