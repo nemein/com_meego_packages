@@ -18,7 +18,7 @@ class com_meego_packages_forms
     public function get_posted_forms($package_guid = null, $page = 1)
     {
         $retval = array();
-        $retval['posts'] = null;
+        $retval['forms'] = null;
         $retval['previous_page'] = 1;
         $retval['next_page'] = 1;
 
