@@ -225,3 +225,6 @@ msgstr "Workflows"
 
 msgid "title_create_new_form"
 msgstr "Create new form"
+
+msgid="title_submitted_forms"
+msgstr "Submitted Form(s)"
