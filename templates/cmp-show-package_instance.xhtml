@@ -47,4 +47,6 @@
 
   <div class="ratings" tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_ratings_caching', 'list_ratings', array('to' => com_meego_packages['package'].guid))"></div>
 
+  <div class="forms" tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_packages', 'package_posted_forms', array('package' => com_meego_packages['package'].guid))"></div>
+
 </div>
