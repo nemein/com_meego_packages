@@ -469,6 +469,11 @@ font-weight: bold;
 text-align: center;
 }
 
+/* within list we don't need left margin */
+div.list div.pager {
+margin: 1em 1em 1em 0;
+}
+
 div.pager div {
 display: inline-block;
 }
