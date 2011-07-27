@@ -195,7 +195,7 @@ class com_meego_packages_controllers_application
      *
      * @return array of packagedetails objects
      *
-     * The code will get simples as soon as
+     * The code will get simpler as soon as
      * https://github.com/midgardproject/midgard-core/issues#issue/86
      * is fixed and we can define joined views
      */
@@ -733,6 +733,7 @@ class com_meego_packages_controllers_application
      * the same package will mean 1 item in the final array.
      *
      * @param array of com_meeg_package_details objects
+     *
      */
     public function set_data(array $packages)
     {
