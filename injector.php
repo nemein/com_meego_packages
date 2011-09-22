@@ -69,6 +69,9 @@ class com_meego_packages_injector
 
         $request->set_data_item('repository_index_url', $repository_index_url);
 
+        // populate open workflows
+        $request->set_data_item('repositories', com_meego_packages_controllers_workflow::get_open_workflows());
+
         self::set_breadcrumb($request);
     }
 
