@@ -226,4 +226,46 @@ class com_meego_packages_controllers_workflow
 
         return $list_of_workflows[$args['workflow']]['provider'];
     }
+
+    /**
+     * Retrieves all open workflows with the corresponding
+     * repository's title and URL to browse that repository
+     *
+     * @return array
+     */
+    public function get_open_workflows()
+    {
+        $retval = null;
+
+        $storage = new midgard_query_storage('com_meego_package_repository_form');
+
+        $q = new midgard_query_select($storage);
+
+        $q->execute();
+
+        $forms = $q->list_objects();
+
+        if (count($forms))
+        {
+            foreach ($forms as $form)
+            {
+                $localurl = $this->mvc->dispatcher->generate_url
+                (
+                    'repository',
+                    array
+                    (
+                        'project' => $form->projectname,
+                        'repository' => $form->reponame,
+                        'arch' => $form->repoarch
+                    ),
+                    'com_meego_packages'
+                );
+
+                $item = array('form_title' => $form->formtitle, 'repository_title' => $form->repotitle, 'browse_url' => $localurl);
+            }
+            $retval[] = $item;
+        }
+
+        return $retval;
+    }
 }
