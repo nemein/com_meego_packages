@@ -74,17 +74,12 @@ class com_meego_packages_forms
             );
 
             // get the login name for the submitter
-            $qb = new midgard_query_builder('midgard_user');
-            $qb->add_constraint('person', '=', $post->submitterguid);
+            $user = com_meego_packages_utils::get_user_by_person_guid($post->submitterguid);
 
-            $users = $qb->execute();
-
-            if (count($users))
+            if ($user)
             {
-                $post->submitter = $users[0]->login;
+                $post->submitter = $user->login;
             }
-
-            unset($qb);
 
             if (! isset($retval['forms'][$post->formtitle]['title']))
             {

@@ -1163,40 +1163,31 @@ class com_meego_packages_controllers_package
                 $rating->date = gmdate('Y-m-d H:i e', strtotime($rating->posted));
                 // avatar part
                 $rating->avatar = false;
+
                 if ($rating->authorguid)
                 {
                     $username = null;
 
                     // get the midgard user name from rating->authorguid
-                    $qb = new midgard_query_builder('midgard_user');
-                    $qb->add_constraint('person', '=', $rating->authorguid);
+                    $user = com_meego_packages_utils::get_user_by_person_guid($rating->authorguid);
 
-                    $users = $qb->execute();
-
-                    if (count($users))
+                    if ($user)
                     {
-                        $username = $users[0]->login;
-                    }
+                        $username = $user->login;
 
-                    unset($qb);
-
-                    if (count($users) > 0)
-                    {
-                        $username = $users[0]->login;
-                    }
-
-                    if (   $username
-                        && $username != 'admin')
-                    {
-                        // get avatar and url to user profile page only if the user is not the midgard admin
-                        try
+                        if (   $username
+                            && $username != 'admin')
                         {
-                            $rating->avatar = $this->mvc->dispatcher->generate_url('meego_avatar', array('username' => $username), '/');
-                            $rating->avatarurl = $this->mvc->configuration->user_profile_prefix . $username;
-                        }
-                        catch (Exception $e)
-                        {
-                            // no avatar
+                            // get avatar and url to user profile page only if the user is not the midgard admin
+                            try
+                            {
+                                $rating->avatar = $this->mvc->dispatcher->generate_url('meego_avatar', array('username' => $username), '/');
+                                $rating->avatarurl = $this->mvc->configuration->user_profile_prefix . $username;
+                            }
+                            catch (Exception $e)
+                            {
+                                // no avatar
+                            }
                         }
                     }
                 }
@@ -1244,20 +1235,14 @@ class com_meego_packages_controllers_package
         $this->forminstance = new midgardmvc_ui_forms_form_instance($args['forminstance']);
         $form = new midgardmvc_ui_forms_form($this->forminstance->form);
 
-        $qb = new midgard_query_builder('midgard_user');
-        $qb->add_constraint('person', '=', $this->forminstance->metadata->creator);
+        // get user info
+        $user = com_meego_packages_utils::get_user_by_person_guid($this->forminstance->metadata->creator);
 
-        $users = $qb->execute();
-
-        if (count($users))
+        if ($user)
         {
-            $submitter = $users[0]->login;
+            $this->data['title'] = $form->title . " submitted by " . $user->login;
+            $this->data['form'] = midgardmvc_ui_forms_load::load_form(midgardmvc_ui_forms_generator::get_by_guid($form->guid), $this->forminstance);
+            $this->data['form']->set_readonly(true);
         }
-
-        unset($qb);
-
-        $this->data['title'] = $form->title . " submitted by " . $submitter;
-        $this->data['form'] = midgardmvc_ui_forms_load::load_form(midgardmvc_ui_forms_generator::get_by_guid($form->guid), $this->forminstance);
-        $this->data['form']->set_readonly(true);
     }
 }
