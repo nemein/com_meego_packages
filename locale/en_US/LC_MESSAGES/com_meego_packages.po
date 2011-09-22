@@ -220,11 +220,18 @@ msgstr "Previous Page"
 msgid "label_next_page"
 msgstr "Next Page"
 
-msgid "title_workflows"
-msgstr "Workflows"
+msgid "title_manage_workflows"
+msgstr "Manage Workflows"
 
 msgid "title_create_new_form"
 msgstr "Create new form"
 
-msgid="title_submitted_forms"
+msgid "title_submitted_forms"
 msgstr "Submitted Form(s)"
+
+msgid "title_open_workflows"
+msgstr "Open Workflows"
+
+msgid "label_form_for_repo"
+msgstr "${form_title} for ${repo_title}"
+
