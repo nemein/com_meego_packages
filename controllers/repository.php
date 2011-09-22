@@ -340,6 +340,7 @@ class com_meego_packages_controllers_repository
                 ),
                 'midgardmvc_ui_forms'
             ));
+
             // @todo: get a list of forms
             $forms = null;
 
