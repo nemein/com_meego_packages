@@ -549,3 +549,18 @@ div.obs {
 margin: 1em 0 0 0;
 }
 
+div.show_form form label ul.radio {
+margin: 0 0 0 1em;
+padding: 0;
+}
+
+div.show_form form label ul.radio li {
+display: inline-block;
+margin: 10px;
+list-style: none;
+}
+
+div.show_form form label ul.radio li span,
+div.show_form form label ul.radio li input {
+display: inline;
+}
