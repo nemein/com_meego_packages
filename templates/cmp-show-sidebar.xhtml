@@ -45,17 +45,20 @@
                     </div>
                 </div>
 
-                <div class="section" tal:condition="true: repositories">
+                <div class="section" tal:condition="true: workflows">
                     <div id="block-menu_block-1" class="block block-menu_block region-odd odd region-count-1 count-1 block-garage">
                         <h2 class="title" i18n:domain="com_meego_packages" i18n:translate="'title_open_workflows'"></h2>
                         <div class="content">
                             <div class="menu-block-1 menu-name-primary-links parent-mlid-0 menu-level-2">
                                 <ul class="menu">
-                                    <li class="leaf" tal:repeat="repository repositories">
-                                        <a tal:attributes="href repository/browse_url" i18n:domain="com_meego_packages" i18n:translate="'label_form_for_repo'">
-                                            <tal:block i18n:name="form_title">${repository/form_title}</tal:block>
-                                            <tal:block i18n:name="repo_title">${repository/repository_title}</tal:block>
+                                    <li class="leaf" tal:repeat="workflow workflows">
+                                        <a tal:attributes="href workflow/browse_url">${workflow/form_title}</a>
+                                        <!--
+                                        <a tal:attributes="href workflow/browse_url" i18n:domain="com_meego_packages" i18n:translate="'label_form_for_repo'">
+                                            <tal:block i18n:name="form_title">${workflow/form_title}</tal:block>
+                                            <tal:block i18n:name="repo_title">${workflow/repository_title}</tal:block>
                                         </a>
+                                        -->
                                     </li>
                                 </ul>
                             </div>
