@@ -70,7 +70,24 @@ class com_meego_packages_injector
         $request->set_data_item('repository_index_url', $repository_index_url);
 
         // populate open workflows
-        $request->set_data_item('repositories', com_meego_packages_controllers_workflow::get_open_workflows());
+        $request->set_data_item('workflows', false);
+
+        $matched = $request->get_route()->get_matched();//$request->get_route()->check_match($request->get_path());
+
+        if (   is_array($matched)
+            && array_key_exists('os', $matched)
+            && array_key_exists('version', $matched)
+            && array_key_exists('ux', $matched))
+        {
+            // populate links if there any workflow that matches this OS, OS version and UX combo
+            $workflows = com_meego_packages_controllers_workflow::get_open_workflows_for_osux(
+                $matched['os'],
+                $matched['version'],
+                $matched['ux']
+            );
+
+            $request->set_data_item('workflows', $workflows);
+        }
 
         self::set_breadcrumb($request);
     }
