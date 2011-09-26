@@ -549,17 +549,25 @@ div.obs {
 margin: 1em 0 0 0;
 }
 
+div.workflow form label ul.radio
+div.edit_form form label ul.radio
 div.show_form form label ul.radio {
 margin: 0 0 0 1em;
 padding: 0;
 }
 
+div.workflow form label ul.radio li,
+div.edit_form form label ul.radio li,
 div.show_form form label ul.radio li {
 display: inline-block;
 margin: 10px;
 list-style: none;
 }
 
+div.workflow form label ul.radio li span,
+div.workflow form label ul.radio li input,
+div.edit_form form label ul.radio li span,
+div.edit_form form label ul.radio li input,
 div.show_form form label ul.radio li span,
 div.show_form form label ul.radio li input {
 display: inline;
