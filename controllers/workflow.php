@@ -268,4 +268,78 @@ class com_meego_packages_controllers_workflow
 
         return $retval;
     }
+
+    /**
+     * Retrieves all open workflows for the specified OS / UX combo
+     * Returns repository titles, form titles and URLs to browse the repos
+     *
+     * @return array
+     */
+    public function get_open_workflows_for_osux($os = null, $version = null, $ux = null)
+    {
+        $retval = null;
+
+        if (   $os
+            && $version
+            && $ux)
+        {
+            $storage = new midgard_query_storage('com_meego_package_repository_form');
+
+            $q = new midgard_query_select($storage);
+
+            $qc = new midgard_query_constraint_group('AND');
+            $qc->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('repoos'),
+                '=',
+                new midgard_query_value($os)
+            ));
+            $qc->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('repoosversion'),
+                '=',
+                new midgard_query_value($version)
+            ));
+
+            $qc1 = new midgard_query_constraint_group('OR');
+            $qc1->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('repoux'),
+                '=',
+                new midgard_query_value($ux)
+            ));
+            $qc1->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('repoux'),
+                '=',
+                new midgard_query_value('')
+            ));
+
+            $qc->add_constraint($qc1);
+            $q->set_constraint($qc);
+
+            $q->execute();
+
+            $forms = $q->list_objects();
+
+            if (count($forms))
+            {
+                foreach ($forms as $form)
+                {
+                    $localurl = $this->mvc->dispatcher->generate_url
+                    (
+                        'repository',
+                        array
+                        (
+                            'project' => $form->projectname,
+                            'repository' => $form->reponame,
+                            'arch' => $form->repoarch
+                        ),
+                        'com_meego_packages'
+                    );
+
+                    $item = array('form_title' => $form->formtitle, 'repository_title' => $form->repotitle, 'browse_url' => $localurl);
+                    $retval[] = $item;
+                }
+            }
+        }
+
+        return $retval;
+    }
 }
