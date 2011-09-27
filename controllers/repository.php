@@ -306,6 +306,8 @@ class com_meego_packages_controllers_repository
 
             $q->execute();
 
+            // todo: what happens if a package has posts from many different
+            // or workflows
             if ($q->get_results_count())
             {
                 $_url = $this->mvc->dispatcher->generate_url
@@ -326,22 +328,25 @@ class com_meego_packages_controllers_repository
 
         $user = $this->mvc->authentication->get_user();
 
-        if (   $user
-            && $user->is_admin())
+        if ($user)
         {
-            $this->request->set_data_item('manage_workflows', true);
+            if ($user->is_admin())
+            {
+                // admins can manage and create new workflows
+                $this->request->set_data_item('manage_workflows', true);
 
-            $this->request->set_data_item('create_form_url', $this->mvc->dispatcher->generate_url
-            (
-                'form_create',
-                array
+                $this->request->set_data_item('create_form_url', $this->mvc->dispatcher->generate_url
                 (
-                    'parent' => $this->data['repository']->guid
-                ),
-                'midgardmvc_ui_forms'
-            ));
+                    'form_create',
+                    array
+                    (
+                        'parent' => $this->data['repository']->guid
+                    ),
+                    'midgardmvc_ui_forms'
+                ));
+            }
 
-            // @todo: get a list of forms
+            // get a list of forms
             $forms = null;
 
             $storage = new midgard_query_storage('midgardmvc_ui_forms_form');
