@@ -72,6 +72,7 @@ class com_meego_packages_injector
         // populate open workflows
         $request->set_data_item('workflows', false);
 
+        $workflows = null;
         $matched = $request->get_route()->get_matched();//$request->get_route()->check_match($request->get_path());
 
         if (   is_array($matched)
@@ -79,12 +80,20 @@ class com_meego_packages_injector
             && array_key_exists('version', $matched)
             && array_key_exists('ux', $matched))
         {
-            // populate links if there any workflow that matches this OS, OS version and UX combo
-            $workflows = com_meego_packages_controllers_workflow::get_open_workflows_for_osux(
-                $matched['os'],
-                $matched['version'],
-                $matched['ux']
-            );
+            if (array_key_exists('packagetitle', $matched))
+            {
+                // when browsing an exact package then we rather provide a direct link to the QA page of the package
+            }
+
+            if (! $workflows)
+            {
+                // populate links if there any workflow that matches this OS, OS version and UX combo
+                $workflows = com_meego_packages_controllers_workflow::get_open_workflows_for_osux(
+                    $matched['os'],
+                    $matched['version'],
+                    $matched['ux']
+                );
+            }
 
             $request->set_data_item('workflows', $workflows);
         }
