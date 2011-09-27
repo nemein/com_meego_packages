@@ -320,8 +320,9 @@ class com_meego_packages_controllers_application
             do
             {
                 $localpackages = array_slice($packages, $offset, $cnt, true);
-            } while (   self::count_unique_apps($localpackages) < $limit
-                     && ($offset + $cnt++) <= count($packages));
+            }
+            while (   self::count_unique_apps($localpackages) < $limit
+                   && ($offset + $cnt++) <= count($packages));
 
             if ($current_page == 1)
             {
@@ -658,7 +659,7 @@ class com_meego_packages_controllers_application
         if ($packagetitle_constraint)
         {
             // no unique array in case an exact package was requested
-            // otherwise we will loose the available arhces
+            // otherwise we will loose the available architectures
             $apps = self::filter_titles($all_objects, $this->mvc->configuration->package_filters, false);
         }
         else
@@ -681,7 +682,7 @@ class com_meego_packages_controllers_application
      * @param boolean make the return array contain unique items only
      * @return array associative array of com_meego_package_details objects
      */
-    public static function filter_titles(array $packages, array $filters, $unique = false)
+    public function filter_titles(array $packages, array $filters, $unique = false)
     {
         $apps = array();
         $localpackages = array();
@@ -912,6 +913,37 @@ class com_meego_packages_controllers_application
                 $this->request
             );
 
+            // get the workflows for this package
+            // todo: this will get workflows for older versions too!
+            if (! array_key_exists('workflows', $this->data['packages'][$package->packagetitle]))
+            {
+                $this->data['packages'][$package->packagetitle]['workflows'] = array();
+            }
+
+            $object = new com_meego_package($package->packageguid);
+            $list_of_workflows = midgardmvc_helper_workflow_utils::get_workflows_for_object($object);
+
+            foreach ($list_of_workflows as $workflow => $workflow_data)
+            {
+                $this->data['packages'][$package->packagetitle]['workflows'][] = array
+                (
+                    'label' => $workflow_data['label'],
+                    'url' => $this->mvc->dispatcher->generate_url
+                    (
+                        'package_instance_workflow_start',
+                        array
+                        (
+                            'package' => $package->packagename,
+                            'version' => $package->packageversion,
+                            'project' => $package->repoprojectname,
+                            'repository' => $package->reponame,
+                            'arch' => $package->repoarch,
+                            'workflow' => $workflow,
+                        ),
+                        'com_meego_packages'
+                    )
+                );
+            }
         } //foreach
 
         unset($latest);
