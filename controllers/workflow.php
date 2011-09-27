@@ -79,6 +79,9 @@ class com_meego_packages_controllers_workflow
     public function get_resume_package_instance(array $args)
     {
         $this->package = $this->load_package_instance($args);
+        // populate the package for the template
+        $this->data['package'] = $this->package;
+
         $workflow_class = $this->load_workflow($args);
 
         $this->mvc->component->load_library('Workflow');
@@ -124,6 +127,7 @@ class com_meego_packages_controllers_workflow
         }
 
         $list_of_variables = array();
+
         foreach ($this->data['forms'] as $variable => $formdata)
         {
             $formdata['form']->process_post();
@@ -164,6 +168,9 @@ class com_meego_packages_controllers_workflow
                 )
             );
         }
+
+        // populate the package
+        $this->data['package'] = $this->package;
     }
 
     private function get_form(ezcWorkflowExecution $execution)
