@@ -235,3 +235,14 @@ msgstr "Open Workflows"
 msgid "label_form_for_repo"
 msgstr "${form_title} for ${repo_title}"
 
+msgid "label_open_forms_for_repo"
+msgstr "Open form(s) for the repository:"
+
+msgid "instruction_access_forms"
+msgstr "To access and fill in the forms please click first on package name in the list below.<br/>There will be a button to each form unless you have filled in that particular one. In that case you can only review your submission (among others') by clicking the 'See posts' link in the list below or on the package page."
+
+msgid "title_app_open_forms"
+msgstr "This application has the following forms available"
+
+msgid "title_form_for_package"
+msgstr "${form_title} for ${package_title}"
