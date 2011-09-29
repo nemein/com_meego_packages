@@ -17,10 +17,10 @@
 <div class="packages" tal:condition="true: com_meego_packages/packages">
     <div class="package" tal:condition="true: com_meego_packages/packages" tal:repeat="package com_meego_packages/packages">
 
-        <div class="screenshot missing" tal:condition="not: package/screenshoturl"></div>
+        <div class="icon missing" tal:condition="not: package/iconurl"></div>
 
-        <div class="screenshot" tal:condition="true: package/screenshoturl">
-            <img tal:attributes="src package/screenshoturl" property="v:image" />
+        <div class="icon" tal:condition="true: package/iconurl">
+            <img tal:attributes="src package/iconurl" property="v:image" />
         </div>
 
         <div class="details">
