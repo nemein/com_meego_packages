@@ -47,6 +47,8 @@ class com_meego_packages_injector
 
         $request->set_data_item('admin', false);
 
+        $request->set_data_item('category_admin_url', false);
+
         if ($this->mvc->authentication->is_user())
         {
             if ($this->mvc->authentication->get_user()->is_admin())
