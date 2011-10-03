@@ -37,12 +37,15 @@ os_map:
 
 # UX defintions in case we have none available
 os_ux:
+    harmattan: Nokia N9
+    meegoce: Nokia N900
+    wetab: WeTab
     netbook: Netbook
     handset: Handset
-    tablet: Tablet
-    mediaphone: Media Phone
-    smarttv: Smart TV
-    ivi: In Vehicle
+#   tablet: Tablet
+#   mediaphone: Media Phone
+#   smarttv: Smart TV
+#   ivi: In Vehicle
 
 # Allowed types of repositories from where packages can be imported
 os_groups:
@@ -56,10 +59,10 @@ os_groups:
 # these projects define the so called "downloads" area
 top_projects:
     MeeGo:1.2:Apps:Testing: Some description
-    home:feri: Some description
-    home:xfade: Some description
-    maemo-fremantle-extras: Some description
-    home:zigbee: Some description
+#    home:feri: Some description
+#    home:xfade: Some description
+#    maemo-fremantle-extras: Some description
+#    home:zigbee: Some description
 
 # list of base categories as name: description pairs
 # base categories are supposed to map all package categories that are
