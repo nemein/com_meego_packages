@@ -50,7 +50,7 @@ class com_meego_packages_controllers_application
      * @param string UX name, in case the repository has none
      * @return array with data
      */
-    private function populate_repo_ux($repository = null, $default_ux = null)
+    public function populate_repo_ux($repository = null, $default_ux = 'universal')
     {
         $retval = array();
 
@@ -73,7 +73,7 @@ class com_meego_packages_controllers_application
                 'version' => $repository->repoosversion,
                 'ux' => $default_ux
             ),
-            $this->request
+            'com_meego_packages'
         );
         $retval['url'] = $localurl;
 
@@ -81,17 +81,12 @@ class com_meego_packages_controllers_application
     }
 
     /**
-     * Generates the content for the index page showing the icons of variants
-     * Here we gather the uxes from the latest version of the OS that is
-     * configurable
+     * Returns an array with all repos that belong to top projects
      *
-     * @param array args
+     * @return array
      */
-    public function get_index(array $args)
+    public function get_top_project_repos()
     {
-        $this->data['repositories'] = array();
-        $this->data['oses'] = array();
-
         // use a view to determine which repositories can be shown
         $storage = new midgard_query_storage('com_meego_package_repository_project');
         $q = new midgard_query_select($storage);
@@ -132,11 +127,28 @@ class com_meego_packages_controllers_application
         $q->set_constraint($qc);
         $q->execute();
 
-        $repositories = $q->list_objects();
+        $list = $q->list_objects();
 
+        return $list;
+    }
+
+    /**
+     * Generates the content for the index page showing the icons of variants
+     * Here we gather the uxes from the latest version of the OS that is
+     * configurable
+     *
+     * @param array args
+     */
+    public function get_index(array $args)
+    {
+        $this->data['oses'] = array();
         $this->data['latest'] = false;
+        $this->data['repositories'] = array();
+
         $latest_os = $this->mvc->configuration->latest['os'];
         $latest_os_version = $this->mvc->configuration->latest['version'];
+
+        $repositories = $this->get_top_project_repos();
 
         foreach ($repositories as $repository)
         {
@@ -147,7 +159,7 @@ class com_meego_packages_controllers_application
 
                 if (! strlen($repository->repoosux))
                 {
-                    // No UX means a core repo, so we populate all UXes
+                    // No UX means a core or universal repo, so we populate all UXes
                     foreach($this->mvc->configuration->os_ux as $configured_ux => $configured_ux_title)
                     {
                         #echo "add configured latest: " . $repository->repoos . ' ' . $repository->repoosversion . ': ' . $configured_ux . "\n";
