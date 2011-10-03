@@ -951,7 +951,14 @@ class com_meego_packages_controllers_package
                         // check if we have ux
                         if (! array_key_exists('ux', $this->data))
                         {
-                            $this->data['ux'] = strtolower($package->repoosux);
+                            if ($package->repoosux == '')
+                            {
+                                $this->data['ux'] = 'universal';
+                            }
+                            else
+                            {
+                                $this->data['ux'] = strtolower($package->repoosux);
+                            }
                         }
 
                         // if could not figure out the ux then provide a tree url
@@ -1026,7 +1033,16 @@ class com_meego_packages_controllers_package
             // we group the variants into providers. a provider is basically a project repository, e.g. home:fal
             $this->data['packages'][$package->packagetitle]['providers'][$package->repoprojectname]['projectname'] = $package->repoprojectname;
 
+            // if the UX is empty then we consider the package to be good for all UXes
+            // this value is used in the template to show a proper icon
+            $package->ux = $package->repoosux;
+            if ( ! strlen($package->ux) )
+            {
+                $package->ux = 'universal';
+            }
+
             // provide a link to visit the page of a certain package variant
+/*
             $package->localurl = $this->mvc->dispatcher->generate_url
             (
                 'package_instance',
@@ -1040,13 +1056,33 @@ class com_meego_packages_controllers_package
                 ),
                 $this->request
             );
+*/
+            $basecategory = null;
 
-            // if the UX is empty then we consider the package to be good for all UXes
-            // this value is used in the template to show a proper icon
-            $package->ux = $package->repoosux;
-            if ( ! strlen($package->ux) )
+            if (is_numeric($package->basecategory))
             {
-                $package->ux = 'universal';
+                $basecategory = self::determine_base_category($package);
+            }
+            else
+            {
+                $basecategory = $package->basecategory;
+            }
+
+            if ($basecategory)
+            {
+                $package->localurl = $this->mvc->dispatcher->generate_url
+                (
+                    'apps_by_title',
+                    array
+                    (
+                        'os' => $package->repoos,
+                        'version' => $package->repoosversion,
+                        'ux' => $package->ux,
+                        'basecategory' => $basecategory,
+                        'packagetitle' => $package->packagetitle
+                    ),
+                    $this->request
+                );
             }
 
             // the variants are basically the versions built for different hardware architectures (not UXes)
