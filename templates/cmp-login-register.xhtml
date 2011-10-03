@@ -1,0 +1,17 @@
+                <div class="login">
+                    <ul tal:condition="php: ! midgardmvc_core::get_instance().authentication.is_user()">
+                        <li>
+                        <tal:block tal:define="main_url php:midgardmvc.context.get_request(0).get_path(); url string:/mgd:login?redirect=$main_url">
+                            <!-- a tal:attributes="href url" title="">Login</a -->
+                            <a href="#login" onclick="popup_login()">Login</a>
+                        </tal:block>
+                        </li>
+                        <li><a href="/user/register" title="" i18n:domain="midgardmvc_core" i18n:translate="'register'">Register</a></li>
+                    </ul>
+                    <ul tal:condition="php:midgardmvc_core::get_instance().authentication.is_user()">
+                        <tal:block tal:define="user php:midgardmvc_core::get_instance().authentication.get_user(); username php:user.login">
+                        <li><a href="http://meego.com/user/me" title="" tal:content="username"></a></li>
+                        <li><a href="/mgd:logout" i18n:domain="midgardmvc_core" i18n:translate="'logout'" title="">Logout</a></li>
+                      </tal:block>
+                    </ul>
+                </div>

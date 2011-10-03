@@ -19,13 +19,13 @@ routes:
         controller: com_meego_packages_controllers_application
         action: redirect
 
-    # lists all UXes starting with the latest
+    # lists latest UXes
     apps_index:
         path: /applications
         controller: com_meego_packages_controllers_application
         action: index
         template_aliases:
-            content: cmp-show-index
+            content: cmp-show-latest-uxes
 
     # redirect if only os is given
     apps_os:

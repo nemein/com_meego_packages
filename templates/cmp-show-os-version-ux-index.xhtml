@@ -1,6 +1,4 @@
-<tal:block tal:condition="true: com_meego_packages/latest">
-    <mgd:include>cmp-show-latest-uxes</mgd:include>
-</tal:block>
+<mgd:include>cmp-show-latest-uxes</mgd:include>
 
 <div class="os" tal:condition="com_meego_packages/oses" tal:repeat="os com_meego_packages/oses">
     <h2 tal:content="os/title">MeeGo 1.0</h2>
