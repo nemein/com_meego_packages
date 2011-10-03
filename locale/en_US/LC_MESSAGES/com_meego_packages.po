@@ -91,6 +91,12 @@ msgstr "Base Category Administration"
 msgid "title_categories"
 msgstr "Categories"
 
+msgid "label_newest"
+msgstr "Newest"
+
+msgid "label_hottest"
+msgstr "Hottest"
+
 msgid "title_base_category"
 msgstr "Category: ${name}"
 
@@ -254,7 +260,13 @@ msgid "title_form_for_package"
 msgstr "${form_title} for ${package_title}"
 
 msgid "instruction_select_ux"
+msgstr "Choose Your UX"
+
+msgid "instruction_select_user_experience"
 msgstr "Choose Your User Experience"
+
+msgid "instruction_select_version"
+msgstr "Choose Your Version"
 
 msgid "instruction_select_ux_version"
 msgstr "Choose Your ${ux} Version"
