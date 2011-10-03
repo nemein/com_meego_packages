@@ -1,9 +1,10 @@
-            <article tal:condition="com_meego_packages/latest">
-                <ul class="userexp" tal:define="latest com_meego_packages/latest">
-                    <li tal:repeat="ux latest/uxes" tal:attributes="class string:block ${ux/css}">
-                        <a tal:attributes="href ux/url">${ux/translated_title}</a>
-                    </li>
-                </ul>
+            <ul class="userexp" tal:condition="true: com_meego_packages/latest">
+                <tal:block tal:define="latest com_meego_packages/latest">
+                <li tal:repeat="ux latest/uxes" tal:attributes="class string:block ${ux/css}">
+                    <a tal:attributes="href ux/url">${ux/translated_title}</a>
+                </li>
+                </tal:block>
+            </ul>
 
-                <div class="clear"></div>
-            </article>
+            <div class="clear"></div>
+
