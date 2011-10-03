@@ -39,8 +39,17 @@ class com_meego_packages_injector
         $route = $request->get_route();
 
         // Replace the default MeeGo sidebar with our own
-        $route->template_aliases['content-sidebar'] = 'cmp-show-sidebar';
-        $route->template_aliases['main-menu'] = 'cmp-show-main_menu';
+        //$route->template_aliases['content-sidebar'] = 'cmp-show-sidebar';
+        //$route->template_aliases['main-menu'] = 'cmp-show-main_menu';
+
+        if ($route->id == "apps_index")
+        {
+            $route->template_aliases['topbar'] = 'cmp-welcome-text';
+        }
+        else
+        {
+            $route->template_aliases['topbar'] = 'cmp-menubar';
+        }
 
         // Add the CSS and JS files needed by Packages
         $this->add_head_elements();
@@ -75,7 +84,7 @@ class com_meego_packages_injector
         $request->set_data_item('workflows', false);
 
         $workflows = null;
-        $matched = $request->get_route()->get_matched();//$request->get_route()->check_match($request->get_path());
+        $matched = $route->get_matched();
 
         if (   is_array($matched)
             && array_key_exists('os', $matched)
