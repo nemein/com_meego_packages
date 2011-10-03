@@ -54,7 +54,7 @@
         <!-- POPUP DIV's -->
 
         <div id="popup_ux" style="display:none;" tal:condition="true: uxes">
-            <p i18n:domain="com_meego_packages" i18n:translate="'instruction_select_ux'">Choose your user experience</p>
+            <p i18n:translate="'instruction_select_user_experience'">Choose your user experience</p>
             <ul class="userexp">
                 <li tal:repeat="ux uxes" tal:attributes="class string:block ${ux/css}">
                     <a tal:attributes="href ux/url">${ux/translated_title}</a>
@@ -70,17 +70,15 @@
         </div>
 
         <div id="popup_ver" style="display:none;" tal:condition="true: versions">
-            <p i18n:domain="com_meego_packages" i18n:translate="'instruction_select_ux_version'">
+            <p i18n:translate="'instruction_select_ux_version'" tal:condition="true: matched">
                 <tal:block i18n:name="ux">${matched/ux}</tal:block> Choose the version
             </p>
             <div class="cat-popup">
-                <div tal:attributes="class string:cat-image ${matched/ux}">
-<!--                    <img src="/midgardmvc-static/com_meego_packages/images/cat_image_1.png"/> -->
-                </div>
+                <div tal:condition="true: matched" tal:attributes="class string:cat-image ${matched/ux}"></div>
                 <div class="cat-more">
                     <ul>
                         <li tal:repeat="version versions">
-                            <a tal:attributes="href version/url" i18n:domain="com_meego_packages" i18n:translate="'label_ux_version'">
+                            <a tal:attributes="href version/url" i18n:translate="'label_ux_version'">
                             <tal:block i18n:name="version">${version/version}</tal:block>
                             </a>
                         </li>
