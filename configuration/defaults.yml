@@ -37,11 +37,11 @@ os_map:
 
 # UX defintions in case we have none available
 os_ux:
-    harmattan: Nokia N9
-    meegoce: Nokia N900
-    wetab: WeTab
     netbook: Netbook
     handset: Handset
+    wetab: WeTab
+    harmattan: Nokia N9
+    meegoce: Nokia N900
 #   tablet: Tablet
 #   mediaphone: Media Phone
 #   smarttv: Smart TV
