@@ -107,9 +107,59 @@ class com_meego_packages_injector
             }
 
             $request->set_data_item('workflows', $workflows);
+            $request->set_data_item('matched', $matched);
+
+            //gather available UXes
+            $uxes = array();
+            $versions = array();
+
+            $repos = com_meego_packages_controllers_application::get_top_project_repos();
+            foreach ($repos as $repo)
+            {
+                ($repo->repoosux == '') ? $ux = 'universal' : $ux = $repo->repoosux;
+
+                // link to the latest UX / version combo
+                $uxes[$ux]['versions'][$repo->repoosversion] = $repo;
+
+                if (   ! array_key_exists('latest', $uxes[$ux])
+                    || (float)$repo->repoosversion > $uxes[$ux]['latest'])
+                {
+                    $uxes[$ux]['latest'] = $repo->repoosversion;
+                }
+
+
+                // all versions of the matched, current UX
+                if ((    $ux == 'universal'
+                     ||  $matched['ux'] == $ux)
+                    && ! array_key_exists($repo->repoosversion, $versions)
+                    && (float) $repo->repoosversion > 0)
+                {
+                    $_repo = com_meego_packages_controllers_application::populate_repo_ux($repo, $matched['ux']);
+                    $versions[$repo->repoosversion] = array(
+                        'version' => $repo->repoosversion,
+                        'url' => $_repo['url']
+                    );
+                }
+            }
+
+            if (array_key_exists('universal', $uxes))
+            {
+                $latest = $uxes['universal']['versions'][$uxes['universal']['latest']];
+                foreach($this->mvc->configuration->os_ux as $configured_ux => $configured_ux_title)
+                {
+                    $uxes[$configured_ux] = com_meego_packages_controllers_application::populate_repo_ux($latest, $configured_ux);
+                }
+                // this won't be needed anymore as we set all UXes
+                unset($uxes['universal'], $latest);
+            }
+
+            arsort($versions);
+
+            $request->set_data_item('uxes', $uxes);
+            $request->set_data_item('versions', $versions);
         }
 
-        self::set_breadcrumb($request);
+        //self::set_breadcrumb($request);
     }
 
     /**
