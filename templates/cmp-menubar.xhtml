@@ -1,21 +1,27 @@
                     <div class="popup_nav">
                         <div class="popup_nav_title">
                             <ul>
-                                <li>Choose your ux</li>
-                                <li>Choose your version</li>
+                                <li i18n:translate="'instruction_select_ux'">Choose your ux</li>
+                                <li i18n:translate="'instruction_select_version'">Choose your version</li>
                             </ul>
                         </div>
-                        <div class="popup_nav_items">
+                        <div class="popup_nav_items" tal:condition="true: matched">
                             <ul>
-                                <li><a href="#popup_ux" onclick="popup_ux()">Handheld</a></li>
-                                <li><a href="#popup_ver" onclick="popup_ver()">Version 1.2</a></li>
+                                <li>
+                                    <a href="#popup_ux" onclick="popup_ux()">${matched/ux}</a>
+                                </li>
+                                <li>
+                                    <a href="#popup_ver" onclick="popup_ver()" i18n:translate="'label_ux_version'">
+                                    <tal:block i18n:name="version">${matched/version}</tal:block>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>
                     <nav>
-                            <ul>
-                                <li><a href="" >Categories</a></li>
-                                <li><a href="" >Hottest</a></li>
-                                <li><a href="" >Newest</a></li>
-                            </ul>
+                        <ul>
+                            <li><a href="" i18n:translate="'title_categories'">Categories</a></li>
+                            <li><a href="" i18n:translate="'label_hottest'">Hottest</a></li>
+                            <li><a href="" i18n:translate="'label_newest'">Newest</a></li>
+                        </ul>
                     </nav>
