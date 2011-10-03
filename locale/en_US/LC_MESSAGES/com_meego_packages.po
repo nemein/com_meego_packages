@@ -252,3 +252,12 @@ msgstr "This application has the following forms available"
 
 msgid "title_form_for_package"
 msgstr "${form_title} for ${package_title}"
+
+msgid "instruction_select_ux"
+msgstr "Choose Your User Experience"
+
+msgid "instruction_select_ux_version"
+msgstr "Choose Your ${ux} Version"
+
+msgid "label_ux_version"
+msgstr "Version ${version}"
