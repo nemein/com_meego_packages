@@ -1,7 +1,12 @@
-<div class="basecategories" tal:condition="true: com_meego_packages/basecategories">
-    <div tal:attributes="class php:'leaf ' . basecategory.css" tal:repeat="basecategory com_meego_packages/basecategories">
-        <a tal:attributes="href basecategory/localurl; title php: 'id: ' . basecategory.id . ', packages: ' . basecategory.apps_counter">
-            <span>${basecategory/name} : ${basecategory/apps_counter}</span>
-        </a>
-    </div>
-</div>
+            <div class="category">
+                <div tal:condition="true: matched" tal:attributes="class string:cat-image ${matched/ux}"></div>
+                <div class="cat-more">
+                    <ul>
+                        <li tal:repeat="basecategory com_meego_packages/basecategories">
+                            <img tal:attributes="src string:/midgardmvc-static/com_meego_packages/images/cat-pic/${basecategory/css}.png"/>
+                            <a tal:attributes="href basecategory/localurl">${basecategory/name}<br/>(${basecategory/apps_counter})</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="clear"></div>
+            </div>
