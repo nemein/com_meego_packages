@@ -11,7 +11,7 @@ class com_meego_packages_forms
      * @param guid GUID of the package
      * @param integer number of the page
      *                Items shown on one page is configurable;
-     *                see: defaults.yml::items_per_page
+     *                see: defaults.yml
      *
      * @return array of com_meego_package_forms_posted objects
      */
@@ -40,7 +40,7 @@ class com_meego_packages_forms
             new midgard_query_value($package_guid)
         ));
 
-        $limit = $this->mvc->configuration->items_per_page;
+        $limit = $this->mvc->configuration->rows_per_page * $this->mvc->configuration->items_per_row;
 
         // using set_limit and set_offset would work here, but let's try our universal pager
 
