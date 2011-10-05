@@ -506,4 +506,42 @@ class com_meego_packages_controllers_repository
 
         return $retval;
     }
+
+    /**
+     * Checks is the given OS is valid
+     *
+     * @param string name of the OS
+     * @param string version of the OS
+     * @return boolean true if OS exists, false otherwise
+     */
+    public function os_exists($os = '', $os_version = '')
+    {
+        $retval = false;
+        $storage = new midgard_query_storage('com_meego_os');
+
+        $q = new midgard_query_select($storage);
+
+        $qc = new midgard_query_constraint_group('AND');
+
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('name'),
+            '=',
+            new midgard_query_value($os)
+        ));
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('version'),
+            '=',
+            new midgard_query_value($os_version)
+        ));
+
+        $q->set_constraint($qc);
+        $q->execute();
+
+        if ($q->get_results_count())
+        {
+            $retval = true;
+        }
+
+        return $retval;
+    }
 }
