@@ -492,7 +492,8 @@ list-style: none;
 display: inline;
 }
 
-article .app_list_navigation ul li a {
+article .app_list_navigation ul li a,
+article .app_list_navigation ul li span {
 font-size: 24px;
 color: #84c1e4;
 display: inline;

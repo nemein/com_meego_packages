@@ -86,11 +86,52 @@ class com_meego_packages_injector
         $workflows = null;
         $matched = $route->get_matched();
 
+        if (! array_key_exists('basecategory', $matched))
+        {
+            $matched['basecategory'] = false;
+            $matched['basecategory_css'] = '';
+        }
+        else
+        {
+            $decoded = rawurldecode($matched['basecategory']);
+            if (array_key_exists($decoded, $this->mvc->configuration->basecategory_css_map))
+            {
+                $matched['basecategory_css'] = $this->mvc->configuration->basecategory_css_map[$decoded];
+            }
+            else
+            {
+                $matched['basecategory_css'] = strtolower($decoded);
+            }
+        }
+
         if (   is_array($matched)
             && array_key_exists('os', $matched)
             && array_key_exists('version', $matched)
             && array_key_exists('ux', $matched))
         {
+            $os = $matched['os'];
+            $ux = $matched['ux'];
+            $redirect = false;
+
+            if (! array_key_exists($matched['os'], $this->mvc->configuration->os_map))
+            {
+                $redirect = true;
+                $os = $this->mvc->configuration->latest['os'];
+            }
+
+            // if the matched UX is not configured then we shout out loud
+            if (! array_key_exists($matched['ux'], $this->mvc->configuration->os_ux))
+            {
+                $redirect = true;
+                $ux = $this->mvc->configuration->latest['ux'];
+            }
+
+            if ($redirect)
+            {
+                //throw new midgardmvc_exception_notfound("Please pick a valid UX, " . $matched['ux'] . " does not exist.", 404);
+                com_meego_packages_controllers_basecategory::redirect($os, $matched['version'], $ux);
+            }
+
             if (array_key_exists('packagetitle', $matched))
             {
                 // when browsing an exact package then we rather provide a direct link to the QA page of the package
@@ -158,7 +199,6 @@ class com_meego_packages_injector
             $request->set_data_item('uxes', $uxes);
             $request->set_data_item('versions', $versions);
         }
-
         //self::set_breadcrumb($request);
     }
 

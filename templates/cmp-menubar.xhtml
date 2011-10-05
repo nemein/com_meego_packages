@@ -20,8 +20,20 @@
                     </div>
                     <nav>
                         <ul>
-                            <li><a href="" i18n:translate="'title_categories'">Categories</a></li>
-                            <li><a href="" i18n:translate="'label_hottest'">Hottest</a></li>
-                            <li><a href="" i18n:translate="'label_newest'">Newest</a></li>
+                            <li>
+                                <a tal:attributes="href string:/basecategories/${matched/os}/${matched/version}/${matched/ux}">
+                                    <tal:block i18n:translate="'title_categories'">Categories</tal:block>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="">
+                                    <tal:block i18n:translate="'label_hottest'">Hottest</tal:block>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="">
+                                    <tal:block i18n:translate="'label_newest'">Newest</tal:block>
+                                </a>
+                            </li>
                         </ul>
                     </nav>

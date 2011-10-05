@@ -52,6 +52,9 @@ msgstr "Full package name including version number and supported CPU architectur
 msgid "no_available_packages"
 msgstr "There are no packages available."
 
+msgid "no_available_applications_in_category"
+msgstr "There are no available applications in this category."
+
 msgid "no_such_package"
 msgstr "There is no such package available."
 
@@ -273,3 +276,9 @@ msgstr "Choose Your ${ux} Version"
 
 msgid "label_ux_version"
 msgstr "Version ${version}"
+
+msgid "label_available_applications"
+msgstr "Available Applications"
+
+msgid "label_back_to_categories"
+msgstr "Please return to the categories"

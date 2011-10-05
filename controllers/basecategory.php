@@ -275,6 +275,19 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         // for now we will not use the UX at all
         $basecategories = self::load_basecategories();
 
+        $os = $args['os'];
+        $os_version = $args['version'];
+        $ux = $args['ux'];
+
+        // check if OS is valid
+        if (! com_meego_packages_controllers_repository::os_exists($args['os'], $args['version']))
+        {
+            $os = $this->mvc->configuration->latest['os'];
+            $os_version = $this->mvc->configuration->latest['version'];
+            $ux = $this->mvc->configuration->latest['ux'];
+            self::redirect($os, $os_version, $ux);
+        }
+
         // check if ux is valid
         if (! com_meego_packages_controllers_repository::ux_exists($args['ux']))
         {
@@ -291,12 +304,16 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
             if (! $found)
             {
                 //if no such base category then complain
-                throw new midgardmvc_exception_httperror($this->mvc->i18n->get("title_no_ux_or_basecategory", null, array('item' => $args['ux'])), 404);
+                //throw new midgardmvc_exception_notfound($this->mvc->i18n->get("title_no_ux_or_basecategory", null, array('item' => $args['ux'])), 404);
+
+                // redirect to basecategory index using default OS,  UX and versions
+                $ux = $this->mvc->configuration->latest['ux'];
+                self::redirect($os, $os_version, $ux);
             }
             else
             {
                 //if no such base category then complain
-                throw new midgardmvc_exception_httperror('get_basecategories_by_ux todo', 404);
+                throw new midgardmvc_exception_notfound('get_basecategories_by_ux todo', 404);
                 #$this->mvc->head->relocate($this->get_url_browse_basecategory($args['ux'], false));
 
                 // @todo: redirect to that particular category index
@@ -310,7 +327,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
                 // set the url where to browse that category
                 $basecategory->localurl = $this->get_url_browse_basecategory($args['os'], $args['version'], $args['ux'], $basecategory->name);
                 // count all apps that are in this category for that UX
-                $basecategory->apps_counter = com_meego_packages_controllers_application::count_number_of_apps($args['os'], $args['version'], $basecategory->name, $args['ux']);
+                //$basecategory->apps_counter = com_meego_packages_controllers_application::count_number_of_apps($args['os'], $args['version'], $basecategory->name, $args['ux']);
                 // set the css class to be used to display this base category
                 $basecategory->css = self::tidy_up($basecategory->name);
                 // populate data
@@ -599,7 +616,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         $this->data['package_counter'] = 0;
 
         // set a flag if both arrays are valid
-        foreach($this->data['categories'] as $category)
+        foreach ($this->data['categories'] as $category)
         {
             $relation = $this->load_relation($object->id, $category->id);
 
@@ -762,5 +779,35 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         }
 
         return $relations;
+    }
+
+    /**
+     * Redirects
+     *
+     * @param string OS name
+     * @param string OS version
+     * @param string UX name
+     */
+    private function redirect($os = null, $version = null, $ux = null)
+    {
+        if (   $os
+            && $version
+            && $ux)
+        {
+            $this->mvc->head->relocate
+            (
+                $this->mvc->dispatcher->generate_url
+                (
+                    'basecategories_os_version_ux',
+                    array
+                    (
+                        'os' => $os,
+                        'version' => (string) $version,
+                        'ux' => $ux
+                    ),
+                    'com_meego_packages'
+                )
+            );
+        }
     }
 }

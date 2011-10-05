@@ -1,4 +1,62 @@
-<div class="nohits" tal:condition="not: com_meego_packages/packages" i18n:domain="com_meego_packages" i18n:translate="'no_available_packages'"></div>
+        <div class="app_list" tal:condition="true: matched">
+            <div class="content-heading">
+                <span tal:condition="true: matched/basecategory">
+                    <img tal:attributes="src php:'/midgardmvc-static/com_meego_packages/images/cat-pic/clean/' . strtolower(matched['basecategory_css']) . '.png'"/>
+                    ${matched/basecategory}
+                </span>
+                <span tal:condition="not: matched/basecategory" i18n:translate="'label_available_applications'"></span>
+            </div>
+
+            <div class="main_list" tal:condition="not: current_component/rows">
+                <span  i18n:translate="'no_available_applications_in_category'"></span>
+                <br/><br/>
+                <a tal:attributes="href string:/basecategories/${matched/os}/${matched/version}/${matched/ux}">
+                    <span i18n:translate="'label_back_to_categories'">Back to categories</span>
+                </a>
+            </div>
+
+            <div class="main_list" tal:condition="true: current_component/rows" tal:repeat="row current_component/rows">
+                <div class="list_item" tal:repeat="package row">
+                    <div class="list_item_img">
+                        <img tal:condition="true: package/iconurl" tal:attributes="src package/iconurl"/>
+                        <img tal:condition="not: package/iconurl" src="/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png"/>
+                    </div>
+                    <div class="list_item_more">
+                        <div class="list_item_title">
+                            <a tal:attributes="href package/localurl">${package/name}</a>
+                        </div>
+                        <div class="list_item_text">${package/description}</div>
+                        <div class="list_item_poll" tal:content="structure package/stars">Stars</div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+
+            <div class="app_list_navigation" tal:condition="true: current_component/rows">
+                <ul tal:condition="true: current_component/pages">
+                    <li>
+                        <a tal:condition="true: current_component/previous_page" tal:attributes="href current_component/previous_page"><img src="/midgardmvc-static/com_meego_packages/images/left.jpg" /></a>
+                        <span tal:condition="not: current_component/previous_page"><img src="/midgardmvc-static/com_meego_packages/images/left_greyed.jpg"/></span>
+                    </li>
+
+                    <li tal:repeat="page current_component/pages">
+                        <a tal:attributes="href string:?page=${page}">${page}</a>
+                    </li>
+
+                    <li>
+                        <a tal:condition="true: current_component/next_page" tal:attributes="href current_component/next_page"><img src="/midgardmvc-static/com_meego_packages/images/right.jpg" /></a>
+                        <span tal:condition="not: current_component/next_page"><img src="/midgardmvc-static/com_meego_packages/images/right_greyed.jpg"/></span>
+                    </li>
+                </ul>
+                <div class="app_list_submit">
+                    <a tal:attributes="href current_component/submit_app_url"><img src="/midgardmvc-static/com_meego_packages/images/submit.jpg"/></a>
+                </div>
+            </div>
+        </div>
+
+
+<!--
+<div class="nohits" tal:condition="not: com_meego_packages/packages" i18n:domain="com_meego_packages" ></div>
 
 <div class="pager">
     <div class="previous disable" tal:condition="not: com_meego_packages/previous_page" i18n:domain="com_meego_packages" i18n:translate="'label_previous_page'"></div>
@@ -26,13 +84,13 @@
         <div class="details">
 
             <h3 class="name"><a tal:attributes="href package/localurl">${package/name}</a></h3>
-
+-->
             <!--
             <div class="maintainer">
                 <tal:block i18n:domain="com_meego_packages" i18n:translate="'maintainer'"></tal:block>: <span>Maintainer</span>
             </div>
             -->
-
+<!--
             <div class="ratcomm">
                 <div class="rating">
                     <tal:block i18n:domain="com_meego_packages" i18n:translate="'rating'"></tal:block>: <span tal:content="structure package/stars">Stars</span>
@@ -47,3 +105,4 @@
         </div>
     </div>
 </div>
+-->

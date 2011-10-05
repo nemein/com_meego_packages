@@ -280,6 +280,26 @@ class com_meego_packages_controllers_application
             $packages = self::get_filtered_applications($this->data['os'], $this->data['version'], 0, $this->data['ux']);
         }
 
+        $this->data['rows'] = false;
+        $this->data['pages'] = false;
+        $this->data['previous_page'] = false;
+        $this->data['next_page'] = false;
+        $this->data['items_shown'] = '';
+        $this->data['submit_app_url'] = $this->mvc->configuration->submit_app_url;
+
+        if (! count($packages))
+        {
+            // say something
+            return 0;
+        }
+
+        // enable for testing, if you need large packages array for paging
+        //$_package = array_pop($packages);
+        //$packages = array_fill(0, 90, $_package);
+        //$localpackages = $packages;
+        //$apps_counter = count($localpackages);
+
+        // real:
         $localpackages = $packages;
 
         $apps_counter = self::count_unique_apps($packages);
@@ -300,11 +320,32 @@ class com_meego_packages_controllers_application
             $current_page = $_GET['page'];
         }
 
-        $limit = $this->mvc->configuration->items_per_page;
+        $limit = $this->mvc->configuration->rows_per_page * $this->mvc->configuration->items_per_row;
 
-        $this->data['previous_page'] = false;
-        $this->data['next_page'] = false;
-        $this->data['items_shown'] = '';
+        $this->data['highest_page_number'] = ceil($apps_counter / $limit);
+
+        if ($apps_counter > 4 * $limit)
+        {
+            if (($current_page - 1) * $limit > $apps_counter)
+            {
+                $current_page = $this->data['highest_page_number'];
+            }
+
+            if ($current_page > 4)
+            {
+                for ($i = $current_page - 3; $i <= $current_page; $i++)
+                {
+                    $this->data['pages'][] =$i;
+                }
+            }
+            else
+            {
+                for ($i = 1; $i <= 4; $i++)
+                {
+                    $this->data['pages'][] = $i;
+                }
+            }
+        }
 
         if (   $current_page > 0
             && $apps_counter > $limit)
@@ -336,6 +377,7 @@ class com_meego_packages_controllers_application
             while (   self::count_unique_apps($localpackages) < $limit
                    && ($offset + $cnt++) <= count($packages));
 
+            //
             if ($current_page == 1)
             {
                 if ($limit > $apps_counter)
@@ -362,8 +404,15 @@ class com_meego_packages_controllers_application
         // and variant names that don't fit the package filter criteria (see configuration)
         self::set_data($localpackages);
 
-        #echo 'count apps: ' . $apps_counter . ', localpackages: ' . count($localpackages) . ', packages: ' . count($packages) . ', cnt: ' . $cnt . ', data: ' . count($this->data['packages']) . "\n";
-        #ob_flush();
+        // enable for testing, if you need large package array for the template
+        // $this->data['packages'] = array_fill(0, 12, array_pop($this->data['packages']));
+
+        // let's prepare the rows for the template
+        $per_row = $this->mvc->configuration->items_per_row;
+        for ($i = 1; $i <= ceil(count($this->data['packages']) / $per_row); $i++)
+        {
+            $this->data['rows'][] = array_slice($this->data['packages'], ($i - 1) * $per_row, $per_row, true);
+        }
 
         // if an exact application is shown
         if (   $this->data['packagetitle']
@@ -382,6 +431,7 @@ class com_meego_packages_controllers_application
         }
 
         // if have no apps then return a 404
+        // may not even get here since we return already well above
         if (   ! count($this->data['packages'])
             && ! $counter)
         {
@@ -443,13 +493,14 @@ class com_meego_packages_controllers_application
 
         foreach ($packages as $package)
         {
-            $apps[$package->packagetitle] = $package->packagetitle;
+            if ($package)
+            {
+                $apps[$package->packagetitle] = $package->packagetitle;
+            }
         }
 
         return count($apps);
     }
-
-
 
     /**
      * Returns all apps that match the criteria specified by the args
@@ -783,7 +834,8 @@ class com_meego_packages_controllers_application
                 $this->data['packages'][$package->packagetitle]['iconurl'] = false;
                 $this->data['packages'][$package->packagetitle]['screenshoturl'] = false;
 
-                $_package = new com_meego_package($package->packageid);
+                $_package = new com_meego_package($package->packageguid);
+
                 $attachments = $_package->list_attachments();
 
                 $_icon_marker = 'icon.png';
@@ -911,6 +963,8 @@ class com_meego_packages_controllers_application
             // always keep it up-to-date
             $this->data['packages'][$package->packagetitle]['older'] = $older;
 
+            $matched = $this->request->get_route()->get_matched();
+
             $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
             (
                 'apps_by_title',
@@ -918,7 +972,7 @@ class com_meego_packages_controllers_application
                 (
                     'os' => $package->repoos,
                     'version' => $package->repoosversion,
-                    'ux' => $package->ux,//$latest['ux'],
+                    'ux' => (array_key_exists('ux', $matched)) ? $matched['ux'] : $package->ux,//$latest['ux'],
                     'basecategory' => com_meego_packages_controllers_package::determine_base_category($package), //$this->data['basecategory'],
                     'packagetitle' => $package->packagetitle
                 ),
