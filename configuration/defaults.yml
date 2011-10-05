@@ -1,6 +1,9 @@
 # user profile URL prefix
 user_profile_prefix: http://meego.com/users/
 
+# doc that explains how to submit an application
+submit_app_url: http://wiki.meego.com/MeeGo_Apps
+
 # thumbnail sizes for screenshots and icons
 attachmentserver_variants:
     sidesquare:
@@ -25,8 +28,9 @@ workflows:
 # define the latest OS and its version
 # it is hard to determine automatically, so we let admins to configure
 latest:
-    os: MeeGo
+    os: meego
     version: 1.2
+    ux: harmattan
 
 # map of os names used in the db and their pretty names used in the UI
 os_map:
@@ -83,6 +87,10 @@ base_categories:
     Utilities: Some description
     Other: Some description
 
+# basecategory name and CSS mapping
+basecategory_css_map:
+    Location & Navigation: location
+
 # package filter regular expression
 # package title matching the filters will not shown in the "downloads" area
 # filters need delimeters e.g. / character at the beginning and at the end
@@ -103,6 +111,8 @@ package_filters:
 # the maximum rate that can be given to a package
 maxrate: 5
 
-# the amount of items that are shown on a page when listing objects
-items_per_page: 10
+# the rows per page when listing applications
+rows_per_page: 4
 
+# the amount of items that are shown on a page when listing objects
+items_per_row: 3
