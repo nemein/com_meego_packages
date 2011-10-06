@@ -131,7 +131,7 @@ msgid "title_allux_ux"
 msgstr "Universal"
 
 msgid "title_harmattan_ux"
-msgstr "Harmattan"
+msgstr "Nokia N9"
 
 msgid "title_meegoce_ux"
 msgstr "Community Edition"
