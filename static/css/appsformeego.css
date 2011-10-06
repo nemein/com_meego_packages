@@ -941,11 +941,13 @@ font-size: 24px;
 font-family: DIN-Bold;
 }
 
-textarea {
+.popup_textbox textarea {
 background-color: #caeef8;
 border: 1px solid #a2afd3;
 padding: 5px;
 color: black;
+width: 600px;
+height: 100px;
 }
 
 .popup_button {
@@ -1022,7 +1024,6 @@ top: -15px;
 /* star rating */
 span.star-rating-control {
 height: 114px !important;
-padding: 0 0 0 60px;
 }
 
 div.rating-cancel.big,
