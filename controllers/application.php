@@ -825,6 +825,9 @@ class com_meego_packages_controllers_application
         {
             if (! isset($this->data['packages'][$package->packagetitle]['name']))
             {
+                // set the guid
+                $this->data['packages'][$package->packagetitle]['packageguid'] = $package->packageguid;
+
                 // set the name
                 $this->data['packages'][$package->packagetitle]['name'] = $package->packagetitle;
 
@@ -1090,6 +1093,11 @@ class com_meego_packages_controllers_application
             // get the 1st variant and set packageguid variable, in case we don't offer choosing a variant
             $variant = reset($this->data['packages'][$this->data['packagetitle']]['latest']['variants']);
             $this->data['packageguid'] = $variant->packageguid;
+        }
+
+        if (! array_key_exists('packageguid', $this->data))
+        {
+            $this->data['packageguid'] = $this->data['packages'][$this->data['packagetitle']]['packageguid'];
         }
 
         $this->data['postaction'] = $this->mvc->dispatcher->generate_url
