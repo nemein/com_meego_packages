@@ -1040,7 +1040,8 @@ class com_meego_packages_controllers_application
                             'workflow' => $workflow,
                         ),
                         'com_meego_packages'
-                    )
+                    ),
+                    'css' => strtolower(preg_replace('/\s/', '_',  $workflow_data['label']))
                 );
             }
         } //foreach
