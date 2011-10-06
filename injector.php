@@ -218,6 +218,8 @@ class com_meego_packages_injector
         // Add the CSS and JS files needed by Packages
         $this->add_head_elements();
 
+        $matched['translated_ux'] = ucwords($this->mvc->i18n->get('title_' . $matched['ux'] . '_ux'));
+
         $request->set_data_item('matched', $matched);
         //self::set_breadcrumb($request);
     }
