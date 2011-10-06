@@ -671,15 +671,16 @@ width: 185px;
 padding: 0px 35px 0px 0px;
 }
 
-.app_page_right
-{
+.app_page_right {
 float: left;
 width: 680px;
 padding: 0px 0px 0px 0px;
 }
 
 .app_image {
-width: 100%;
+max-width: 182px;
+max-height: 182px;
+overflow: hidden;
 }
 
 .app_download {
@@ -708,7 +709,7 @@ float: left;
 clear: both;
 font-family: DIN-Bold;
 font-size: 16px;
-color: #84c1e4;
+color: #4792A5;
 text-transform: uppercase;
 padding-bottom: 5px;
 }
@@ -716,6 +717,15 @@ padding-bottom: 5px;
 .app_poll {
 position: absolute;
 margin: 0px 0px 0px 550px;
+}
+
+.app_poll span.stars {
+background: url("/midgardmvc-static/com_meego_packages/images/app_poll_background.png") no-repeat scroll center top transparent;
+display: block;
+height: 38px;
+padding: 7px 0 0;
+text-align: center;
+width: 125px;
 }
 
 .app_content {
@@ -737,6 +747,10 @@ float: left;
 margin-bottom: 10px;
 }
 
+.app_page_right .app_login_write {
+clear: both;
+}
+
 .app_login_write {
 float: left;
 font-family: DIN;
@@ -745,6 +759,10 @@ color: #84c1e4;
 text-transform: uppercase;
 padding-top: 15px;
 padding-bottom: 5px;
+}
+
+.app_login_write a {
+color: #84C1E4;
 }
 
 .app_h2 {
@@ -767,7 +785,7 @@ border-top: 1px solid #e5e5e5;
 
 .app_comment_block_user {
 float: left;
-width: 185px;
+width: 195px;
 padding: 0px 35px 0px 0px;
 }
 
@@ -775,7 +793,7 @@ padding: 0px 35px 0px 0px;
 float: left;
 color: #6b6b6b;
 line-height: 18px;
-width: 680px;
+width: 670px;
 font-size: 12px;
 color: #6b6b6b;
 }
@@ -814,6 +832,10 @@ color: #77549c;
 
 .app_comment_write {
 margin: 10px 0px 0px 210px;
+}
+
+.app_comment_poll {
+padding: 5px 0 5px 10px;
 }
 
 /*********************E***********************/
@@ -886,18 +908,22 @@ font-size: 24px;
 margin-bottom: 30px;
 }
 
-#popup_poll ul li {
+#popup_poll ul li,
+#popup_comment ul li {
 list-style: none;
 display: inline;
 margin: 0px 20px 0px 0px;
 }
 
-#popup_poll .poll_app_rate {
-margin: 10px 0px 10px 0px;
+#popup_poll .poll_app_rate,
+#popup_comment .poll_app_rate {
+margin: 20px 0px 10px 0px;
 text-align: center;
+clear: both;
 }
 
-#popup_poll .poll_app_ratetitle {
+#popup_poll .poll_app_ratetitle,
+#popup_comment .poll_app_ratetitle {
 text-transform: uppercase;
 clear: both;
 display: inline;
@@ -906,7 +932,8 @@ font-size: 24px;
 font-family: DIN;
 }
 
-#popup_poll .poll_app_ratenumber {
+#popup_poll .poll_app_ratenumber,
+#popup_comment .poll_app_ratenumber {
 padding: 0px 0px 0px 10px;
 display: inline;
 color: #401576;
@@ -924,7 +951,16 @@ color: black;
 .popup_button {
 margin: 20px 20px 10px 0px;
 text-align: center;
-display: inline;
+display: inline-block;
+vertical-align: top;
+}
+
+.popup_button span.simplemodal-close {
+background: url(/midgardmvc-static/com_meego_packages/images/cancel.png) no-repeat center top;
+display: inline-block;
+width: 131px;
+height: 38px;
+margin: 0;
 }
 
 #popup_comment .popup_textbox {
@@ -968,5 +1004,71 @@ margin-bottom: 10px ;
 background-color: #dff5fb;
 border: 1px solid #a2afd3;
 padding: 5px;
-
 }
+
+input.submit_comment {
+background: url(/midgardmvc-static/com_meego_packages/images/submit.png) no-repeat top center;
+margin: 0;
+width: 131px;
+height: 38px;
+border: 0;
+font-size: 0;
+/*
+position: relative;
+top: -15px;
+*/
+}
+
+/* star rating */
+span.star-rating-control {
+height: 114px !important;
+padding: 0 0 0 60px;
+}
+
+div.rating-cancel.big,
+div.star-rating.big {
+float:left;
+width:120px;
+height:114px;
+text-indent:-999em;
+cursor:pointer;
+display:block;
+background:transparent;
+overflow:hidden;
+}
+
+div.rating-cancel.big,
+div.rating-cancel.big a {
+background: url(delete.gif) no-repeat 0 -16px;
+}
+
+div.star-rating.big,
+div.star-rating.big a {
+background: url(/midgardmvc-static/eu_urho_widgets/img/icons/star-all-big.png) no-repeat 0 0px;
+}
+
+div.rating-cancel.big a,
+div.star-rating.big a {
+display:block;
+width:120px;
+height:100%;
+background-position:0 0px;
+border:0;
+}
+
+div.star-rating-hover.big a,
+div.star-rating-on.big a {
+background-position:0 -114px !important;
+}
+
+/* Read Only CSS */
+div.star-rating-readonly.big a {
+cursor:default !important;
+}
+
+/* Partial Star CSS */
+div.star-rating.big {
+background:transparent!important;
+overflow:hidden!important;
+}
+/* END jQuery.Rating Plugin CSS */
