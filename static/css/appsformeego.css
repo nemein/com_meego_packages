@@ -295,58 +295,99 @@ text-decoration: none;
 color: #431678;
 }
 
-ul.userexp { margin: 0px; /*padding: 0px;*/}
-ul.userexp  li{ text-decoration: none; list-style: none;}
+ul.userexp {
+margin: 50px 0 0 0;
+/*padding: 0px;*/
+}
 
-ul.userexp  li.block {float: left; width: 150px; }
+ul.userexp  li {
+text-decoration: none;
+list-style: none;
+}
 
-ul.userexp  li.netbook {height: 270px; padding: 30px 0px 0px 0px;}
+ul.userexp  li.block {
+float: left;
+width: 150px;
+}
+
+ul.userexp  li.netbook {
+/*height: 270px;*/
+padding: 30px 0px 0px 0px;
+}
+
 ul.userexp  li.netbook a,
 #popup_ver .cat-image.netbook,
 div.category .cat-image.netbook {
 background: url(/midgardmvc-static/com_meego_packages/images/device-netbook.png) no-repeat top;
 }
-ul.userexp  li.netbook a:hover { background: url(/midgardmvc-static/com_meego_packages/images/device-netbook.png) no-repeat bottom;}
+ul.userexp  li.netbook a:hover {
+background: url(/midgardmvc-static/com_meego_packages/images/device-netbook.png) no-repeat bottom;
+}
 
-ul.userexp  li.handset {height: 220px; padding: 80px 0px 0px 0px;}
+ul.userexp  li.handset {
+/*height: 220px;*/
+padding: 80px 0px 0px 0px;
+}
 ul.userexp  li.handset a,
 #popup_ver .cat-image.handset,
 div.category .cat-image.handset {
 background: url(/midgardmvc-static/com_meego_packages/images/device-handset.png) no-repeat top;
 }
-ul.userexp  li.handset a:hover { background: url(/midgardmvc-static/com_meego_packages/images/device-handset.png) no-repeat bottom;}
+ul.userexp  li.handset a:hover {
+background: url(/midgardmvc-static/com_meego_packages/images/device-handset.png) no-repeat bottom;
+}
 
-ul.userexp  li.harmattan {height: 200px; padding: 0px 0px 0px 0px;}
+ul.userexp  li.harmattan {
+/*height: 200px;*/
+padding: 0px 0px 0px 0px;
+}
 ul.userexp  li.harmattan a,
 #popup_ver .cat-image.harmattan,
 div.category .cat-image.harmattan {
 background: url(/midgardmvc-static/com_meego_packages/images/device-harmattan.png) no-repeat top;
 }
-ul.userexp  li.harmattan a:hover { background: url(/midgardmvc-static/com_meego_packages/images/device-harmattan.png) no-repeat bottom;}
+ul.userexp  li.harmattan a:hover {
+background: url(/midgardmvc-static/com_meego_packages/images/device-harmattan.png) no-repeat bottom;
+}
 
-ul.userexp  li.meegoce {height: 300px; padding: 50px 0px 0px 0px;}
+ul.userexp  li.meegoce {
+/*height: 300px;*/
+padding: 50px 0px 0px 0px;
+}
 ul.userexp  li.meegoce a,
 #popup_ver .cat-image.meegoce,
 div.category .cat-image.meegoce {
 background: url(/midgardmvc-static/com_meego_packages/images/device-meegoce.png) no-repeat top;
 }
-ul.userexp  li.meegoce a:hover { background: url(/midgardmvc-static/com_meego_packages/images/device-meegoce.png) no-repeat bottom;}
+ul.userexp  li.meegoce a:hover {
+background: url(/midgardmvc-static/com_meego_packages/images/device-meegoce.png) no-repeat bottom;
+}
 
-ul.userexp  li.wetab {height: 300px; padding: 0px 0px 0px 0px;}
+ul.userexp  li.wetab {
+/*height: 300px;*/
+padding: 0px 0px 0px 0px;
+}
 ul.userexp  li.wetab a,
 #popup_ver .cat-image.wetab,
 div.category .cat-image.wetab {
 background: url(/midgardmvc-static/com_meego_packages/images/device-wetab.png) no-repeat top;
 }
-ul.userexp  li.wetab a:hover { background: url(/midgardmvc-static/com_meego_packages/images/device-wetab.png) no-repeat bottom;}
+ul.userexp  li.wetab a:hover {
+background: url(/midgardmvc-static/com_meego_packages/images/device-wetab.png) no-repeat bottom;
+}
 
-ul.userexp  li.tablet {height: 230px; padding: 70px 0px 0px 0px;}
+ul.userexp  li.tablet {
+/*height: 230px;*/
+padding: 70px 0px 0px 0px;
+}
 ul.userexp  li.tablet a,
 #popup_ver .cat-image.tablet,
 div.category .cat-image.tablet {
 background: url(/midgardmvc-static/com_meego_packages/images/device-tablet.png) no-repeat top;
 }
-ul.userexp  li.tablet a:hover { background: url(/midgardmvc-static/com_meego_packages/images/device-tablet.png) no-repeat bottom;}
+ul.userexp  li.tablet a:hover {
+background: url(/midgardmvc-static/com_meego_packages/images/device-tablet.png) no-repeat bottom;
+}
 
 /*------------------------ FOOTER LIST ITEMS ---------------------------*/
 footer .open_wrapper {
