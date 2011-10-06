@@ -1100,14 +1100,17 @@ class com_meego_packages_controllers_application
             $this->data['packageguid'] = $this->data['packages'][$this->data['packagetitle']]['packageguid'];
         }
 
-        $this->data['postaction'] = $this->mvc->dispatcher->generate_url
-        (
-            'rating_create', array
+        if (array_key_exists('packageguid', $this->data))
+        {
+            $this->data['postaction'] = $this->mvc->dispatcher->generate_url
             (
-                'to' => $this->data['packageguid']
-            ),
-            'com_meego_ratings_caching'
-        );
+                'rating_create', array
+                (
+                    'to' => $this->data['packageguid']
+                ),
+                'com_meego_ratings_caching'
+            );
+        }
     }
 
     /**
