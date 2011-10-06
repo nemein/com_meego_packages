@@ -1,4 +1,4 @@
-<div tal:repeat="form current_component/forms" tal:define="package current_component/package">
+<div class="workflow_wrapper" tal:repeat="form current_component/forms" tal:define="package current_component/package">
     <h2 i18n:domain="com_meego_packages" i18n:translate="'title_form_for_package'">
         <tal:block i18n:name="form_title">${form/db_form/title}</tal:block>
         <tal:block i18n:name="package_title">${package/title} ${package/version}</tal:block>
