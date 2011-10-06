@@ -4,7 +4,7 @@
                     <ul>
                         <li tal:repeat="basecategory com_meego_packages/basecategories">
                             <img tal:attributes="src string:/midgardmvc-static/com_meego_packages/images/cat-pic/${basecategory/css}.png"/>
-                            <a tal:attributes="href basecategory/localurl">${basecategory/name}</a>
+                            <a tal:attributes="href basecategory/localurl">${basecategory/name}<span class="counter">(${basecategory/apps_counter})</span></a>
                         </li>
                     </ul>
                 </div>
