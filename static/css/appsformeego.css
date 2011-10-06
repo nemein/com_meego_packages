@@ -1024,7 +1024,7 @@ top: -15px;
 }
 
 /* star rating */
-span.star-rating-control {
+span.star-rating-control.big {
 height: 114px !important;
 }
 
