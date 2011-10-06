@@ -1,0 +1,24 @@
+        <div id="popup_ver" style="display:none;" tal:condition="true: versions">
+            <p i18n:translate="'instruction_select_ux_version'" tal:condition="true: matched">
+                <tal:block i18n:name="ux">${matched/ux}</tal:block> Choose the version
+            </p>
+            <div class="cat-popup">
+                <div tal:condition="true: matched" tal:attributes="class string:cat-image ${matched/ux}"></div>
+                <div class="cat-more">
+                    <ul>
+                        <li tal:repeat="version versions">
+                            <a tal:attributes="href version/url" i18n:translate="'label_ux_version'">
+                            <tal:block i18n:name="version">${version/version}</tal:block>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="clear"></div>
+                <div id="buttonset_popup">
+                    <div class="popup_button">
+                        <a class="simplemodal-close" href="#"><img src="/midgardmvc-static/com_meego_packages/images/cancel.png"/></a>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>

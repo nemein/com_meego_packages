@@ -1,0 +1,54 @@
+        <div id="popup_comment" style="display: none;" tal:condition="true: com_meego_packages/postaction">
+            <form method="post" tal:attributes="action com_meego_packages/postaction">
+
+                <input type="hidden" name="relocate" tal:attributes="value current_component/relocate"/>
+                <input type="hidden" name="packageguid" tal:attributes="value current_component/packageguid"/>
+
+                <p i18n:domain="com_meego_packages" i18n:translate="'label_rate_and_comment'">Rate and write a comment</p>
+                <div id="poll-popup">
+                    <input class="star" type="radio" name="rating" value="1"/>
+                    <input class="star" type="radio" name="rating" value="2"/>
+                    <input class="star" type="radio" name="rating" value="3"/>
+                    <input class="star" type="radio" name="rating" value="4"/>
+                    <input class="star" type="radio" name="rating" value="5"/>
+
+<!--
+                    <ul>
+                        <li><a href="#"><img src="/midgardmvc-static/com_meego_packages/images/poll_on.png"/></a></li>
+                        <li><a href="#"><img src="/midgardmvc-static/com_meego_packages/images/poll_on.png"/></a></li>
+                        <li><a href="#"><img src="/midgardmvc-static/com_meego_packages/images/poll_on.png"/></a></li>
+                        <li><a href="#"><img src="/midgardmvc-static/com_meego_packages/images/poll_on.png"/></a></li>
+                        <li><a href="#"><img src="/midgardmvc-static/com_meego_packages/images/poll_off.png"/></a></li>
+                    </ul>
+-->
+                    <div class="poll_app_rate">
+                        <div class="poll_app_ratetitle" i18n:domain="com_meego_ratings" i18n:translate="'label_average_rating'">Avarage rating:</div>
+                        <div class="poll_app_ratenumber">${package/average_rating}</div>
+                    </div>
+    <!--
+                    <div class="poll_app_rate">
+                        <div class="poll_app_ratetitle">Your rating:</div>
+                        <div class="poll_app_ratenumber">4</div>
+                    </div>
+                    <div id="buttonset_popup">
+                        <div class="popup_button">
+                            <a class="simplemodal-close" href="#"><img src="/midgardmvc-static/com_meego_packages/images/cancel.png"/></a>
+                        </div>
+                    </div>
+    -->
+                </div>
+
+                <div class="popup_textbox">
+                    <textarea cols="100" rows="10" name="comment" id="text"></textarea>
+                </div>
+                <div id="buttonset_popup">
+                    <div class="popup_button">
+                        <span class="simplemodal-close"></span>
+                    </div>
+                    <div class="popup_button">
+                        <input type="submit" class="submit_comment" i18n:attributes="value command_save"/>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </form>
+        </div>

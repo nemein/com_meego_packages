@@ -1,0 +1,27 @@
+        <div id="popup_login" style="display:none;">
+            <p i18n:domain="midgardmvc_core" i18n:translate="'login'">Login</p>
+            <div class="login-popup">
+                <div tal:condition="exists:midgardmvc_core_services_authentication_message" class="errors" tal:content="midgardmvc_core_services_authentication_message">Lorem ipsum</div>
+
+                <form method='post' action='/mgd:login'>
+                    <input tal:condition="exists:current_component/redirect_url" type="hidden" name="redirect" tal:attributes="value current_component/redirect_url" />
+
+                    <div class="login_app_un">
+                        <div class="poll_app_untitle" i18n:domain="midgardmvc_core" i18n:translate="'username'">Username:</div><div class="poll_app_unbox"><input type="text" name="username" /></div>
+                    </div>
+                    <div class="login_app_pw">
+                        <div class="poll_app_pwtitle" i18n:domain="midgardmvc_core" i18n:translate="'password'">Password:</div><div class="poll_app_pwbox"><input type="password" name="password" /></div>
+                    </div>
+                    <div class="clear"></div>
+                    <div id="buttonset_popup">
+                        <div class="popup_button">
+                            <input type='submit' class="submit" name='login' value='Login' i18n:domain="midgardmvc_core" i18n:attributes="value login" />
+                        </div>
+                        <div class="popup_button">
+                            <a class="simplemodal-close" href="#" ><img src="/midgardmvc-static/com_meego_packages/images/cancel.png" /></a>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+            </div>
+        </div>

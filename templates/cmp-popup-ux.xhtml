@@ -1,0 +1,15 @@
+        <div id="popup_ux" style="display:none;" tal:condition="true: uxes">
+            <p i18n:translate="'instruction_select_user_experience'">Choose your user experience</p>
+            <ul class="userexp">
+                <li tal:repeat="ux uxes" tal:attributes="class string:block ${ux/css}">
+                    <a tal:attributes="href ux/url">${ux/translated_title}</a>
+                </li>
+            </ul>
+            <div class="clear"></div>
+            <div id="buttonset_popup">
+                <div class="popup_button"><a class="simplemodal-close" href="#">
+                    <img src="/midgardmvc-static/com_meego_packages/images/cancel.png"/></a>
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
