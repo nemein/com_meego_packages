@@ -58,6 +58,9 @@ msgstr "There are no available applications in this category."
 msgid "no_such_package"
 msgstr "There is no such package available."
 
+msgid "no_such_application"
+msgstr "There is no such application available."
+
 msgid "os_release"
 msgstr "MeeGo Release"
 
@@ -69,6 +72,9 @@ msgstr "Maintainer"
 
 msgid "rating"
 msgstr "Rating"
+
+msgid "label_user_comments"
+msgstr "User comments"
 
 msgid "comments"
 msgstr "Comments: ${number}"
@@ -282,3 +288,15 @@ msgstr "Available Applications"
 
 msgid "label_back_to_categories"
 msgstr "Please return to the categories"
+
+msgid "command_login_to_comment"
+msgstr "Login to comment"
+
+msgid "command_login_to_rate"
+msgstr "Login to rate"
+
+msgid "label_application_homepage"
+msgstr "Application homepage"
+
+msgid "label_rate_and_comment"
+msgstr "Rate and write a comment"
