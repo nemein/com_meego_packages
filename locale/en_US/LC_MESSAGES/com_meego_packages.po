@@ -134,7 +134,7 @@ msgid "title_harmattan_ux"
 msgstr "Nokia N9"
 
 msgid "title_meegoce_ux"
-msgstr "Community Edition"
+msgstr "Nokia N900 CE"
 
 msgid "title_wetab_ux"
 msgstr "WeTab"
