@@ -153,50 +153,6 @@ class com_meego_packages_injector
 
             $repositories = com_meego_packages_controllers_application::get_top_project_repos();
 
-/*
-            foreach ($repositories as $repo)
-            {
-                ($repo->repoosux == '') ? $ux = 'universal' : $ux = $repo->repoosux;
-
-                // link to the latest UX / version combo
-                $uxes[$ux]['versions'][$repo->repoosversion] = $repo;
-
-                if (   ! array_key_exists('latest', $uxes[$ux])
-                    || (float)$repo->repoosversion > $uxes[$ux]['latest'])
-                {
-                    $uxes[$ux]['latest'] = $repo->repoosversion;
-                }
-
-
-                // all versions of the matched, current UX
-                if ((    $ux == 'universal'
-                     ||  $matched['ux'] == $ux)
-                    && ! array_key_exists($repo->repoosversion, $versions)
-                    && (float) $repo->repoosversion > 0)
-                {
-                    $_repo = com_meego_packages_controllers_application::populate_repo_ux($repo, $matched['ux']);
-                    $versions[$repo->repoosversion] = array(
-                        'version' => $repo->repoosversion,
-                        'url' => $_repo['url']
-                    );
-                }
-            }
-
-var_dump($uxes);
-die;
-
-            if (array_key_exists('universal', $uxes))
-            {
-                $latest = $uxes['universal']['versions'][$uxes['universal']['latest']];
-
-                foreach($this->mvc->configuration->os_ux[$os] as $configured_ux => $configured_ux_title)
-                {
-                    $uxes[$configured_ux] = com_meego_packages_controllers_application::populate_repo_ux($latest, $configured_ux);
-                }
-                // this won't be needed anymore as we set all UXes
-                unset($uxes['universal'], $latest);
-            }
-*/
             $latest = $this->mvc->configuration->latest;
 
             foreach ($repositories as $repository)
@@ -250,6 +206,7 @@ die;
                 || ! array_key_exists('ux', $matched)))
         {
             $matched = array_merge($matched, $this->mvc->configuration->latest[$this->mvc->configuration->default['os']]);
+            $matched['os'] = $this->mvc->configuration->default['os'];
             $this->part = 'packages';
         }
 
