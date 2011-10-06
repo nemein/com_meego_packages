@@ -2,6 +2,7 @@
 class com_meego_packages_injector
 {
     var $mvc = null;
+    var $part = 'applications';
 
     public function __construct()
     {
@@ -50,9 +51,6 @@ class com_meego_packages_injector
         {
             $route->template_aliases['topbar'] = 'cmp-menubar';
         }
-
-        // Add the CSS and JS files needed by Packages
-        $this->add_head_elements();
 
         $request->set_data_item('admin', false);
 
@@ -202,6 +200,24 @@ class com_meego_packages_injector
             $request->set_data_item('versions', $versions);
         }
 
+        // in case there is no matched stuff from the request we will use the defaults configured
+        if (! is_array($matched))
+        {
+            $matched = array();
+        }
+
+        if (   is_array($matched)
+            && (   ! array_key_exists('os', $matched)
+                || ! array_key_exists('version', $matched)
+                || ! array_key_exists('ux', $matched)))
+        {
+            $matched = array_merge($matched, $this->mvc->configuration->latest);
+            $this->part = 'packages';
+        }
+
+        // Add the CSS and JS files needed by Packages
+        $this->add_head_elements();
+
         $request->set_data_item('matched', $matched);
         //self::set_breadcrumb($request);
     }
@@ -212,7 +228,15 @@ class com_meego_packages_injector
     private function add_head_elements()
     {
         $this->mvc->head->add_jsfile(MIDGARDMVC_STATIC_URL . '/eu_urho_widgets/js/jquery.rating/jquery.rating.js');
-        $this->mvc->head->add_jsfile(MIDGARDMVC_STATIC_URL . '/com_meego_packages/js/init_rating_widget.js');
+
+        if ($this->part == 'applications')
+        {
+            $this->mvc->head->add_jsfile(MIDGARDMVC_STATIC_URL . '/com_meego_packages/js/init_rating_widget_big.js');
+        }
+        else
+        {
+            $this->mvc->head->add_jsfile(MIDGARDMVC_STATIC_URL . '/com_meego_packages/js/init_rating_widget_small.js');
+        }
         $this->mvc->head->add_link
         (
             array
