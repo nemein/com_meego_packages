@@ -290,6 +290,7 @@ class com_meego_packages_controllers_application
         if (! count($packages))
         {
             // say something
+            $this->data['packages'] = array();
             return 0;
         }
 
@@ -538,21 +539,27 @@ class com_meego_packages_controllers_application
                     $filtered = self::get_filtered_applications($args['os'], $args['version'], $relation->packagecategory, $ux, $args['packagetitle']);
                 }
 
-                $packages = array_merge($filtered, $packages);
+                if (is_array($filtered))
+                {
+                    $packages = array_merge($filtered, $packages);
+                }
             }
 
             // sort the packages by title
-            uasort(
-                $packages,
-                function($a, $b)
-                {
-                    if ($a->packagetitle == $b->packagetitle)
+            if (count($packages))
+            {
+                uasort(
+                    $packages,
+                    function($a, $b)
                     {
-                        return 0;
+                        if ($a->packagetitle == $b->packagetitle)
+                        {
+                            return 0;
+                        }
+                        return ($a->packagetitle < $b->packagetitle) ? -1 : 1;
                     }
-                    return ($a->packagetitle < $b->packagetitle) ? -1 : 1;
-                }
-            );
+                );
+            }
         }
         else
         {
@@ -577,6 +584,7 @@ class com_meego_packages_controllers_application
      */
     public function get_filtered_applications($os = null, $os_version = null, $packagecategory_id = 0, $ux_name = false, $package_title = false)
     {
+        $apps = null;
         $packages = array();
         $os_constraint = null;
         $os_version_constraint = null;
@@ -727,7 +735,7 @@ class com_meego_packages_controllers_application
         }
         else
         {
-            $apps = self::filter_titles($all_objects, $this->mvc->configuration->package_filters, true);
+            $apps = self::filter_titles($all_objects, $this->mvc->configuration->package_filters, false);
         }
 
         //echo 'all packages: ' . count($all_objects) . ', apps after filtering: ' . count($apps) . "\n";
@@ -747,6 +755,9 @@ class com_meego_packages_controllers_application
      */
     public function filter_titles(array $packages, array $filters, $unique = false)
     {
+echo "filter titles; unique " . $unique . "\n";
+ob_flush();
+
         $apps = array();
         $localpackages = array();
 
@@ -804,6 +815,15 @@ class com_meego_packages_controllers_application
         $older = array();
         $latest = array('os' => '', 'version' => '', 'variants' => array());
 
+        $matched = $this->request->get_route()->get_matched();
+
+        // this index will be used to grab the download URL of the appropriate arch variant of the package
+        $index = 0;
+        if (array_key_exists($matched['ux'], $this->mvc->configuration->ux_arch_map))
+        {
+            $index = $this->mvc->configuration->ux_arch_map[$matched['ux']];
+        }
+
         foreach ($packages as $package)
         {
             if (! isset($this->data['packages'][$package->packagetitle]['name']))
@@ -818,6 +838,7 @@ class com_meego_packages_controllers_application
                 $this->data['packages'][$package->packagetitle]['number_of_comments'] = $stats['number_of_comments'];
 
                 // the stars as html snippet for the average rating; should be used as-is in the template
+                $this->data['packages'][$package->packagetitle]['average_rating'] = $stats['average_rating'];
                 $this->data['packages'][$package->packagetitle]['stars'] = com_meego_ratings_controllers_rating::draw_stars($stats['average_rating']);
 
                 // collect ratings and comments (used in application detailed view)
@@ -828,13 +849,21 @@ class com_meego_packages_controllers_application
 
                 $this->data['packages'][$package->packagetitle]['ratings'] = self::prepare_ratings($package->packagetitle);
 
+                // set a summary
+                $this->data['packages'][$package->packagetitle]['summary'] = $package->packagesummary;
                 // set a longer description
                 $this->data['packages'][$package->packagetitle]['description'] = $package->packagedescription;
+                $this->data['packages'][$package->packagetitle]['basecategoryname'] = $package->basecategoryname;
+                // base category name
 
                 $this->data['packages'][$package->packagetitle]['iconurl'] = false;
                 $this->data['packages'][$package->packagetitle]['screenshoturl'] = false;
 
-                $_package = new com_meego_package($package->packageguid);
+                // a package may have multiple arches
+                // but we should nominate one to be the default in order to support the new design
+                $this->data['packages'][$package->packagetitle]['defaultdownloadurl'] = false;
+
+                $_package = new com_meego_package($package->packageid);
 
                 $attachments = $_package->list_attachments();
 
@@ -944,6 +973,15 @@ class com_meego_packages_controllers_application
                 $older[$package->packageversion]['providers'][$package->repoprojectname]['variants'][] = $package;
             }
 
+            // set the default download url for the package
+            if (     array_key_exists($index, $latest['variants'])
+                && ! $this->data['packages'][$package->packagetitle]['defaultdownloadurl'])
+            {
+                // index was set at the beginning of this method
+                $this->data['packages'][$package->packagetitle]['defaultdownloadurl'] = $latest['variants'][$index]->packageinstallfileurl;
+            }
+
+            // set the latest of this package
             if (! array_key_exists('latest', $this->data['packages'][$package->packagetitle]))
             {
                 $this->data['packages'][$package->packagetitle]['latest'] = array('version' => '', 'variants' => array());
@@ -962,8 +1000,6 @@ class com_meego_packages_controllers_application
 
             // always keep it up-to-date
             $this->data['packages'][$package->packagetitle]['older'] = $older;
-
-            $matched = $this->request->get_route()->get_matched();
 
             $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
             (
@@ -1012,6 +1048,10 @@ class com_meego_packages_controllers_application
             }
         } //foreach
 
+        // let's unset the default variant, so we don't list it among the "other downloads"
+        unset($this->data['packages'][$package->packagetitle]['latest']['variants'][$index]);
+
+        // and we don't need this either
         unset($latest);
     }
 
@@ -1022,15 +1062,17 @@ class com_meego_packages_controllers_application
      */
     public function enable_commenting()
     {
+        $matched = $this->request->get_route()->get_matched();
+
         $this->data['relocate'] = $this->mvc->dispatcher->generate_url(
             'apps_by_title',
             array
             (
-                'os' => $this->data['os'],
-                'version' => $this->data['version'],
-                'ux' => $this->data['ux'],
-                'basecategory' => $this->data['basecategory'],
-                'packagetitle' => $this->data['packagetitle']
+                'os' => $matched['os'],
+                'version' => $matched['version'],
+                'ux' => $matched['ux'],
+                'basecategory' => $matched['basecategory'],
+                'packagetitle' => $matched['packagetitle']
             ),
             $this->request
         );
