@@ -788,7 +788,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      * @param string OS version
      * @param string UX name
      */
-    private function redirect($os = null, $version = null, $ux = null)
+    public function redirect($os = null, $version = null, $ux = null)
     {
         if (   $os
             && $version
