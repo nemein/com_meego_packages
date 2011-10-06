@@ -29,6 +29,14 @@
                             </li>
                         </ul>
 
+                        <div class="warning" tal:condition="true: package/workflows">
+                            <h3 i18n:translate="'title_app_open_forms'"></h3>
+                            <div class="workflow_bar">
+                                <form tal:repeat="workflow package/workflows" method="post" tal:attributes="action workflow/url">
+                                    <input type="submit" tal:attributes="value workflow/label" />
+                                </form>
+                             </div>
+                        </div>
                     </div>
                 </div>
                 <div class="app_page_right">
