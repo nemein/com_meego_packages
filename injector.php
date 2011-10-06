@@ -117,25 +117,20 @@ class com_meego_packages_injector
             if (! array_key_exists($matched['os'], $this->mvc->configuration->os_map))
             {
                 $redirect = true;
-                $os = $this->mvc->configuration->latest['os'];
+                $os = $this->mvc->configuration->default['os'];
             }
 
             // if the matched UX is not configured then we shout out loud
-            if (! array_key_exists($matched['ux'], $this->mvc->configuration->os_ux))
+            if (! array_key_exists($matched['ux'], $this->mvc->configuration->os_ux[$os]))
             {
                 $redirect = true;
-                $ux = $this->mvc->configuration->latest['ux'];
+                $ux = $this->mvc->configuration->latest[$os]['ux'];
             }
 
             if ($redirect)
             {
                 //throw new midgardmvc_exception_notfound("Please pick a valid UX, " . $matched['ux'] . " does not exist.", 404);
                 com_meego_packages_controllers_basecategory::redirect($os, $matched['version'], $ux);
-            }
-
-            if (array_key_exists('packagetitle', $matched))
-            {
-                // when browsing an exact package then we rather provide a direct link to the QA page of the package
             }
 
             if (! $workflows)
@@ -150,12 +145,16 @@ class com_meego_packages_injector
 
             $request->set_data_item('workflows', $workflows);
 
-            //gather available UXes
+            // gather available UXes for the popups
+            // @todo: this piece of code is only needed for some of the routes
+            // so we should not run it when not needed
             $uxes = array();
             $versions = array();
 
-            $repos = com_meego_packages_controllers_application::get_top_project_repos();
-            foreach ($repos as $repo)
+            $repositories = com_meego_packages_controllers_application::get_top_project_repos();
+
+/*
+            foreach ($repositories as $repo)
             {
                 ($repo->repoosux == '') ? $ux = 'universal' : $ux = $repo->repoosux;
 
@@ -183,15 +182,54 @@ class com_meego_packages_injector
                 }
             }
 
+var_dump($uxes);
+die;
+
             if (array_key_exists('universal', $uxes))
             {
                 $latest = $uxes['universal']['versions'][$uxes['universal']['latest']];
-                foreach($this->mvc->configuration->os_ux as $configured_ux => $configured_ux_title)
+
+                foreach($this->mvc->configuration->os_ux[$os] as $configured_ux => $configured_ux_title)
                 {
                     $uxes[$configured_ux] = com_meego_packages_controllers_application::populate_repo_ux($latest, $configured_ux);
                 }
                 // this won't be needed anymore as we set all UXes
                 unset($uxes['universal'], $latest);
+            }
+*/
+            $latest = $this->mvc->configuration->latest;
+
+            foreach ($repositories as $repository)
+            {
+                if (   array_key_exists($repository->repoos, $latest)
+                    && $repository->repoosversion == $latest[$repository->repoos]['version'])
+                {
+                    if (! strlen($repository->repoosux))
+                    {
+                        // No UX means a core or universal repo, so we populate all UXes
+                        foreach($this->mvc->configuration->os_ux[$repository->repoos] as $configured_ux => $configured_ux_title)
+                        {
+                            $uxes[$repository->repoos . $configured_ux] = com_meego_packages_controllers_application::populate_repo_ux($repository, $configured_ux);
+                        }
+                    }
+                    else
+                    {
+                        $uxes[$repository->repoos . $repository->repoosux] = com_meego_packages_controllers_application::populate_repo_ux($repository);
+                    }
+                }
+
+                // all versions of the matched, current UX
+                if ((    $ux == 'universal'
+                     ||  $matched['ux'] == $ux)
+                    && ! array_key_exists($repository->repoosversion, $versions)
+                    && (float) $repository->repoosversion > 0)
+                {
+                    $_repo = com_meego_packages_controllers_application::populate_repo_ux($repository, $matched['ux']);
+                    $versions[$repository->repoosversion] = array (
+                        'version' => $repository->repoosversion,
+                        'url' => $_repo['url']
+                    );
+                }
             }
 
             arsort($versions);
@@ -211,7 +249,7 @@ class com_meego_packages_injector
                 || ! array_key_exists('version', $matched)
                 || ! array_key_exists('ux', $matched)))
         {
-            $matched = array_merge($matched, $this->mvc->configuration->latest);
+            $matched = array_merge($matched, $this->mvc->configuration->latest[$this->mvc->configuration->default['os']]);
             $this->part = 'packages';
         }
 

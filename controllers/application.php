@@ -141,54 +141,36 @@ class com_meego_packages_controllers_application
      */
     public function get_index(array $args)
     {
-        $this->data['oses'] = array();
         $this->data['latest'] = false;
         $this->data['repositories'] = array();
 
-        $latest_os = $this->mvc->configuration->latest['os'];
-        $latest_os_version = $this->mvc->configuration->latest['version'];
+        // must be an array
+        $latest = $this->mvc->configuration->latest;
 
+        // top repos that we show to "end users"
         $repositories = $this->get_top_project_repos();
 
         foreach ($repositories as $repository)
         {
-            if (   $repository->repoos == strtolower($latest_os)
-                && $repository->repoosversion == $latest_os_version)
+            if (   array_key_exists($repository->repoos, $latest)
+                && $repository->repoosversion == $latest[$repository->repoos]['version'])
             {
-                $this->data['latest']['title'] = $this->mvc->configuration->os_map[$repository->repoos] . ' ' . $repository->repoosversion;
+                // a nicer title for the OS
+                //$this->data['latest'][$repository->repoos]['title'] = $this->mvc->configuration->os_map[$repository->repoos] . ' ' . $repository->repoosversion;
 
                 if (! strlen($repository->repoosux))
                 {
                     // No UX means a core or universal repo, so we populate all UXes
-                    foreach($this->mvc->configuration->os_ux as $configured_ux => $configured_ux_title)
+                    foreach($this->mvc->configuration->os_ux[$repository->repoos] as $configured_ux => $configured_ux_title)
                     {
                         #echo "add configured latest: " . $repository->repoos . ' ' . $repository->repoosversion . ': ' . $configured_ux . "\n";
-                        $this->data['latest']['uxes'][$configured_ux] = $this->populate_repo_ux($repository, $configured_ux);
+                        $this->data['latest']['uxes'][$repository->repoos . $configured_ux] = $this->populate_repo_ux($repository, $configured_ux);
                     }
                 }
                 else
                 {
-                    $this->data['latest']['uxes'][$repository->repoosux] = $this->populate_repo_ux($repository);
+                    $this->data['latest']['uxes'][$repository->repoos . $repository->repoosux] = $this->populate_repo_ux($repository);
                     #echo "add latest: " . $repository->repoos . ' ' . $repository->repoosversion . ': ' . $repository->repoosux . "\n";
-                }
-            }
-            else
-            {
-                $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['title'] = $this->mvc->configuration->os_map[$repository->repoos] . ' ' . $repository->repoosversion;
-
-                if (! strlen($repository->repoosux))
-                {
-                    // No UX means a core repo, so we populate all UXes
-                    foreach($this->mvc->configuration->os_ux as $configured_ux => $configured_ux_title)
-                    {
-                        $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['uxes'][$configured_ux] = $this->populate_repo_ux($repository, $configured_ux);
-                        #echo "add configured normal: " . $repository->repoos . ' ' . $repository->repoosversion . ': ' . $configured_ux . "\n";
-                    }
-                }
-                else
-                {
-                    $this->data['oses'][$repository->repoos . ' ' . $repository->repoosversion]['uxes'][$repository->repoosux] = $this->populate_repo_ux($repository);
-                    #echo "add normal: " . $repository->repoos . ' ' . $repository->repoosversion . ': ' . $repository->repoosux . "\n";
                 }
             }
         }

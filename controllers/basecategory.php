@@ -280,16 +280,17 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         $ux = $args['ux'];
 
         // check if OS is valid
+        // this would be cheaper if we check the configuration, not the DB..
         if (! com_meego_packages_controllers_repository::os_exists($args['os'], $args['version']))
         {
-            $os = $this->mvc->configuration->latest['os'];
-            $os_version = $this->mvc->configuration->latest['version'];
-            $ux = $this->mvc->configuration->latest['ux'];
+            $os = $this->mvc->configuration->default['os'];
+            $os_version = $this->mvc->configuration->latest[$os]['version'];
+            $ux = $this->mvc->configuration->latest[$os]['ux'];
             self::redirect($os, $os_version, $ux);
         }
 
-        // check if ux is valid
-        if (! com_meego_packages_controllers_repository::ux_exists($args['ux']))
+        // check from the configuration if ux is valid
+        if (! array_key_exists($args['ux'], $this->mvc->configuration->os_ux[$os]))
         {
             $found = false;
             // check for base category, perhaps the user wants that
@@ -307,7 +308,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
                 //throw new midgardmvc_exception_notfound($this->mvc->i18n->get("title_no_ux_or_basecategory", null, array('item' => $args['ux'])), 404);
 
                 // redirect to basecategory index using default OS,  UX and versions
-                $ux = $this->mvc->configuration->latest['ux'];
+                $ux = $this->mvc->configuration->latest[$os]['ux'];
                 self::redirect($os, $os_version, $ux);
             }
             else
@@ -790,6 +791,10 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function redirect($os = null, $version = null, $ux = null)
     {
+var_dump($os);
+var_dump($version);
+var_dump($ux);
+
         if (   $os
             && $version
             && $ux)

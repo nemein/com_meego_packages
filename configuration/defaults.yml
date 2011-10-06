@@ -25,31 +25,45 @@ workflows:
         label: Community QA
         provider: com_meego_packages_workflow_review
 
-# define the latest OS and its version
-# it is hard to determine automatically, so we let admins to configure
-latest:
-    os: meego
-    version: 1.2
-    ux: harmattan
+# default OS
+default:
+    os: maemo.org
 
 # map of os names used in the db and their pretty names used in the UI
 os_map:
     maemo.org: Harmattan
-    maemo: Harmattan
     meego: MeeGo
-    debian: Debian
+    wetabos: WeTab
 
-# UX defintions in case we have none available
+# define an array for default OS settings
+latest:
+    maemo.org:
+        version: 1.2
+        ux: harmattan
+    meego:
+        version: 1.2
+        ux: netbook
+    wetabos:
+        version: 1.0
+        ux: tablet
+
+# Listing all UXes an OS may have
 os_ux:
-    harmattan: Nokia N9
-    meegoce: Nokia N900
-    netbook: Netbook
-    handset: Handset
-    wetab: WeTab
-#   tablet: Tablet
-#   mediaphone: Media Phone
-#   smarttv: Smart TV
-#   ivi: In Vehicle
+    maemo.org:
+        harmattan: Nokia N9
+    meego:
+        meegoce: Nokia N900
+        netbook: Netbook
+        handset: Handset
+        # until we have no wetab import let's put this under meego
+        wetab: WeTab
+        # unused UXes
+        #   tablet: Tablet
+        #   mediaphone: Media Phone
+        #   smarttv: Smart TV
+        #   ivi: In Vehicle
+    wetabos:
+        wetab: WeTab
 
 # Each UX should have a default arch to provide a simple download link
 ux_arch_map:
@@ -71,6 +85,7 @@ os_groups:
 # these projects define the so called "downloads" area
 top_projects:
     MeeGo:1.2:Apps:Testing: Some description
+    MeeGo:1.2:Harmattan:Apps:Testing: Some description
 #    home:feri: Some description
 #    home:xfade: Some description
 #    maemo-fremantle-extras: Some description

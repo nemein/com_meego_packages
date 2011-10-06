@@ -479,12 +479,12 @@ class com_meego_packages_controllers_repository
     public function ux_exists($ux = '')
     {
         $retval = false;
-        $storage = new midgard_query_storage('com_meego_repository');
+        $storage = new midgard_query_storage('com_meego_ux');
 
         $q = new midgard_query_select($storage);
 
         $q->set_constraint(new midgard_query_constraint(
-            new midgard_query_property('osux'),
+            new midgard_query_property('name'),
             '=',
             new midgard_query_value($ux)
         ));
