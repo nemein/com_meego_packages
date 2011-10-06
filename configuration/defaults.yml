@@ -51,6 +51,14 @@ os_ux:
 #   smarttv: Smart TV
 #   ivi: In Vehicle
 
+# Each UX should have a default arch to provide a simple download link
+ux_arch_map:
+    netbook: armv7el
+    handset: armv7el
+    wetab: armv7el
+    harmattan: armv7el
+    meegoce: armv7el
+
 # Allowed types of repositories from where packages can be imported
 os_groups:
     core: Core repository
