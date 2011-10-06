@@ -84,25 +84,8 @@ class com_meego_packages_injector
         $request->set_data_item('workflows', false);
 
         $workflows = null;
-        $matched = $route->get_matched();
 
-        if (! array_key_exists('basecategory', $matched))
-        {
-            $matched['basecategory'] = false;
-            $matched['basecategory_css'] = '';
-        }
-        else
-        {
-            $decoded = rawurldecode($matched['basecategory']);
-            if (array_key_exists($decoded, $this->mvc->configuration->basecategory_css_map))
-            {
-                $matched['basecategory_css'] = $this->mvc->configuration->basecategory_css_map[$decoded];
-            }
-            else
-            {
-                $matched['basecategory_css'] = strtolower($decoded);
-            }
-        }
+        $matched = $route->get_matched();
 
         if (   is_array($matched)
             && array_key_exists('os', $matched)
@@ -112,6 +95,26 @@ class com_meego_packages_injector
             $os = $matched['os'];
             $ux = $matched['ux'];
             $redirect = false;
+
+            $decoded = '';
+            if (array_key_exists('basecategory', $matched))
+            {
+                $decoded = rawurldecode($matched['basecategory']);
+
+                if (array_key_exists($decoded, $this->mvc->configuration->basecategory_css_map))
+                {
+                    $matched['basecategory_css'] = $this->mvc->configuration->basecategory_css_map[$decoded];
+                }
+                else
+                {
+                    $matched['basecategory_css'] = strtolower($decoded);
+                }
+            }
+            else
+            {
+                $matched['basecategory'] = false;
+                $matched['basecategory_css'] = '';
+            }
 
             if (! array_key_exists($matched['os'], $this->mvc->configuration->os_map))
             {
@@ -148,7 +151,6 @@ class com_meego_packages_injector
             }
 
             $request->set_data_item('workflows', $workflows);
-            $request->set_data_item('matched', $matched);
 
             //gather available UXes
             $uxes = array();
@@ -199,6 +201,8 @@ class com_meego_packages_injector
             $request->set_data_item('uxes', $uxes);
             $request->set_data_item('versions', $versions);
         }
+
+        $request->set_data_item('matched', $matched);
         //self::set_breadcrumb($request);
     }
 
@@ -207,7 +211,8 @@ class com_meego_packages_injector
      */
     private function add_head_elements()
     {
-        $this->mvc->head->add_jsfile(MIDGARDMVC_STATIC_URL . '/eu_urho_widgets/js/jquery.rating/jquery.rating.pack.js');
+        $this->mvc->head->add_jsfile(MIDGARDMVC_STATIC_URL . '/eu_urho_widgets/js/jquery.rating/jquery.rating.js');
+        $this->mvc->head->add_jsfile(MIDGARDMVC_STATIC_URL . '/com_meego_packages/js/init_rating_widget.js');
         $this->mvc->head->add_link
         (
             array
