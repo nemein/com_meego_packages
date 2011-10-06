@@ -39,7 +39,7 @@
                             <span class="stars" tal:content="structure package/stars">Stars</span>
                         </a>
                         <a tal:condition="not: current_component/can_post" tal:define="main_url php:midgardmvc.context.get_request(0).get_path(); url string:/mgd:login?redirect=$main_url" tal:attributes="href url">
-                            <span tal:content="structure package/stars">Stars</span>
+                            <span class="stars" tal:content="structure package/stars">Stars</span>
                         </a>
                     </div>
                     <div class="app_content">${package/description}</div>
