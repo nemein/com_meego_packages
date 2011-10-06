@@ -13,27 +13,34 @@
                         </a>
                     </div>
                     <div class="app_notes">
-                        <p>List of alternative versions, technical parameters, requirements, notes, etc.</p>
+                        <ul class="basic_info">
+                            <li i18n:translate="'label_app_version'"><tal:block i18n:name="version">x.y</tal:block></li>
+                            <li i18n:translate="'label_app_release'"><tal:block i18n:name="date">xxxx-xx-xx</tal:block></li>
+                            <li i18n:translate="'label_app_size'"><tal:block i18n:name="size">xxx</tal:block></li>
+                        </ul>
 
                         <div class="homepage" tal:condition="true: package/homepageurl">
                             <a class="url" tal:attributes="href package/homepageurl" i18n:translate="'label_application_homepage'">Homepage</a>
                         </div>
 
-                        <ul tal:condition="true: package/latest/variants">
-                            <li tal:repeat="variant package/latest/variants">
-                                <div class="variant">
-                                    <a tal:attributes="href variant/packageinstallfileurl; class php: variant.ux . ' ' . variant.repoarch" i18n:domain="com_meego_packages" i18n:attributes="title tip_install" i18n:translate="'command_install'">
-                                        <tal:block i18n:name="arch">${variant/repoarch}</tal:block>
-                                    </a>
-                                </div>
-                            </li>
-                        </ul>
+                        <div class="variants" tal:condition="true: package/latest/variants">
+                            <span i18n:translate="'title_available_arch_variants'"></span>:
+                            <ul>
+                                <li tal:repeat="variant package/latest/variants">
+                                    <div class="variant">
+                                        <a tal:attributes="href variant/packageinstallfileurl; class php: variant.ux . ' ' . variant.repoarch" i18n:domain="com_meego_packages" i18n:attributes="title tip_install" i18n:translate="'command_install'">
+                                            <tal:block i18n:name="arch">${variant/repoarch}</tal:block>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
 
-                        <div class="warning" tal:condition="true: package/workflows">
-                            <h3 i18n:translate="'title_app_open_forms'"></h3>
+                        <div tal:condition="true: package/workflows">
+                            <span i18n:translate="'title_app_open_forms'"></span>:
                             <div class="workflow_bar">
                                 <form tal:repeat="workflow package/workflows" method="post" tal:attributes="action workflow/url">
-                                    <input type="submit" tal:attributes="value workflow/label" />
+                                    <input type="submit" tal:attributes="value workflow/label; class workflow/css" />
                                 </form>
                              </div>
                         </div>
