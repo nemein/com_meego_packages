@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="150"
+   height="380"
+   id="svg3933"
+   version="1.1"
+   inkscape:version="0.48.1 r9760"
+   sodipodi:docname="netbook_all.svg"
+   inkscape:export-filename="/home/sopi/.midgard2/meego/com_meego_packages/static/images/device-netbook.png"
+   inkscape:export-xdpi="89.940002"
+   inkscape:export-ydpi="89.940002">
+  <defs
+     id="defs3935" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="36.428571"
+     inkscape:cy="520"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1440"
+     inkscape:window-height="830"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata3938">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-672.36218)">
+    <g
+       id="g3993"
+       transform="matrix(1.5426085,0,0,1.5426085,-573.72087,308.51944)">
+	<g
+   id="g3995">
+		<linearGradient
+   y2="328.6106"
+   x2="420.5361"
+   y1="267.32959"
+   x1="420.5361"
+   gradientUnits="userSpaceOnUse"
+   id="SVGID_1_">
+			<stop
+   id="stop3998"
+   style="stop-color:#DFF5FB"
+   offset="0" />
+
+			<stop
+   id="stop4000"
+   style="stop-color:#CBDBEB"
+   offset="1" />
+
+		</linearGradient>
+
+		<circle
+   id="circle4002"
+   r="30.792"
+   cy="297.44601"
+   cx="420.535"
+   sodipodi:cx="420.535"
+   sodipodi:cy="297.44601"
+   sodipodi:rx="30.792"
+   sodipodi:ry="30.792"
+   style="fill:url(#SVGID_1_)"
+   d="m 451.327,297.44601 c 0,17.00596 -13.78604,30.792 -30.792,30.792 -17.00595,0 -30.792,-13.78604 -30.792,-30.792 0,-17.00595 13.78605,-30.792 30.792,-30.792 17.00596,0 30.792,13.78605 30.792,30.792 z" />
+
+	</g>
+
+	<g
+   id="g4004">
+		<polygon
+   id="polygon4006"
+   points="404.536,307.613 422.786,315.863 447.036,304.863 432.286,299.113 430.786,279.363 397.536,282.363 "
+   style="fill:#4fc3e6" />
+
+		<polygon
+   id="polygon4008"
+   points="407.12,305.113 430.119,298.613 428.619,283.28 402.62,286.28 " />
+
+		<polygon
+   id="polygon4010"
+   points="431.286,300.113 432.786,300.613 410.703,308.113 408.12,307.029 " />
+
+		<polygon
+   id="polygon4012"
+   points="433.369,301.113 434.869,301.613 414.545,309.758 412.429,308.869 " />
+
+		<polygon
+   id="polygon4014"
+   points="436.286,302.254 437.786,302.754 418.333,311.334 416.37,310.51 " />
+
+		<polygon
+   id="polygon4016"
+   points="428.266,307.844 431.891,309.246 437.307,306.852 433.391,305.436 " />
+
+	</g>
+
+</g>
+    <g
+       id="g4116"
+       transform="matrix(1.5426085,0,0,1.5426085,-573.72087,499.17507)">
+	<g
+   id="g4118">
+		<circle
+   id="circle4120"
+   r="30.792"
+   cy="297.021"
+   cx="420.535"
+   sodipodi:cx="420.535"
+   sodipodi:cy="297.021"
+   sodipodi:rx="30.792"
+   sodipodi:ry="30.792"
+   style="fill:#84e4fd"
+   d="m 451.327,297.021 c 0,17.00595 -13.78604,30.792 -30.792,30.792 -17.00595,0 -30.792,-13.78605 -30.792,-30.792 0,-17.00596 13.78605,-30.792 30.792,-30.792 17.00596,0 30.792,13.78604 30.792,30.792 z" />
+
+	</g>
+
+	<g
+   id="g4122">
+		<polygon
+   id="polygon4124"
+   points="447.036,304.438 432.286,298.688 430.786,278.938 397.536,281.938 404.536,307.188 422.786,315.438 "
+   style="fill:#4fc3e6" />
+
+		<polygon
+   id="polygon4126"
+   points="428.619,282.855 402.62,285.855 407.12,304.688 430.119,298.188 " />
+
+		<polygon
+   id="polygon4128"
+   points="410.703,307.688 408.12,306.605 431.286,299.688 432.786,300.188 " />
+
+		<polygon
+   id="polygon4130"
+   points="414.545,309.332 412.429,308.445 433.369,300.688 434.869,301.188 " />
+
+		<polygon
+   id="polygon4132"
+   points="418.333,310.908 416.37,310.085 436.286,301.828 437.786,302.328 " />
+
+		<polygon
+   id="polygon4134"
+   points="437.307,306.427 433.391,305.01 428.266,307.418 431.891,308.82 " />
+
+	</g>
+
+</g>
+  </g>
+</svg>

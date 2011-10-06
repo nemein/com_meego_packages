@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="150"
+   height="380"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.1 r9760"
+   sodipodi:docname="wetab_all.svg"
+   inkscape:export-filename="/home/sopi/.midgard2/meego/com_meego_packages/static/images/device-wetab.png"
+   inkscape:export-xdpi="89.940002"
+   inkscape:export-ydpi="89.940002">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.6368421"
+     inkscape:cx="2.6045016"
+     inkscape:cy="296.02442"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1440"
+     inkscape:window-height="830"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1">
+    <sodipodi:guide
+       orientation="0,1"
+       position="-27.491961,380"
+       id="guide3277" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="26.881029,190"
+       id="guide3279" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="256.59164,0"
+       id="guide3281" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-672.36218)">
+    <g
+       id="g3150"
+       transform="matrix(1.7861782,0,0,1.7861782,-677.29538,236.05097)">
+	<g
+   id="g3152">
+		<linearGradient
+   y2="328.6214"
+   x2="421.17719"
+   y1="267.34079"
+   x1="421.17719"
+   gradientUnits="userSpaceOnUse"
+   id="SVGID_1_">
+			<stop
+   id="stop3155"
+   style="stop-color:#DFF5FB"
+   offset="0" />
+
+			<stop
+   id="stop3157"
+   style="stop-color:#CBDBEB"
+   offset="1" />
+
+		</linearGradient>
+
+		<circle
+   id="circle3159"
+   r="30.792"
+   cy="297.457"
+   cx="421.17599"
+   sodipodi:cx="421.17599"
+   sodipodi:cy="297.457"
+   sodipodi:rx="30.792"
+   sodipodi:ry="30.792"
+   style="fill:url(#SVGID_1_)"
+   d="m 451.96799,297.457 c 0,17.00595 -13.78604,30.792 -30.792,30.792 -17.00595,0 -30.79199,-13.78605 -30.79199,-30.792 0,-17.00595 13.78604,-30.792 30.79199,-30.792 17.00596,0 30.792,13.78605 30.792,30.792 z" />
+
+	</g>
+
+	<g
+   id="g3161">
+		<path
+   id="path3163"
+   d="m 442.235,306.482 c 0.763,2.135 -0.685,3.973 -3.233,4.104 l -30.375,2.118 c -2.548,0.131 -4.614,-1.972 -4.614,-4.698 v -22.83 c 0,-2.726 1.608,-4.689 3.592,-4.384 l 24.996,3.845 c 1.984,0.306 4.211,2.284 4.974,4.42 l 4.66,17.425 z"
+   inkscape:connector-curvature="0"
+   style="fill:#85b26d" />
+
+		<polygon
+   id="polygon3165"
+   points="432.851,287.83 439.002,306.643 408.243,308.869 408.243,284.777 " />
+
+	</g>
+
+</g>
+    <g
+       id="g3253"
+       transform="matrix(1.7861782,0,0,1.7861782,-677.29538,426.14565)">
+	<g
+   id="g3255">
+		<circle
+   id="circle3257"
+   r="30.792"
+   cy="297.40399"
+   cx="421.17599"
+   sodipodi:cx="421.17599"
+   sodipodi:cy="297.40399"
+   sodipodi:rx="30.792"
+   sodipodi:ry="30.792"
+   style="fill:#84e4fd"
+   d="m 451.96799,297.40399 c 0,17.00595 -13.78604,30.792 -30.792,30.792 -17.00595,0 -30.79199,-13.78605 -30.79199,-30.792 0,-17.00595 13.78604,-30.792 30.79199,-30.792 17.00596,0 30.792,13.78605 30.792,30.792 z" />
+
+	</g>
+
+	<g
+   id="g3259">
+		<path
+   id="path3261"
+   d="m 442.235,306.43 c 0.763,2.135 -0.685,3.973 -3.233,4.104 l -30.375,2.118 c -2.548,0.131 -4.614,-1.972 -4.614,-4.698 v -22.829 c 0,-2.727 1.608,-4.689 3.592,-4.385 l 24.996,3.846 c 1.984,0.305 4.211,2.283 4.974,4.42 l 4.66,17.424 z"
+   inkscape:connector-curvature="0"
+   style="fill:#85b26d" />
+
+		<polygon
+   id="polygon3263"
+   points="408.243,284.725 432.851,287.777 439.002,306.59 408.243,308.816 " />
+
+	</g>
+
+</g>
+  </g>
+</svg>

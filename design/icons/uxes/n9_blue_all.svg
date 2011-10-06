@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="150"
+   height="380"
+   id="svg3402"
+   version="1.1"
+   inkscape:version="0.48.1 r9760"
+   inkscape:export-filename="/home/sopi/.midgard2/meego/com_meego_packages/static/images/device-harmattan.png"
+   inkscape:export-xdpi="89.940002"
+   inkscape:export-ydpi="89.940002"
+   sodipodi:docname="New document 6">
+  <defs
+     id="defs3404">
+    <linearGradient
+       id="SVGID_1_"
+       gradientUnits="userSpaceOnUse"
+       x1="396.27371"
+       y1="319.2981"
+       x2="396.27371"
+       y2="258.01849"
+       gradientTransform="matrix(1,0,0,-1,24.9448,586.6392)">
+      <stop
+         offset="0"
+         style="stop-color:#DFF5FB"
+         id="stop3258" />
+      <stop
+         offset="1"
+         style="stop-color:#CBDBEB"
+         id="stop3260" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#SVGID_1_"
+       id="linearGradient4360"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1,0,0,-1,24.9448,586.6392)"
+       x1="396.27371"
+       y1="319.2981"
+       x2="396.27371"
+       y2="258.01849" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.6368421"
+     inkscape:cx="75"
+     inkscape:cy="166.7756"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1440"
+     inkscape:window-height="830"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1">
+    <sodipodi:guide
+       orientation="0,1"
+       position="223.06371,779.80627"
+       id="guide3498" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="427.80544,589.74377"
+       id="guide3500" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="231.54341,380"
+       id="guide4364" />
+    <sodipodi:guide
+       position="0,0"
+       orientation="0,744.09448"
+       id="guide4366" />
+    <sodipodi:guide
+       position="744.09448,0"
+       orientation="-1052.3622,0"
+       id="guide4368" />
+    <sodipodi:guide
+       position="744.09448,1052.3622"
+       orientation="0,-744.09448"
+       id="guide4370" />
+    <sodipodi:guide
+       position="0,1052.3622"
+       orientation="1052.3622,0"
+       id="guide4372" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="170.45016,190"
+       id="guide4409" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata3407">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-672.36218)">
+    <g
+       transform="matrix(2.1109379,0,0,2.1109379,-814.16714,329.56082)"
+       id="g3359"
+       inkscape:export-filename="/home/sopi/.midgard2/meego/com_meego_packages/static/images/device-harmattan.png"
+       inkscape:export-xdpi="89.940002"
+       inkscape:export-ydpi="89.940002">
+      <g
+         id="g3361">
+        <circle
+           style="fill:#84e4fd"
+           sodipodi:ry="30.792"
+           sodipodi:rx="30.792"
+           sodipodi:cy="297.40399"
+           sodipodi:cx="421.21899"
+           d="m 452.01099,297.40399 c 0,17.00595 -13.78604,30.792 -30.792,30.792 -17.00595,0 -30.792,-13.78605 -30.792,-30.792 0,-17.00595 13.78605,-30.792 30.792,-30.792 17.00596,0 30.792,13.78605 30.792,30.792 z"
+           cx="421.21899"
+           cy="297.40399"
+           r="30.792"
+           id="circle3363" />
+      </g>
+      <g
+         id="g3365">
+        <polygon
+           style="fill:#48b0e8"
+           points="404.889,316.293 410.029,279.021 433.484,274.846 439.268,309.866 "
+           id="polygon3367" />
+        <path
+           inkscape:connector-curvature="0"
+           d="m 435.644,303.82 c 0.236,1.688 -1.687,3.447 -4.291,3.934 l -18.351,3.418 c -2.606,0.484 -4.557,-0.562 -4.355,-2.337 l 2.661,-23.509 c 0.2,-1.776 1.916,-3.495 3.832,-3.839 l 13.487,-2.417 c 1.915,-0.344 3.658,0.744 3.896,2.433 l 3.121,22.317 z"
+           id="path3369" />
+        <path
+           style="fill:#85b26d"
+           inkscape:connector-curvature="0"
+           d="m 421.78,287.992 c 0.012,1.48 -1.477,2.954 -3.325,3.293 l -0.837,0.151 c -1.848,0.336 -3.258,-0.61 -3.146,-2.119 l 0.076,-1.044 c 0.108,-1.507 1.594,-2.979 3.312,-3.29 l 0.778,-0.141 c 1.719,-0.311 3.121,0.64 3.134,2.121 l 0.008,1.029 z"
+           id="path3371" />
+        <path
+           style="fill:#4bb5ea"
+           inkscape:connector-curvature="0"
+           d="m 430.641,286.383 c 0.16,1.451 -1.208,2.901 -3.057,3.238 l -0.838,0.151 c -1.849,0.336 -3.377,-0.587 -3.416,-2.062 l -0.024,-1.023 c -0.038,-1.477 1.325,-2.925 3.044,-3.234 l 0.778,-0.142 c 1.719,-0.31 3.241,0.614 3.401,2.065 l 0.112,1.007 z"
+           id="path3373" />
+        <path
+           style="fill:#ffc700"
+           inkscape:connector-curvature="0"
+           d="m 431.525,294.404 c 0.159,1.45 -1.343,2.929 -3.356,3.3 l -0.911,0.168 c -2.015,0.371 -3.68,-0.525 -3.717,-2.002 l -0.025,-1.023 c -0.037,-1.476 1.459,-2.951 3.345,-3.296 l 0.854,-0.156 c 1.884,-0.344 3.541,0.554 3.7,2.004 l 0.11,1.005 z"
+           id="path3375" />
+      </g>
+    </g>
+    <g
+       id="use3564"
+       transform="matrix(2.1109379,0,0,2.1109379,-814.16714,139.44892)"
+       inkscape:export-filename="/home/sopi/.midgard2/meego/com_meego_packages/static/images/device-harmattan.png"
+       inkscape:export-xdpi="89.940002"
+       inkscape:export-ydpi="89.940002">
+      <g
+         id="g4338">
+        <linearGradient
+           gradientTransform="matrix(1,0,0,-1,24.9448,586.6392)"
+           y2="258.01849"
+           x2="396.27371"
+           y1="319.2981"
+           x1="396.27371"
+           gradientUnits="userSpaceOnUse"
+           id="linearGradient4340">
+          <stop
+             id="stop4342"
+             style="stop-color:#DFF5FB"
+             offset="0" />
+          <stop
+             id="stop4344"
+             style="stop-color:#CBDBEB"
+             offset="1" />
+        </linearGradient>
+        <circle
+           id="circle4346"
+           r="30.792"
+           cy="297.457"
+           cx="421.21899"
+           d="m 452.01099,297.457 c 0,17.00595 -13.78604,30.792 -30.792,30.792 -17.00595,0 -30.792,-13.78605 -30.792,-30.792 0,-17.00595 13.78605,-30.792 30.792,-30.792 17.00596,0 30.792,13.78605 30.792,30.792 z"
+           sodipodi:cx="421.21899"
+           sodipodi:cy="297.457"
+           sodipodi:rx="30.792"
+           sodipodi:ry="30.792"
+           style="fill:url(#linearGradient4360)" />
+      </g>
+      <g
+         id="g4348">
+        <polygon
+           id="polygon4350"
+           points="404.889,316.346 410.029,279.075 433.484,274.898 439.268,309.92 "
+           style="fill:#48b0e8" />
+        <path
+           id="path4352"
+           d="m 435.644,303.873 c 0.236,1.687 -1.687,3.446 -4.291,3.933 l -18.351,3.418 c -2.606,0.484 -4.557,-0.562 -4.355,-2.337 l 2.661,-23.509 c 0.2,-1.776 1.916,-3.495 3.832,-3.838 l 13.487,-2.417 c 1.915,-0.344 3.658,0.745 3.896,2.432 l 3.121,22.318 z"
+           inkscape:connector-curvature="0" />
+        <path
+           id="path4354"
+           d="m 421.78,288.045 c 0.012,1.48 -1.477,2.956 -3.325,3.292 l -0.837,0.151 c -1.848,0.338 -3.258,-0.61 -3.146,-2.117 l 0.076,-1.044 c 0.108,-1.508 1.594,-2.979 3.312,-3.29 l 0.778,-0.141 c 1.719,-0.311 3.121,0.64 3.134,2.121 l 0.008,1.028 z"
+           inkscape:connector-curvature="0"
+           style="fill:#85b26d" />
+        <path
+           id="path4356"
+           d="m 430.641,286.436 c 0.16,1.451 -1.208,2.901 -3.057,3.237 l -0.838,0.153 c -1.849,0.336 -3.377,-0.588 -3.416,-2.063 l -0.024,-1.022 c -0.038,-1.478 1.325,-2.925 3.044,-3.235 l 0.778,-0.141 c 1.719,-0.311 3.241,0.614 3.401,2.065 l 0.112,1.006 z"
+           inkscape:connector-curvature="0"
+           style="fill:#4bb5ea" />
+        <path
+           id="path4358"
+           d="m 431.525,294.457 c 0.159,1.451 -1.343,2.928 -3.356,3.299 l -0.911,0.168 c -2.015,0.371 -3.68,-0.525 -3.717,-2.002 l -0.025,-1.023 c -0.037,-1.476 1.459,-2.952 3.345,-3.296 l 0.854,-0.156 c 1.884,-0.344 3.541,0.554 3.7,2.005 l 0.11,1.005 z"
+           inkscape:connector-curvature="0"
+           style="fill:#ffc700" />
+      </g>
+    </g>
+  </g>
+</svg>
