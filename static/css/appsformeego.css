@@ -316,7 +316,7 @@ background: url(/midgardmvc-static/com_meego_packages/images/device-handset.png)
 }
 ul.userexp  li.handset a:hover { background: url(/midgardmvc-static/com_meego_packages/images/device-handset.png) no-repeat bottom;}
 
-ul.userexp  li.harmattan {height: 200px; padding: 100px 0px 0px 0px;}
+ul.userexp  li.harmattan {height: 200px; padding: 0px 0px 0px 0px;}
 ul.userexp  li.harmattan a,
 #popup_ver .cat-image.harmattan,
 div.category .cat-image.harmattan {
@@ -324,7 +324,7 @@ background: url(/midgardmvc-static/com_meego_packages/images/device-harmattan.pn
 }
 ul.userexp  li.harmattan a:hover { background: url(/midgardmvc-static/com_meego_packages/images/device-harmattan.png) no-repeat bottom;}
 
-ul.userexp  li.meegoce {height: 300px; padding: 0px 0px 0px 0px;}
+ul.userexp  li.meegoce {height: 300px; padding: 50px 0px 0px 0px;}
 ul.userexp  li.meegoce a,
 #popup_ver .cat-image.meegoce,
 div.category .cat-image.meegoce {
@@ -607,7 +607,10 @@ article .cat-more ul li a:hover {
 color:#401576;
 }
 
-
+article .cat-more ul li a span {
+color: lightgray;
+display: block;
+}
 /****************** POPUP NAV **************************/
 .popup_nav {
 width: 340px;
