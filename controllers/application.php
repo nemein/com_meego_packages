@@ -755,9 +755,6 @@ class com_meego_packages_controllers_application
      */
     public function filter_titles(array $packages, array $filters, $unique = false)
     {
-echo "filter titles; unique " . $unique . "\n";
-ob_flush();
-
         $apps = array();
         $localpackages = array();
 
