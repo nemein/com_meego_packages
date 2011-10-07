@@ -29,16 +29,10 @@ workflows:
 default:
     os: n9
 
-# map of os names used in the db and their pretty names used in the UI
-os_map:
-    n9: Harmattan
-    meego: MeeGo
-    wetabos: WeTab
-
 # define an array for default OS settings
 latest:
     n9:
-        version: 1.2
+        version: pr1.0
         ux: harmattan
     meego:
         version: 1.2
@@ -46,6 +40,13 @@ latest:
     wetabos:
         version: 1.0
         ux: tablet
+
+# map of os names used in the DB
+# Their pretty names could be used in the UI
+os_map:
+    n9: Harmattan
+    meego: MeeGo
+    wetabos: WeTab
 
 # Listing all UXes an OS may have
 os_ux:
@@ -84,12 +85,8 @@ os_groups:
 # are meant for the non-techie audience.
 # these projects define the so called "downloads" area
 top_projects:
-    MeeGo:1.2:Apps:Testing: Some description
-    MeeGo:1.2:Harmattan:Apps:Testing: Some description
-#    home:feri: Some description
-#    home:xfade: Some description
-#    maemo-fremantle-extras: Some description
-#    home:zigbee: Some description
+    MeeGo:1.2:Apps: Some description
+    MeeGo:1.2:Harmattan:Apps: Some description
 
 # list of base categories as name: description pairs
 # base categories are supposed to map all package categories that are
