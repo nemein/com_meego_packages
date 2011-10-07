@@ -215,7 +215,7 @@ margin: 0;
 padding: 0;
 position: absolute;
 font-size: 18px;
-width: 330px;
+width: 580px;
 top: 35px;
 }
 
@@ -312,7 +312,7 @@ width: 150px;
 
 ul.userexp  li.netbook {
 /*height: 270px;*/
-padding: 30px 0px 0px 0px;
+padding: 25px 0px 0px 0px;
 }
 
 ul.userexp  li.netbook a,
@@ -326,7 +326,7 @@ background: url(/midgardmvc-static/com_meego_packages/images/device-netbook.png)
 
 ul.userexp  li.handset {
 /*height: 220px;*/
-padding: 80px 0px 0px 0px;
+padding: 35px 0px 0px 0px;
 }
 ul.userexp  li.handset a,
 #popup_ver .cat-image.handset,
@@ -352,7 +352,7 @@ background: url(/midgardmvc-static/com_meego_packages/images/device-harmattan.pn
 
 ul.userexp  li.meegoce {
 /*height: 300px;*/
-padding: 50px 0px 0px 0px;
+padding: 0px 0px 0px 0px;
 }
 ul.userexp  li.meegoce a,
 #popup_ver .cat-image.meegoce,
@@ -365,7 +365,7 @@ background: url(/midgardmvc-static/com_meego_packages/images/device-meegoce.png)
 
 ul.userexp  li.wetab {
 /*height: 300px;*/
-padding: 0px 0px 0px 0px;
+padding: 40px 0px 0px 0px;
 }
 ul.userexp  li.wetab a,
 #popup_ver .cat-image.wetab,
