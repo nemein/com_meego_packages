@@ -176,9 +176,6 @@ class com_meego_packages_injector
 
                 if ($matched['os'] == $repository->repoos)
                 {
-                    echo $repository->repoosux . " - " . $matched['ux'] . "\n";
-                    ob_flush();
-
                     // all versions of the matched, current UX
                     if (   $repository->repoosux == ''
                         || $repository->repoosux == 'universal'
