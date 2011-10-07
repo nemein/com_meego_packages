@@ -163,7 +163,7 @@ class com_meego_packages_injector
                     if (! strlen($repository->repoosux))
                     {
                         // No UX means a core or universal repo, so we populate all UXes
-                        foreach($this->mvc->configuration->os_ux[$repository->repoos] as $configured_ux => $configured_ux_title)
+                        foreach ($this->mvc->configuration->os_ux[$repository->repoos] as $configured_ux => $configured_ux_title)
                         {
                             $uxes[$repository->repoos . $configured_ux] = com_meego_packages_controllers_application::populate_repo_ux($repository, $configured_ux);
                         }
@@ -174,21 +174,28 @@ class com_meego_packages_injector
                     }
                 }
 
-                // all versions of the matched, current UX
-                if ((    $ux == 'universal'
-                     ||  $matched['ux'] == $ux)
-                    && ! array_key_exists($repository->repoosversion, $versions)
-                    && (float) $repository->repoosversion > 0)
+                if ($matched['os'] == $repository->repoos)
                 {
-                    $_repo = com_meego_packages_controllers_application::populate_repo_ux($repository, $matched['ux']);
-                    $versions[$repository->repoosversion] = array (
-                        'version' => $repository->repoosversion,
-                        'url' => $_repo['url']
-                    );
+                    echo $repository->repoosux . " - " . $matched['ux'] . "\n";
+                    ob_flush();
+
+                    // all versions of the matched, current UX
+                    if (   $repository->repoosux == ''
+                        || $repository->repoosux == 'universal'
+                        || $repository->repoosux == $matched['ux']
+                        && ! array_key_exists($repository->repoosversion, $versions))
+                    {
+                        $_repo = com_meego_packages_controllers_application::populate_repo_ux($repository, $matched['ux']);
+                        $versions[$repository->repoosversion] = array (
+                            'version' => $repository->repoosversion,
+                            'url' => $_repo['url']
+                        );
+                    }
                 }
             }
 
-            arsort($versions);
+            krsort($uxes);
+            ksort($versions);
 
             $request->set_data_item('uxes', $uxes);
             $request->set_data_item('versions', $versions);
@@ -216,6 +223,7 @@ class com_meego_packages_injector
         $matched['translated_ux'] = ucwords($this->mvc->i18n->get('title_' . $matched['ux'] . '_ux'));
 
         $request->set_data_item('matched', $matched);
+
         //self::set_breadcrumb($request);
     }
 
