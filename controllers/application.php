@@ -163,18 +163,18 @@ class com_meego_packages_controllers_application
                     // No UX means a core or universal repo, so we populate all UXes
                     foreach($this->mvc->configuration->os_ux[$repository->repoos] as $configured_ux => $configured_ux_title)
                     {
-                        #echo "add configured latest: " . $repository->repoos . ' ' . $repository->repoosversion . ': ' . $configured_ux . "\n";
                         $this->data['latest']['uxes'][$repository->repoos . $configured_ux] = $this->populate_repo_ux($repository, $configured_ux);
                     }
                 }
                 else
                 {
                     $this->data['latest']['uxes'][$repository->repoos . $repository->repoosux] = $this->populate_repo_ux($repository);
-                    #echo "add latest: " . $repository->repoos . ' ' . $repository->repoosversion . ': ' . $repository->repoosux . "\n";
                 }
             }
         }
-        #ob_flush();
+
+        // ugly hack to get N9 to the beginning
+        krsort($this->data['latest']['uxes']);
     }
 
     /**
