@@ -91,6 +91,7 @@ class com_meego_packages_controllers_repository
         {
             if ($repository->os)
             {
+                $orig_os = $repository->os;
                 $repository->os = $this->mvc->configuration->os_map[$repository->os];
 
                 $os = new com_meego_os($repository->osversion);
@@ -102,7 +103,7 @@ class com_meego_packages_controllers_repository
                 if (! strlen($ux->name))
                 {
                     // No UX means a core repo, so we populate all UXes
-                    foreach($this->mvc->configuration->os_ux as $configured_ux => $configured_ux_title)
+                    foreach($this->mvc->configuration->os_ux[$orig_os] as $configured_ux => $configured_ux_title)
                     {
                         $this->data['oses'][$repository->os . ' ' . $os->version]['uxes'][$configured_ux] = $this->populate_repo_ux($os, $ux,  $repository->osgroup, $configured_ux);
                     }
