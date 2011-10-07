@@ -27,17 +27,17 @@ workflows:
 
 # default OS
 default:
-    os: maemo.org
+    os: n9
 
 # map of os names used in the db and their pretty names used in the UI
 os_map:
-    maemo.org: Harmattan
+    n9: Harmattan
     meego: MeeGo
     wetabos: WeTab
 
 # define an array for default OS settings
 latest:
-    maemo.org:
+    n9:
         version: 1.2
         ux: harmattan
     meego:
@@ -49,7 +49,7 @@ latest:
 
 # Listing all UXes an OS may have
 os_ux:
-    maemo.org:
+    n9:
         harmattan: Nokia N9
     meego:
         meegoce: Nokia N900
