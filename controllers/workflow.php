@@ -23,6 +23,17 @@ class com_meego_packages_controllers_workflow
         $this->mvc->i18n->set_language($default_language, false);
     }
 
+    /**
+     * Lists all open workflows
+     */
+    public function get_index(array $args)
+    {
+        $this->data['workflows'] = self::get_open_workflows();
+    }
+
+    /**
+     *
+     */
     public function post_start_package_instance(array $args)
     {
         $this->package = $this->load_package_instance($args);
@@ -76,6 +87,9 @@ class com_meego_packages_controllers_workflow
         );
     }
 
+    /**
+     *
+     */
     public function get_resume_package_instance(array $args)
     {
         $this->package = $this->load_package_instance($args);
@@ -117,6 +131,9 @@ class com_meego_packages_controllers_workflow
         }
     }
 
+    /**
+     *
+     */
     public function post_resume_package_instance(array $args)
     {
         $this->get_resume_package_instance($args);
@@ -173,6 +190,9 @@ class com_meego_packages_controllers_workflow
         $this->data['package'] = $this->package;
     }
 
+    /**
+     *
+     */
     private function get_form(ezcWorkflowExecution $execution)
     {
         $list_of_variables = $execution->getVariables();
@@ -203,6 +223,9 @@ class com_meego_packages_controllers_workflow
         return null;
     }
 
+    /**
+     *
+     */
     private function load_package_instance(array $args)
     {
         $qb = com_meego_package::new_query_builder();
@@ -222,6 +245,9 @@ class com_meego_packages_controllers_workflow
         return $packages[0];
     }
 
+    /**
+     *
+     */
     private function load_workflow(array $args)
     {
         $list_of_workflows = midgardmvc_helper_workflow_utils::get_workflows_for_object($this->package);
@@ -348,5 +374,13 @@ class com_meego_packages_controllers_workflow
         }
 
         return $retval;
+    }
+
+    /**
+     * Admin UI for workflow management
+     */
+    public function get_admin_index(array $args)
+    {
+        com_meego_packages_utils::require_admin();
     }
 }
