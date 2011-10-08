@@ -262,3 +262,19 @@ routes:
         action: posted_form_instance
         template_aliases:
             content: cmp-admin-posted-form-instance
+
+    workflows:
+        path: /workflows
+        controller: com_meego_packages_controllers_workflow
+        action: index
+        template_aliases:
+            content: cmp-show-workflow-list
+
+    # admin UI for workflows
+    # meant only for managing workflows
+    workflows_admin_index:
+        path: /workflows/admin
+        controller: com_meego_packages_controllers_workflow
+        action: admin_index
+        template_aliases:
+            content: cmp-admin-index-workflows
