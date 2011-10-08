@@ -312,3 +312,6 @@ msgstr "Release date: ${date}"
 
 msgid "label_app_size"
 msgstr "Size: ${size}"
+
+msgid "feedback_no_open_workflows"
+msgstr "There are no available workflows at the moment."
