@@ -78,8 +78,8 @@ class com_meego_packages_controllers_repository
      */
     public function get_index(array $args)
     {
-        $this->data['repositories'] = array();
         $this->data['oses'] = array();
+        $this->data['repositories'] = array();
 
         $qb = com_meego_repository::new_query_builder();
         $qb->add_constraint('disabledownload', '=', false);
@@ -188,27 +188,56 @@ class com_meego_packages_controllers_repository
 
         $repositories = $q->list_objects();
 
-        $cnt = 0;
-        foreach ($repositories as $repository)
-        {
-            (++$cnt % 2 == 0) ? $repository->rawclass = 'even' : $repository->rawclass = 'odd';
-
-            $repository->localurl = $this->mvc->dispatcher->generate_url
-            (
-                'repository',
-                array
-                (
-                    'project' => $repository->projectname,
-                    'repository' => $repository->reponame,
-                    'arch' => $repository->repoarch
-                ),
-                $this->request
-            );
-
-            $this->data['repositories'][] = $repository;
-        }
+        $this->data['repositories'] = self::append_repositories($repositories);
     }
 
+    /**
+     * Appends repo objects with some useful stuff
+     *
+     * @param array of repo objects
+     * @return array
+     */
+    public function append_repositories(array $repositories)
+    {
+        $retval = null;
+        if (count($repositories))
+        {
+            $cnt = 0;
+            foreach ($repositories as $repository)
+            {
+                (++$cnt % 2 == 0) ? $repository->rawclass = 'even' : $repository->rawclass = 'odd';
+
+                $repository->localurl = $this->mvc->dispatcher->generate_url
+                (
+                    'repository',
+                    array
+                    (
+                        'project' => $repository->projectname,
+                        'repository' => $repository->reponame,
+                        'arch' => $repository->repoarch
+                    ),
+                    $this->request
+                );
+
+                $repository->create_form_url = $this->mvc->dispatcher->generate_url
+                (
+                    'form_create',
+                    array
+                    (
+                        'parent' => $repository->repoguid
+                    ),
+                    'midgardmvc_ui_forms'
+                );
+
+                $retval[] = $repository;
+            }
+        }
+        return $retval;
+    }
+
+    /**
+     *
+     */
     public function get_repository(array $args)
     {
         $qb = com_meego_repository::new_query_builder();
@@ -544,5 +573,29 @@ class com_meego_packages_controllers_repository
         }
 
         return $retval;
+    }
+
+    /**
+     * Returns all imported repositories using a view
+     * @return array
+     */
+    public function get_all_repositories()
+    {
+        $storage = new midgard_query_storage('com_meego_package_repository_project');
+
+        $q = new midgard_query_select($storage);
+
+        $q->set_constraint(new midgard_query_constraint(
+            new midgard_query_property('repodisabledownload'),
+            '=',
+            new midgard_query_value(false)
+        ));
+
+        $q->add_order(new midgard_query_property('repotitle'), SORT_ASC);
+
+        $q->execute();
+        $repositories = $q->list_objects();
+
+        return self::append_repositories($repositories);
     }
 }
