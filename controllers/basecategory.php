@@ -193,7 +193,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function get_admin_index(array $args)
     {
-        com_meego_packages_utils::require_admin();
+        $this->mvc->authorization->require_admin();
 
         $this->load_object($args);
 
@@ -328,7 +328,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function get_manage_basecategory(array $args)
     {
-        com_meego_packages_utils::require_admin();
+        $this->mvc->authorization->require_admin();
 
         $this->data['map'] = false;
 
@@ -363,7 +363,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function post_create_basecategory(array $args)
     {
-        com_meego_packages_utils::require_admin();
+        $this->mvc->authorization->require_admin();
 
         $saved = true;
 
@@ -425,7 +425,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function post_manage_basecategory(array $args)
     {
-        com_meego_packages_utils::require_admin();
+        $this->mvc->authorization->require_admin();
 
         $this->data['category'] = false;
         $this->data['undelete'] = false;
@@ -566,7 +566,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     private function delete_relations($basecategory_id = null, $purge = false)
     {
-        com_meego_packages_utils::require_admin();
+        $this->mvc->authorization->require_admin();
 
         if ($basecategory_id)
         {
@@ -592,7 +592,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function prepare_mapping($object)
     {
-        com_meego_packages_utils::require_admin();
+        $this->mvc->authorization->require_admin();
 
         // this will set the package categories to this->data['categories']
         $packagecategories = com_meego_packages_controllers_category::get_all_package_categories();

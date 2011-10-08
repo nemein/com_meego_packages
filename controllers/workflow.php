@@ -381,6 +381,6 @@ class com_meego_packages_controllers_workflow
      */
     public function get_admin_index(array $args)
     {
-        com_meego_packages_utils::require_admin();
+        $this->mvc->authorization->require_admin();
     }
 }
