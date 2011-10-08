@@ -47,20 +47,6 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
     }
 
     /**
-     * If user does not have admin privileges then redirects to /
-     */
-    private function require_admin()
-    {
-        // check sufficient access rights
-        // we could do that in injector too...
-        if (   ! $this->mvc->authentication->is_user()
-            || ! $this->mvc->authorization->can_do('midgard:admin', null))
-        {
-            midgardmvc_core::get_instance()->head->relocate('/');
-        }
-    }
-
-    /**
      * Check if a basecategory exist
      *
      * @param string name of basecategory
@@ -207,7 +193,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function get_admin_index(array $args)
     {
-        self::require_admin();
+        com_meego_packages_utils::require_admin();
 
         $this->load_object($args);
 
@@ -342,7 +328,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function get_manage_basecategory(array $args)
     {
-        self::require_admin();
+        com_meego_packages_utils::require_admin();
 
         $this->data['map'] = false;
 
@@ -377,7 +363,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function post_create_basecategory(array $args)
     {
-        self::require_admin();
+        com_meego_packages_utils::require_admin();
 
         $saved = true;
 
@@ -439,7 +425,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function post_manage_basecategory(array $args)
     {
-        self::require_admin();
+        com_meego_packages_utils::require_admin();
 
         $this->data['category'] = false;
         $this->data['undelete'] = false;
@@ -580,7 +566,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     private function delete_relations($basecategory_id = null, $purge = false)
     {
-        self::require_admin();
+        com_meego_packages_utils::require_admin();
 
         if ($basecategory_id)
         {
@@ -606,7 +592,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function prepare_mapping($object)
     {
-        self::require_admin();
+        com_meego_packages_utils::require_admin();
 
         // this will set the package categories to this->data['categories']
         $packagecategories = com_meego_packages_controllers_category::get_all_package_categories();
@@ -791,10 +777,6 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      */
     public function redirect($os = null, $version = null, $ux = null)
     {
-var_dump($os);
-var_dump($version);
-var_dump($ux);
-
         if (   $os
             && $version
             && $ux)
