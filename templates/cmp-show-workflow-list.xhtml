@@ -1,0 +1,7 @@
+    <div class="warning" tal:condition="not: current_component/workflows" i18n:translate="'feedback_no_open_workflows'"></div>
+
+    <ul class="workflows" tal:condition="true: current_component/workflows">
+        <li tal:repeat="workflow current_component/workflows">
+            <a tal:attributes="href workflow/browse_url">${workflow/form_title}</a>
+        </li>
+    </ul>
