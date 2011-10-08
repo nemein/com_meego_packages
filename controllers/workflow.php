@@ -261,23 +261,13 @@ class com_meego_packages_controllers_workflow
     }
 
     /**
-     * Retrieves all open workflows with the corresponding
-     * repository's title and URL to browse that repository
-     *
+     * Adds some useful data to the forms
+     * @param array of forms
      * @return array
      */
-    public function get_open_workflows()
+    private function append_forms(array $forms)
     {
         $retval = null;
-
-        $storage = new midgard_query_storage('com_meego_package_repository_form');
-
-        $q = new midgard_query_select($storage);
-
-        $q->execute();
-
-        $forms = $q->list_objects();
-
         if (count($forms))
         {
             foreach ($forms as $form)
@@ -294,10 +284,81 @@ class com_meego_packages_controllers_workflow
                     'com_meego_packages'
                 );
 
-                $item = array('form_title' => $form->formtitle, 'repository_title' => $form->repotitle, 'browse_url' => $localurl);
+                $retval[] = array('form_title' => $form->formtitle, 'repository_title' => $form->repotitle, 'browse_url' => $localurl);
             }
-            $retval[] = $item;
         }
+        return $retval;
+    }
+
+    /**
+     * Returns open workflows
+     */
+    public function get_open_workflows()
+    {
+        return $this->get_workflows('open');
+    }
+
+    /**
+     * Returns open workflows
+     */
+    public function get_closed_workflows()
+    {
+        return $this->get_workflows('closed');
+    }
+
+    /**
+     * Retrieves all workflows with the corresponding
+     * repository's title and URL to browse that repository
+     *
+     * @param string can be open, closed, or both. default is both
+     * @return array
+     */
+    public function get_workflows($type = 'both')
+    {
+        $retval = null;
+
+        $storage = new midgard_query_storage('com_meego_package_repository_form');
+        $q = new midgard_query_select($storage);
+
+        $dt = new midgard_datetime();
+        $now = $dt->__toString();
+
+        switch ($type)
+        {
+            case 'closed':
+                $qc = new midgard_query_constraint(
+                    new midgard_query_property('formend'),
+                    '<',
+                    new midgard_query_value($now));
+                break;
+            case 'both':
+                break;
+            case 'open':
+            default:
+                $qc = new midgard_query_constraint_group('AND');
+                $qc->add_constraint(
+                    new midgard_query_constraint(
+                        new midgard_query_property('formstart'),
+                        '<=',
+                        new midgard_query_value($now)
+                ));
+                $qc->add_constraint(
+                    new midgard_query_constraint(
+                        new midgard_query_property('formend'),
+                        '>',
+                        new midgard_query_value($now)
+                ));
+        }
+
+        if ($qc)
+        {
+            $q->set_constraint($qc);
+        }
+        $q->execute();
+
+        $forms = $q->list_objects();
+
+        $retval = self::append_forms($forms);
 
         return $retval;
     }
@@ -316,11 +377,27 @@ class com_meego_packages_controllers_workflow
             && $version
             && $ux)
         {
+            $dt = new midgard_datetime();
+            $now = $dt->__toString();
+
             $storage = new midgard_query_storage('com_meego_package_repository_form');
 
             $q = new midgard_query_select($storage);
 
             $qc = new midgard_query_constraint_group('AND');
+
+            $qc->add_constraint(
+                new midgard_query_constraint(
+                    new midgard_query_property('formstart'),
+                    '<=',
+                    new midgard_query_value($now)
+            ));
+            $qc->add_constraint(
+                new midgard_query_constraint(
+                    new midgard_query_property('formend'),
+                    '>',
+                    new midgard_query_value($now)
+            ));
             $qc->add_constraint(new midgard_query_constraint(
                 new midgard_query_property('repoos'),
                 '=',
@@ -351,26 +428,7 @@ class com_meego_packages_controllers_workflow
 
             $forms = $q->list_objects();
 
-            if (count($forms))
-            {
-                foreach ($forms as $form)
-                {
-                    $localurl = $this->mvc->dispatcher->generate_url
-                    (
-                        'repository',
-                        array
-                        (
-                            'project' => $form->projectname,
-                            'repository' => $form->reponame,
-                            'arch' => $form->repoarch
-                        ),
-                        'com_meego_packages'
-                    );
-
-                    $item = array('form_title' => $form->formtitle, 'repository_title' => $form->repotitle, 'browse_url' => $localurl);
-                    $retval[] = $item;
-                }
-            }
+            $retval = self::append_forms($forms);
         }
 
         return $retval;
@@ -382,5 +440,10 @@ class com_meego_packages_controllers_workflow
     public function get_admin_index(array $args)
     {
         $this->mvc->authorization->require_admin();
+
+        $this->data['workflows']['open'] = $this->get_open_workflows();
+        $this->data['workflows']['closed'] = $this->get_closed_workflows();
+
+        $this->data['repositories'] = com_meego_packages_controllers_repository::get_all_repositories();
     }
 }
