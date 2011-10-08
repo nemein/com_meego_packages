@@ -135,6 +135,8 @@ background-repeat: no-repeat;
 }
 
 li.ux a div.core {
+background-repeat: no-repeat;
+background-position: top;
 background-image: url(/midgardmvc-static/com_meego_packages/images/osgroup-core.png);
 }
 
@@ -148,12 +150,12 @@ background-image: url(/midgardmvc-static/com_meego_packages/images/osgroup-surro
 
 li.ux a div.core.handset,
 li.ux a div.handset {
-background-image: url(/midgardmvc-static/com_meego_packages/images/device-handsets.png);
+background-image: url(/midgardmvc-static/com_meego_packages/images/device-handset.png);
 }
 
 li.ux a div.core.netbook,
 li.ux a div.netbook {
-background-image: url(/midgardmvc-static/com_meego_packages/images/device-netbooks.png);
+background-image: url(/midgardmvc-static/com_meego_packages/images/device-netbook.png);
 }
 
 li.ux a div.core.smarttv,
@@ -168,17 +170,27 @@ background-image: url(/midgardmvc-static/com_meego_packages/images/device-automo
 
 li.ux a div.core.mediaphone,
 li.ux a div.mediaphone {
-background-image: url(/midgardmvc-static/com_meego_packages/images/device-media-phones.png);
+background-image: url(/midgardmvc-static/com_meego_packages/images/device-media-phone.png);
 }
 
 li.ux a div.core.tablet,
 li.ux a div.tablet {
-background-image: url(/midgardmvc-static/com_meego_packages/images/device-tablets.png);
+background-image: url(/midgardmvc-static/com_meego_packages/images/device-tablet.png);
 }
 
 li.ux a div.core.harmattan,
 li.ux a div.harmattan {
-background-image: url(/midgardmvc-static/com_meego_packages/images/device-handsets.png);
+background-image: url(/midgardmvc-static/com_meego_packages/images/device-harmattan.png);
+}
+
+li.ux a div.core.wetab,
+li.ux a div.wetab {
+background-image: url(/midgardmvc-static/com_meego_packages/images/device-wetab.png);
+}
+
+li.ux a div.core.meegoce,
+li.ux a div.meegoce {
+background-image: url(/midgardmvc-static/com_meego_packages/images/device-meegoce.png);
 }
 
 li.ux div {
@@ -199,7 +211,7 @@ font-weight: bold;
 }
 
 div.element {
-line-height: 1.5em;
+line-height: 2em;
 }
 
 div.element.odd {
@@ -218,12 +230,28 @@ margin: 0 0 0.1em 0;
 
 div.list div.header .title,
 div.list div.element .title {
-width: 22em;
+width: 40em;
+}
+
+div.list.admin div.header .title,
+div.list.admin div.element .title {
+width: 40em;
+}
+
+div.list div.header .action,
+div.list div.element .action {
+width: 10em;
+}
+
+div.list div.element .action a:link,
+div.list div.element .action a:visited {
+color: blue;
+text-decoration: underline;
 }
 
 div.list div.header .projectname,
 div.list div.element .projectname {
-width: 15em;
+width: 17em;
 }
 
 div.list div.header .version,

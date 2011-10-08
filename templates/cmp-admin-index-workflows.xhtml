@@ -1,1 +1,42 @@
-todo
+    <h1 i18n:translate="'title_open_workflows'">Open Workflows</h1>
+    <div class="warning" tal:condition="not: current_component/workflows/open" i18n:translate="'feedback_no_open_workflows'"></div>
+
+    <ul class="workflows" tal:condition="true: current_component/workflows/open">
+        <li tal:repeat="workflow current_component/workflows/open">
+            <a tal:attributes="href workflow/browse_url">${workflow/form_title}</a>
+        </li>
+    </ul>
+
+    <h1 i18n:translate="'title_closed_workflows'">Closed Workflows</h1>
+    <div class="warning" tal:condition="not: current_component/workflows/closed" i18n:translate="'feedback_no_closed_workflows'"></div>
+
+    <ul class="workflows" tal:condition="true: current_component/workflows/closed">
+        <li tal:repeat="workflow current_component/workflows/closed">
+            <a tal:attributes="href workflow/browse_url">${workflow/form_title}</a>
+        </li>
+    </ul>
+
+    <h1 i18n:translate="'title_repositories'">Repositories</h1>
+    <div class="warning" tal:condition="not: current_component/repositories" i18n:translate="'feedback_no_repositories'"></div>
+
+    <div class="list admin">
+        <div class="header">
+            <div class="title" i18n:translate="'title_repository_title'">Repository Title</div>
+            <div class="projectname" i18n:translate="'title_project_name'">Project</div>
+            <div class="action" i18n:translate="'title_action'">Action</div>
+        </div>
+        <div tal:attributes="class php:'element ' . repository.rawclass" tal:repeat="repository current_component/repositories">
+            <div class="title">
+                <a tal:attributes="href repository/localurl" tal:content="repository/repotitle">MeeGo 1.2 Netbook</a>
+            </div>
+
+            <div class="projectname" tal:content="repository/projectname">
+                MeeGo:1.2:Apps
+            </div>
+
+            <div class="action">
+                <a tal:attributes="href repository/create_form_url" i18n:translate="'command_create_workflow'">Create workflow</a>
+            </div>
+        </div>
+    </div>
+
