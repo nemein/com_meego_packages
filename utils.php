@@ -19,6 +19,20 @@ class com_meego_packages_utils
     }
 
     /**
+     * If user does not have admin privileges then redirects to /
+     */
+    public function require_admin()
+    {
+        // check sufficient access rights
+        // we could do that in injector too...
+        if (   ! $this->mvc->authentication->is_user()
+            || ! $this->mvc->authorization->can_do('midgard:admin', null))
+        {
+            midgardmvc_core::get_instance()->head->relocate('/');
+        }
+    }
+
+    /**
      * Requires a user to be logged in
      * If not logged then redirect to the login page otherwise return user
      * object
