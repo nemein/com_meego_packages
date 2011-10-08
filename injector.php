@@ -71,18 +71,6 @@ class com_meego_packages_injector
             }
         }
 
-        $repository_index_url = $this->mvc->dispatcher->generate_url
-        (
-            'repositories', array(), $request
-        );
-
-        $request->set_data_item('repository_index_url', $repository_index_url);
-
-        // populate open workflows
-        $request->set_data_item('workflows', false);
-
-        $workflows = null;
-
         $matched = $route->get_matched();
 
         if (   is_array($matched)
@@ -132,18 +120,6 @@ class com_meego_packages_injector
                 //throw new midgardmvc_exception_notfound("Please pick a valid UX, " . $matched['ux'] . " does not exist.", 404);
                 com_meego_packages_controllers_basecategory::redirect($os, $matched['version'], $ux);
             }
-
-            if (! $workflows)
-            {
-                // populate links if there any workflow that matches this OS, OS version and UX combo
-                $workflows = com_meego_packages_controllers_workflow::get_open_workflows_for_osux(
-                    $matched['os'],
-                    $matched['version'],
-                    $matched['ux']
-                );
-            }
-
-            $request->set_data_item('workflows', $workflows);
 
             // gather available UXes for the popups
             // @todo: this piece of code is only needed for some of the routes
