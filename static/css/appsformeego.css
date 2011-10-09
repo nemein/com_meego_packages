@@ -1155,7 +1155,8 @@ width: 174px;
 height: 38px;
 }
 
-div.workflow input.midgardmvc_helper_forms_form_save {
+div.workflow input.midgardmvc_helper_forms_form_save,
+div.midgardmvc_helper_forms_actions input.midgardmvc_helper_forms_form_save {
 background: url(/midgardmvc-static/com_meego_packages/images/submit.png) no-repeat 0 0px;
 width: 174px;
 height: 38px;
@@ -1163,6 +1164,20 @@ font-size: 0;
 border: 0;
 margin: 0;
 cursor: pointer;
+display: inline-block;
+}
+
+div.workflow a.midgardmvc_helper_forms_form_cancel,
+div.midgardmvc_helper_forms_actions input.midgardmvc_helper_forms_form_cancel {
+background: url("/midgardmvc-static/com_meego_packages/images/cancel.png") no-repeat 0 0px;
+border: 0 none;
+cursor: pointer;
+font-size: 0;
+height: 38px;
+margin: 0 10px 0 0;
+width: 131px;
+display: inline-block;
+vertical-align: top;
 }
 
 /* app notes */
