@@ -1,5 +1,5 @@
 <?php
-class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_definition
+class com_meego_packages_workflow_uno implements midgardmvc_helper_workflow_definition
 {
     public function can_handle(midgard_object $object)
     {
@@ -48,7 +48,7 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
 
         if ($q->get_results_count() != 0)
         {
-            return false;
+            //return false;
         }
 
         return true;
@@ -56,7 +56,7 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
 
     public function get()
     {
-        $workflow = new ezcWorkflow('review');
+        $workflow = new ezcWorkflow('uno');
 
         $get_package_instance = new ezcWorkflowNodeInput
         (
@@ -84,7 +84,6 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
             )
         );
         $find_form_action->addOutNode($get_form);
-
         $get_review = new ezcWorkflowNodeInput
         (
             array
@@ -93,7 +92,6 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
             )
         );
         $get_form->addOutNode($get_review);
-
         $distill_review = new ezcWorkflowNodeAction
         (
             array

@@ -121,6 +121,7 @@ class com_meego_packages_controllers_workflow
             {
                 case 'midgardmvc_ui_forms_workflow_condition_instance':
                     $form_for_variable = $this->get_form($this->execution);
+
                     if (!is_null($form_for_variable))
                     {
                         $this->data['forms'][$variable] = $form_for_variable;
@@ -213,10 +214,24 @@ class com_meego_packages_controllers_workflow
                 continue;
             }
 
+            $form = midgardmvc_ui_forms_generator::get_by_form($db_form, false);
+
+
+            if (array_key_exists('HTTP_REFERER', $_SERVER))
+            {
+                $cancel_url = $_SERVER['HTTP_REFERER'];
+            }
+            else
+            {
+                $cancel_url = "/";
+            }
+
+            $form->set_cancel(null, $this->mvc->i18n->get('cancel', 'midgardmvc_helper_forms'), $cancel_url);
+
             return array
             (
                 'db_form' => $db_form,
-                'form' => midgardmvc_ui_forms_generator::get_by_form($db_form, false)
+                'form' => $form
             );
         }
 
@@ -272,7 +287,7 @@ class com_meego_packages_controllers_workflow
         {
             foreach ($forms as $form)
             {
-                $localurl = $this->mvc->dispatcher->generate_url
+                $browseurl = $this->mvc->dispatcher->generate_url
                 (
                     'repository',
                     array
@@ -284,7 +299,22 @@ class com_meego_packages_controllers_workflow
                     'com_meego_packages'
                 );
 
-                $retval[] = array('form_title' => $form->formtitle, 'repository_title' => $form->repotitle, 'browse_url' => $localurl);
+                $editurl = $this->mvc->dispatcher->generate_url
+                (
+                    'form_read',
+                    array
+                    (
+                        'form' => $form->formguid,
+                    ),
+                    'midgardmvc_ui_forms'
+                );
+
+                $retval[] = array(
+                    'form_title' => $form->formtitle,
+                    'repository_title' => $form->repotitle,
+                    'browse_url' => $browseurl,
+                    'edit_url' => $editurl
+                );
             }
         }
         return $retval;

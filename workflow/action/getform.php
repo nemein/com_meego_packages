@@ -12,7 +12,6 @@ class com_meego_packages_workflow_action_getform implements ezcWorkflowServiceOb
         {
             return;
         }
-
         $execution->setVariable('review_form', $list_of_forms[0]->name);
     }
 
