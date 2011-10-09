@@ -51,9 +51,9 @@ class com_meego_packages_pager
             // if we don't do this then array_slice will not work properly
             // in case offset = 1, limit = 1 and count(data) = 2...
             //
-            ob_start();
-            var_dump($data);
-            ob_end_clean();
+            //ob_start();
+            //var_dump($data);
+            //ob_end_clean();
 
             // this is where paging really happens
             $localdata = array_slice($data, $offset, $limit, true);
