@@ -8,6 +8,7 @@ class com_meego_packages_workflow_action_getform implements ezcWorkflowServiceOb
         // We load the form from the package's repository
         $repository = new com_meego_repository($package_instance->repository);
         $list_of_forms = midgardmvc_ui_forms_generator::list_for_object($repository);
+
         if (empty($list_of_forms))
         {
             return;
