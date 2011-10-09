@@ -3,7 +3,7 @@
 
     <ul class="workflows" tal:condition="true: current_component/workflows/open">
         <li tal:repeat="workflow current_component/workflows/open">
-            <a tal:attributes="href workflow/browse_url">${workflow/form_title}</a>
+            <a tal:attributes="href workflow/edit_url">${workflow/form_title}</a>
         </li>
     </ul>
 
@@ -12,7 +12,7 @@
 
     <ul class="workflows" tal:condition="true: current_component/workflows/closed">
         <li tal:repeat="workflow current_component/workflows/closed">
-            <a tal:attributes="href workflow/browse_url">${workflow/form_title}</a>
+            <a tal:attributes="href workflow/edit_url">${workflow/form_title}</a>
         </li>
     </ul>
 
