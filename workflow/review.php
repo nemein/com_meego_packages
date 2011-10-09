@@ -21,6 +21,32 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
             return false;
         }
 
+        // Check if the form is assigned to this repository
+        $storage = new midgard_query_storage('com_meego_package_repository_form');
+        $q = new midgard_query_select($storage);
+
+        $qc = new midgard_query_constraint_group('AND');
+
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('formtitle'),
+            '=',
+            new midgard_query_value($this->workflow['label'])
+        ));
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('repoguid'),
+            '=',
+            new midgard_query_value($repository->guid)
+        ));
+
+        $q->set_constraint($qc);
+
+        $res = $q->execute();
+
+        if (! $q->get_results_count())
+        {
+            return false;
+        }
+
         //TODO: Check that object is reviewable
 
         $user = midgardmvc_core::get_instance()->authentication->get_person();
