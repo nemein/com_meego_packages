@@ -216,7 +216,6 @@ class com_meego_packages_controllers_workflow
 
             $form = midgardmvc_ui_forms_generator::get_by_form($db_form, false);
 
-
             if (array_key_exists('HTTP_REFERER', $_SERVER))
             {
                 $cancel_url = $_SERVER['HTTP_REFERER'];
