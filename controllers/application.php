@@ -1026,7 +1026,7 @@ class com_meego_packages_controllers_application
                         ),
                         'com_meego_packages'
                     ),
-                    'css' => strtolower(preg_replace('/\s/', '_',  $workflow_data['label']))
+                    'css' => $workflow_data['css']
                 );
             }
         } //foreach
