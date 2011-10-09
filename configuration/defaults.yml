@@ -21,8 +21,14 @@ attachmentserver_variants:
 
 # available workflows
 workflows:
-    review:
-        label: Community QA
+    n9review:
+        label: Community QA for N9
+        provider: com_meego_packages_workflow_review
+    meegoreview:
+        label: Community QA for MeeGo 1.2
+        provider: com_meego_packages_workflow_review
+    wetabreview:
+        label: Community QA for WeTab
         provider: com_meego_packages_workflow_review
 
 # default OS
