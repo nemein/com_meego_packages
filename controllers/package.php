@@ -411,7 +411,7 @@ class com_meego_packages_controllers_package
                     ),
                     $this->request
                 ),
-                'css' => strtolower(preg_replace('/\s/', '_',  $workflow_data['label']))
+                'css' => $workflow_data['css']
             );
         }
 
