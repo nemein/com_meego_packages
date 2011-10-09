@@ -24,12 +24,15 @@ workflows:
     n9review:
         label: Community QA for N9
         provider: com_meego_packages_workflow_review
+        css: community_qa_n9
     meegoreview:
         label: Community QA for MeeGo 1.2
         provider: com_meego_packages_workflow_review
+        css: community_qa_meego
     wetabreview:
         label: Community QA for WeTab
         provider: com_meego_packages_workflow_review
+        css: community_qa_wetab
 
 # default OS
 default:
