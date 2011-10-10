@@ -1209,3 +1209,9 @@ margin: 0 0 0 10px;
 list-style: none;
 padding: 0;
 }
+
+div.submit_your_app {
+float: right;
+position: relative;
+top: 80px;
+}
