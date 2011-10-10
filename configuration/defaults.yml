@@ -94,8 +94,12 @@ os_groups:
 # are meant for the non-techie audience.
 # these projects define the so called "downloads" area
 top_projects:
-    MeeGo:1.2:Apps: Some description
-    MeeGo:1.2:Harmattan:Apps: Some description
+    MeeGo:1.2:Apps:
+        description: Some description
+        staging: MeeGo:1.2:Apps:Testing
+    MeeGo:1.2:Harmattan:Apps:
+        description: Some description
+        staging: MeeGo:1.2:Harmattan:Apps:Testing
 
 # list of base categories as name: description pairs
 # base categories are supposed to map all package categories that are
