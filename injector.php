@@ -196,8 +196,7 @@ class com_meego_packages_injector
         $matched['translated_ux'] = ucwords($this->mvc->i18n->get('title_' . $matched['ux'] . '_ux'));
 
         $request->set_data_item('matched', $matched);
-
-        //self::set_breadcrumb($request);
+        $request->set_data_item('submit_app_url', $this->mvc->configuration->submit_app_url);
     }
 
     /**
