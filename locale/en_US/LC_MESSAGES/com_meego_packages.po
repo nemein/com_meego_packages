@@ -339,3 +339,6 @@ msgstr "Project"
 
 msgid "title_action"
 msgstr "Action"
+
+msgid "title_apps_waiting_for_review"
+msgstr "Applications waiting for review"

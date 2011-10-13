@@ -626,6 +626,12 @@ font-size: 16px;
 padding: 0px 0px 5px 0px;
 }
 
+article .cat-more div.staging ul li a {
+width: 200px;
+margin: 0;
+padding: 0;
+}
+
 article .cat-more ul li img {
 float: left;
 }

@@ -1,5 +1,6 @@
             <div class="category">
-                <div tal:condition="true: matched" tal:attributes="class string:cat-image ${matched/ux}"></div>
+                <div tal:condition="true: matched" tal:attributes="class string:cat-image ${matched/ux}">
+                </div>
                 <div class="cat-more">
                     <ul>
                         <li tal:repeat="basecategory com_meego_packages/basecategories">
@@ -7,6 +8,7 @@
                             <a tal:attributes="href basecategory/localurl">${basecategory/name}<span class="counter">(${basecategory/apps_counter})</span></a>
                         </li>
                     </ul>
+                    <mgd:include>cmp-open-staging-workflow-list</mgd:include>
                 </div>
                 <div class="clear"></div>
             </div>

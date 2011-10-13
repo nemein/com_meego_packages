@@ -1,0 +1,8 @@
+                    <div tal:condition="true: staging_workflows" class="staging">
+                        <span class="title" i18n:translate="'title_apps_waiting_for_review'"></span>
+                        <ul>
+                            <li tal:repeat="workflow staging_workflows">
+                                <a tal:attributes="href workflow/browse_url">${workflow/form_title}</a>
+                            </li>
+                        </ul>
+                    </div>
