@@ -14,9 +14,9 @@
 
 <div class="list">
     <div class="header">
-        <div class="title">Title</div>
-        <div class="version">Version</div>
-        <div class="posts">Posted Forms</div>
+        <div class="title" i18n:translate="'title_application_title'">Application</div>
+        <div class="version" i18n:translate="'title_package_version'">Version</div>
+        <div class="posts" i18n:translate="'title_posted_forms'">Posted Reviews</div>
     </div>
     <div tal:attributes="class php:'element ' . package.rawclass" tal:repeat="package com_meego_packages/packages">
         <div class="title">
