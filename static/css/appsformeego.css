@@ -315,12 +315,6 @@ ul.userexp  li.netbook {
 padding: 25px 0px 0px 0px;
 }
 
-div.category .staging_warning {
-font-size: 16px;
-color: red;
-font-family: DIN-Bold;
-}
-
 ul.userexp  li.netbook a,
 #popup_ver .cat-image.netbook,
 div.category .cat-image.netbook {
@@ -1233,4 +1227,11 @@ div.submit_your_app {
 float: right;
 position: relative;
 top: 80px;
+}
+
+.staging_warning {
+font-size: 16px;
+color: red;
+font-family: DIN-Bold;
+margin: 5px 0 15px 0;
 }

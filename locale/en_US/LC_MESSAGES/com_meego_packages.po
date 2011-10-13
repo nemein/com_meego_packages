@@ -354,3 +354,7 @@ msgstr "Submitted Reviews"
 
 msgid "title_staging_area"
 msgstr "Applications Waiting for Review"
+
+msgid "title_staging_application"
+msgstr "Waiting for Review"
+
