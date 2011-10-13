@@ -25,8 +25,14 @@ msgstr "Applications in ${basecategory}"
 msgid "title_tip_package_list"
 msgstr "Listing all packages available in the given category"
 
-msgid "title_package"
+msgid "title_package_title"
 msgstr "Package"
+
+msgid "title_package_version"
+msgstr "Version"
+
+msgid "title_application_title"
+msgstr "Application"
 
 msgid "title_tip_package"
 msgstr "Short package name"
@@ -342,3 +348,9 @@ msgstr "Action"
 
 msgid "title_apps_waiting_for_review"
 msgstr "Applications waiting for review"
+
+msgid "title_posted_forms"
+msgstr "Submitted Reviews"
+
+msgid "title_staging_area"
+msgstr "Applications Waiting for Review"

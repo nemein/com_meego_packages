@@ -48,8 +48,8 @@ class com_meego_packages_injector
             $route->template_aliases['topbar'] = 'cmp-menubar';
         }
 
-        // placeholder for staging repositories
-        $staging_workflows = false;
+        // placeholder for a link to list staging apps
+        $request->set_data_item('staging_link', false);
         // set if user is admin
         $request->set_data_item('admin', false);
         // admins get a link to category management UI
@@ -165,17 +165,29 @@ class com_meego_packages_injector
                     }
                 }
 
+                // if we are not serving a staging_ route then
                 // check if the repo's project has a staging project configured
-                if (   $repository->repoos == $os
+                if (   substr($route->id, 0, 8) != 'staging_'
+                    && $repository->repoos == $os
                     && $this->mvc->configuration->top_projects[$repository->projectname]['staging'])
                 {
                     $workflows = com_meego_packages_controllers_workflow::get_open_workflows_for_osux($repository->repoos, $repository->repoosversion, $repository->repoosux);
+
                     if (count($workflows))
                     {
-                        foreach ($workflows as $workflow)
-                        {
-                            $staging_workflows[] = $workflow;
-                        }
+                        // if there is at least 1 workflow then we set and show the link in the templates
+                        $link = $this->mvc->dispatcher->generate_url
+                        (
+                            'staging_basecategories_os_version_ux',
+                            array
+                            (
+                                'os' => $os,
+                                'version' => (string) $repository->repoosversion,
+                                'ux' => $repository->repoosux
+                            ),
+                            'com_meego_packages'
+                        );
+                        $request->set_data_item('staging_link', $link);
                     }
                 }
             }
@@ -210,7 +222,12 @@ class com_meego_packages_injector
 
         $request->set_data_item('matched', $matched);
         $request->set_data_item('submit_app_url', $this->mvc->configuration->submit_app_url);
-        $request->set_data_item('staging_workflows', $staging_workflows);
+
+        $request->set_data_item('staging_area', false);
+        if (substr($route->id, 0, 8) == 'staging_')
+        {
+            $request->set_data_item('staging_area', true);
+        }
     }
 
     /**

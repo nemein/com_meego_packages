@@ -315,6 +315,12 @@ ul.userexp  li.netbook {
 padding: 25px 0px 0px 0px;
 }
 
+div.category .staging_warning {
+font-size: 16px;
+color: red;
+font-family: DIN-Bold;
+}
+
 ul.userexp  li.netbook a,
 #popup_ver .cat-image.netbook,
 div.category .cat-image.netbook {
@@ -626,10 +632,17 @@ font-size: 16px;
 padding: 0px 0px 5px 0px;
 }
 
-article .cat-more div.staging ul li a {
+article .cat-more div.staging a {
 width: 200px;
-margin: 0;
-padding: 0;
+text-transform: uppercase;
+list-style: none;
+font-size: 16px;
+padding: 20px 0px 5px 65px;
+font-family: DIN-Bold;
+color: #4792A5;
+margin: 0px 0px 0px -55px;
+display: block;
+height: 60px;
 }
 
 article .cat-more ul li img {

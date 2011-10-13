@@ -140,11 +140,21 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
     /**
      * @todo: docs
      */
-    public function get_url_browse_basecategory($os = null, $os_version = null, $ux = null, $basecategory = null)
+    public function get_url_browse_basecategory($os = null, $os_version = null, $ux = null, $basecategory = null, $filter_type = 'top')
     {
+        switch($filter_type)
+        {
+            case 'staging':
+                $route_id = 'staging_apps_by_basecategory';
+                break;
+            case 'top':
+            default:
+                $route_id = 'apps_by_basecategory';
+        }
+
         $url = $this->mvc->dispatcher->generate_url
         (
-            'apps_by_basecategory',
+            $route_id,
             array
             (
                 'os' => $os,
@@ -152,7 +162,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
                 'ux' => $ux,
                 'basecategory' => $basecategory
             ),
-            $this->request
+            'com_meego_packages'
         );
 
         return $url;
@@ -245,22 +255,13 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
         return mb_strtolower(preg_replace($pattern, $replacement, $string));
     }
 
+
     /**
-     * Show a fancy list of basecategories
-     *
-     * @param array args where the key
-     *                                  'os' will contain the name of the OS
-     *                                  'version' will contain the versionof the UX
-     *                                  'ux' will contain the name of the UX
-     *
+     * Checks some stuff based on submitted GET args
+     * @param array
      */
-    public function get_basecategories_by_ux(array $args)
+    private function check_args(array $args)
     {
-        $this->data['basecategories'] = array();
-
-        // for now we will not use the UX at all
-        $basecategories = self::load_basecategories();
-
         $os = $args['os'];
         $os_version = $args['version'];
         $ux = $args['ux'];
@@ -306,15 +307,70 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
                 // @todo: redirect to that particular category index
             }
         }
+    }
+
+    /**
+     * Show a fancy list of basecategories
+     *
+     * @param array args where the key
+     *                                  'os' will contain the name of the OS
+     *                                  'version' will contain the versionof the UX
+     *                                  'ux' will contain the name of the UX
+     *
+     */
+    public function get_basecategories_by_ux(array $args)
+    {
+        $this->data['basecategories'] = array();
+
+        // for now we will not use the UX at all
+        $basecategories = self::load_basecategories();
+
+        // do a quick saity check
+        self::check_args($args);
 
         if (count($basecategories))
         {
             foreach ($basecategories as $basecategory)
             {
                 // set the url where to browse that category
-                $basecategory->localurl = $this->get_url_browse_basecategory($args['os'], $args['version'], $args['ux'], $basecategory->name);
+                $basecategory->localurl = $this->get_url_browse_basecategory($args['os'], $args['version'], $args['ux'], $basecategory->name, 'top');
                 // count all apps that are in this category for that UX
-                $basecategory->apps_counter = com_meego_packages_controllers_application::count_number_of_apps($args['os'], $args['version'], $basecategory->name, $args['ux']);
+                $basecategory->apps_counter = com_meego_packages_controllers_application::count_number_of_apps($args['os'], $args['version'], $basecategory->name, $args['ux'], 'top');
+                // set the css class to be used to display this base category
+                $basecategory->css = self::tidy_up($basecategory->name);
+                // populate data
+                $this->data['basecategories'][] = $basecategory;
+            }
+        }
+    }
+
+    /**
+     * Show a fancy list of basecategories but only for staging apps
+     *
+     * @param array args where the key
+     *                                  'os' will contain the name of the OS
+     *                                  'version' will contain the versionof the UX
+     *                                  'ux' will contain the name of the UX
+     *
+     */
+    public function get_staging_basecategories_by_ux(array $args)
+    {
+        $this->data['basecategories'] = array();
+
+        // for now we will not use the UX at all
+        $basecategories = self::load_basecategories();
+
+        // do a quick saity check
+        self::check_args($args);
+
+        if (count($basecategories))
+        {
+            foreach ($basecategories as $basecategory)
+            {
+                // set the url where to browse that category
+                $basecategory->localurl = $this->get_url_browse_basecategory($args['os'], $args['version'], $args['ux'], $basecategory->name, 'staging');
+                // count all apps that are in this category for that UX
+                $basecategory->apps_counter = com_meego_packages_controllers_application::count_number_of_apps($args['os'], $args['version'], $basecategory->name, $args['ux'], 'staging');
                 // set the css class to be used to display this base category
                 $basecategory->css = self::tidy_up($basecategory->name);
                 // populate data
@@ -632,6 +688,7 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
      * We could use a view later and then could have different criteria
      * like load only those bases who have packages for a certain UX
      *
+     * @
      * @return array of base category objects
      */
     private function load_basecategories()

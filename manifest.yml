@@ -61,11 +61,27 @@ routes:
         template_aliases:
             content: cmp-show-applications-list
 
+    # lists all packages that are avaialable for a UX / basecategory in a staging repo
+    staging_apps_by_basecategory:
+        path: /staging/applications/{$os}/{$string:version}/{$ux}/{$basecategory}
+        controller: com_meego_packages_controllers_application
+        action: staging_applications
+        template_aliases:
+            content: cmp-show-applications-list
+
     # show a package overview based on UX / basecategory / packagetitle
     apps_by_title:
         path: /applications/{$os}/{$string:version}/{$ux}/{$basecategory}/{$packagetitle}
         controller: com_meego_packages_controllers_application
         action: applications
+        template_aliases:
+            content: cmp-show-application
+
+    # show a package overview based on UX / basecategory / packagetitle
+    staging_apps_by_title:
+        path: /staging/applications/{$os}/{$string:version}/{$ux}/{$basecategory}/{$packagetitle}
+        controller: com_meego_packages_controllers_application
+        action: staging_applications
         template_aliases:
             content: cmp-show-application
 
@@ -100,6 +116,14 @@ routes:
         path: /basecategories/{$os}/{$string:version}/{$ux}
         controller: com_meego_packages_controllers_basecategory
         action: basecategories_by_ux
+        template_aliases:
+            content: cmp-show-fancy-basecategories-list
+
+    # lists all base categories that are avaialable for a UX
+    staging_basecategories_os_version_ux:
+        path: /staging/basecategories/{$os}/{$string:version}/{$ux}
+        controller: com_meego_packages_controllers_basecategory
+        action: staging_basecategories_by_ux
         template_aliases:
             content: cmp-show-fancy-basecategories-list
 

@@ -178,6 +178,22 @@ class com_meego_packages_controllers_application
     }
 
     /**
+     * Get staging applications that are in repos of staging projects for a base category but
+     * only if they belong to a certain ux and to a top project that is configurable
+     *
+     *
+     * @param array of args (os, version, ux, basecategory, packagetitle)
+     * @param boolean true indicates the need of the counter only
+     * @param string filter type 'top' deal with apps in top projects; 'staging' work on apps in staging projects only
+     *
+     * is fixed and we can define joined views
+     */
+    public function get_staging_applications(array $args)
+    {
+        self::get_applications($args, false, 'staging');
+    }
+
+    /**
      * Get applications (ie top packages) for a base category but
      * only if they belong to a certain ux and to a top project that is configurable
      *
@@ -186,6 +202,7 @@ class com_meego_packages_controllers_application
      *
      * @param array of args (os, version, ux, basecategory, packagetitle)
      * @param boolean true indicates the need of the counter only
+     * @param string filter type 'top' deal with apps in top projects; 'staging' work on apps in staging projects only
      *
      * @return array of packagedetails objects
      *
@@ -193,7 +210,7 @@ class com_meego_packages_controllers_application
      * https://github.com/midgardproject/midgard-core/issues#issue/86
      * is fixed and we can define joined views
      */
-    public function get_applications(array $args, $counter = false)
+    public function get_applications(array $args, $counter = false, $filter_type = 'top')
     {
         $cnt = 0;
 
@@ -254,12 +271,12 @@ class com_meego_packages_controllers_application
         {
             $this->data['basecategory'] = strtolower($args['basecategory']);
             // this sets data['packages'] and we just need to filter that
-            $packages = self::get_applications_by_criteria($args);
+            $packages = self::get_applications_by_criteria($args, $filter_type);
         }
         else
         {
             // this sets data['packages'] and we just need to filter that
-            $packages = self::get_filtered_applications($this->data['os'], $this->data['version'], 0, $this->data['ux']);
+            $packages = self::get_filtered_applications($this->data['os'], $this->data['version'], 0, $this->data['ux'], $filter_type);
         }
 
         $this->data['rows'] = false;
@@ -385,7 +402,7 @@ class com_meego_packages_controllers_application
         // this will fill in providers, variants and statistics for each package
         // by filtering out those projects that are not top_projects (see configuration)
         // and variant names that don't fit the package filter criteria (see configuration)
-        self::set_data($localpackages);
+        self::set_data($localpackages, $filter_type);
 
         // enable for testing, if you need large package array for the template
         // $this->data['packages'] = array_fill(0, 12, array_pop($this->data['packages']));
@@ -405,7 +422,7 @@ class com_meego_packages_controllers_application
             if ($this->mvc->authentication->is_user())
             {
                 $this->data['can_post'] = true;
-                self::enable_commenting();
+                self::enable_commenting($filter_type);
             }
             else
             {
@@ -443,11 +460,12 @@ class com_meego_packages_controllers_application
      * @param string version number of the os
      * @param string name of the basecategory
      * @param string name of the ux
+     * @param string filter type: 'top' for top projects only, 'staging' for staging projects only
      *
      * @return integer total amount of apps
      *
      */
-    public function count_number_of_apps($os = '', $os_version = '', $basecategory = '', $ux = '')
+    public function count_number_of_apps($os = '', $os_version = '', $basecategory = '', $ux = '', $filter_type = 'top')
     {
         $counter = self::get_applications(
             array(
@@ -456,7 +474,8 @@ class com_meego_packages_controllers_application
                 'basecategory' => $basecategory,
                 'ux' => $ux
             ),
-            true
+            true,
+            $filter_type
         );
 
         return $counter;
@@ -488,10 +507,12 @@ class com_meego_packages_controllers_application
     /**
      * Returns all apps that match the criteria specified by the args
      *
-     * @param array args
+     * @param array GET args
+     * @param string filter type: 'top' for top projects only, 'staging' for staging projects only
+     *
      * @return array of com_meego_package_details objects
      */
-    public function get_applications_by_criteria(array $args)
+    public function get_applications_by_criteria(array $args, $filter_type = 'top')
     {
         $ux = null;
         if (array_key_exists('ux', $args))
@@ -514,11 +535,11 @@ class com_meego_packages_controllers_application
             {
                 if ($args['packagetitle'])
                 {
-                    $filtered = self::get_filtered_applications($args['os'], null, $relation->packagecategory, $ux, $args['packagetitle']);
+                    $filtered = self::get_filtered_applications($args['os'], null, $relation->packagecategory, $ux, $args['packagetitle'], $filter_type);
                 }
                 else
                 {
-                    $filtered = self::get_filtered_applications($args['os'], $args['version'], $relation->packagecategory, $ux, $args['packagetitle']);
+                    $filtered = self::get_filtered_applications($args['os'], $args['version'], $relation->packagecategory, $ux, $args['packagetitle'], $filter_type);
                 }
 
                 if (is_array($filtered))
@@ -562,9 +583,11 @@ class com_meego_packages_controllers_application
      * @param string version of the OS
      * @param integer package category id
      * @param string ux name
+     * @param string package title
+     * @param string filter type "top" or "staging"
      * @return array of com_meego_package_details objects
      */
-    public function get_filtered_applications($os = null, $os_version = null, $packagecategory_id = 0, $ux_name = false, $package_title = false)
+    public function get_filtered_applications($os = null, $os_version = null, $packagecategory_id = 0, $ux_name = false, $package_title = false, $filter_type = 'top')
     {
         $apps = null;
         $packages = array();
@@ -640,31 +663,62 @@ class com_meego_packages_controllers_application
         $q = new midgard_query_select($storage);
         $qc = new midgard_query_constraint_group('AND');
 
-        // filter the top projects only
+        //filter either top projects or staging projects
         if (count($this->mvc->configuration->top_projects))
         {
-            // filter the top projects only
-            if (count($this->mvc->configuration->top_projects) == 1)
+            switch ($filter_type)
             {
-                $top_project = array_keys($this->mvc->configuration->top_projects);
-                $qc->add_constraint(new midgard_query_constraint(
-                    new midgard_query_property('repoprojectname'),
-                    '=',
-                    new midgard_query_value($top_project[0])
-                ));
-            }
-            else
-            {
-                $qc2 = new midgard_query_constraint_group('OR');
-                foreach ($this->mvc->configuration->top_projects as $top_project => $description)
-                {
-                    $qc2->add_constraint(new midgard_query_constraint(
-                        new midgard_query_property('repoprojectname'),
-                        '=',
-                        new midgard_query_value($top_project)
-                    ));
-                }
-                $qc->add_constraint($qc2);
+                case 'staging':
+                    // filter the top projects only
+                    if (count($this->mvc->configuration->top_projects) == 1)
+                    {
+                        $top_project = array_keys($this->mvc->configuration->top_projects);
+                        $qc->add_constraint(new midgard_query_constraint(
+                            new midgard_query_property('repoprojectname'),
+                            '=',
+                            new midgard_query_value($top_project[0]['staging'])
+                        ));
+                    }
+                    else
+                    {
+                        $qc2 = new midgard_query_constraint_group('OR');
+                        foreach ($this->mvc->configuration->top_projects as $top_project => $details)
+                        {
+                            $qc2->add_constraint(new midgard_query_constraint(
+                                new midgard_query_property('repoprojectname'),
+                                '=',
+                                new midgard_query_value($details['staging'])
+                            ));
+                        }
+                        $qc->add_constraint($qc2);
+                    }
+
+                    break;
+                case 'top':
+                default:
+                    // filter the top projects only
+                    if (count($this->mvc->configuration->top_projects) == 1)
+                    {
+                        $top_project = array_keys($this->mvc->configuration->top_projects);
+                        $qc->add_constraint(new midgard_query_constraint(
+                            new midgard_query_property('repoprojectname'),
+                            '=',
+                            new midgard_query_value($top_project[0])
+                        ));
+                    }
+                    else
+                    {
+                        $qc2 = new midgard_query_constraint_group('OR');
+                        foreach ($this->mvc->configuration->top_projects as $top_project => $details)
+                        {
+                            $qc2->add_constraint(new midgard_query_constraint(
+                                new midgard_query_property('repoprojectname'),
+                                '=',
+                                new midgard_query_value($top_project)
+                            ));
+                        }
+                        $qc->add_constraint($qc2);
+                    }
             }
         }
 
@@ -787,9 +841,10 @@ class com_meego_packages_controllers_application
      * the same package will mean 1 item in the final array.
      *
      * @param array of com_meeg_package_details objects
+     * @param string filter type: 'top' or 'staging': settings URL will depend on it
      *
      */
-    public function set_data(array $packages)
+    public function set_data(array $packages, $filter_type = 'top')
     {
         $older = array();
         $latest = array('os' => '', 'version' => '', 'variants' => array());
@@ -983,9 +1038,19 @@ class com_meego_packages_controllers_application
             // always keep it up-to-date
             $this->data['packages'][$package->packagetitle]['older'] = $older;
 
+            switch($filter_type)
+            {
+                case 'staging':
+                    $route_id = 'staging_apps_by_title';
+                    break;
+                case 'top':
+                default:
+                    $route_id = 'apps_by_title';
+            }
+
             $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
             (
-                'apps_by_title',
+                $route_id,
                 array
                 (
                     'os' => $package->repoos,
@@ -1040,15 +1105,26 @@ class com_meego_packages_controllers_application
 
     /**
      * Adds a form to page if commenting is enabled
-     *
      * Uses the data array that is set earlier for the templates
+     *
+     * @param string filter type: 'top' or 'staging'; setting an URL depends on this
      */
-    public function enable_commenting()
+    public function enable_commenting($filter_type = 'top')
     {
         $matched = $this->request->get_route()->get_matched();
 
+        switch($filter_type)
+        {
+            case 'staging':
+                $route_id = 'staging_apps_by_title';
+                break;
+            case 'top':
+            default:
+                $route_id = 'apps_by_title';
+        }
+
         $this->data['relocate'] = $this->mvc->dispatcher->generate_url(
-            'apps_by_title',
+            $route_id,
             array
             (
                 'os' => $matched['os'],
