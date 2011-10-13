@@ -39,10 +39,6 @@ class com_meego_packages_injector
     {
         $route = $request->get_route();
 
-        // Replace the default MeeGo sidebar with our own
-        //$route->template_aliases['content-sidebar'] = 'cmp-show-sidebar';
-        //$route->template_aliases['main-menu'] = 'cmp-show-main_menu';
-
         if ($route->id == "apps_index")
         {
             $route->template_aliases['topbar'] = 'cmp-welcome-text';
@@ -52,8 +48,11 @@ class com_meego_packages_injector
             $route->template_aliases['topbar'] = 'cmp-menubar';
         }
 
+        // placeholder for staging repositories
+        $staging_workflows = false;
+        // set if user is admin
         $request->set_data_item('admin', false);
-
+        // admins get a link to category management UI
         $request->set_data_item('category_admin_url', false);
 
         if ($this->mvc->authentication->is_user())
@@ -165,6 +164,20 @@ class com_meego_packages_injector
                         );
                     }
                 }
+
+                // check if the repo's project has a staging project configured
+                if (   $repository->repoos == $os
+                    && $this->mvc->configuration->top_projects[$repository->projectname]['staging'])
+                {
+                    $workflows = com_meego_packages_controllers_workflow::get_open_workflows_for_osux($repository->repoos, $repository->repoosversion, $repository->repoosux);
+                    if (count($workflows))
+                    {
+                        foreach ($workflows as $workflow)
+                        {
+                            $staging_workflows[] = $workflow;
+                        }
+                    }
+                }
             }
 
             krsort($uxes);
@@ -197,6 +210,7 @@ class com_meego_packages_injector
 
         $request->set_data_item('matched', $matched);
         $request->set_data_item('submit_app_url', $this->mvc->configuration->submit_app_url);
+        $request->set_data_item('staging_workflows', $staging_workflows);
     }
 
     /**
