@@ -129,14 +129,14 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
         );
         $get_review->addoutNode($distill_review);
 
-        $check_boolean = new ezcWorkflowNodeInput
+        $check_integer = new ezcWorkflowNodeInput
         (
             array
             (
-                'distilled_review' => new ezcWorkflowConditionIsBool()
+                'distilled_review' => new ezcWorkflowConditionIsInteger()
             )
         );
-        $distill_review->addoutNode($check_boolean);
+        $distill_review->addoutNode($check_integer);
 
         $notify_boss = new ezcWorkflowNodeAction
         (
@@ -145,7 +145,7 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
                 'class' => 'com_meego_packages_workflow_action_notifyboss',
             )
         );
-        $check_boolean->addoutNode($notify_boss);
+        $check_integer->addoutNode($notify_boss);
 
         $notify_boss->addoutNode($workflow->endNode);
 
