@@ -80,7 +80,10 @@ msgid "rating"
 msgstr "Rating"
 
 msgid "label_user_comments"
-msgstr "User comments"
+msgstr "User Comments"
+
+msgid "label_user_tests"
+msgstr "User Tests"
 
 msgid "comments"
 msgstr "Comments: ${number}"

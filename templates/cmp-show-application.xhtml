@@ -77,7 +77,14 @@
                             <a tal:define="main_url php:midgardmvc.context.get_request(0).get_path(); url string:/mgd:login?redirect=$main_url" tal:attributes="href url" i18n:translate="'command_login_to_comment'"/>
                         </div>
                     </div>
+
+                    <div class="app_forms" tal:condition="true: staging_area">
+                        <div class="app_h2" i18n:translate="'label_user_tests'">User Tests</div>
+                        <div class="forms" tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_packages', 'package_posted_forms', array('package' => com_meego_packages['packages'][com_meego_packages['packagetitle']]['packageguid']))"></div>
+                    </div>
+
                     <div class="clear"></div>
+
                     <div class="app_comment_main" tal:condition="true: package/ratings">
                         <div class="app_comment_block" tal:repeat="rating package/ratings">
                             <div class="app_comment_block_user">

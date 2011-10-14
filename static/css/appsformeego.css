@@ -1235,3 +1235,11 @@ color: red;
 font-family: DIN-Bold;
 margin: 5px 0 15px 0;
 }
+
+div.app_page div.app_forms {
+float: left;
+}
+
+div.app_page div.app_forms div.forms {
+float: left;
+}

@@ -1,5 +1,7 @@
 <tal:block tal:condition="true: com_meego_packages/forms">
+    <!--
     <h1 tal:condition="com_meego_packages/title" tal:content="com_meego_packages/title">title</h1>
+    -->
 
     <h2 tal:condition="true:com_meego_packages/packagename">Package: ${com_meego_packages/packagename} in repository: ....</h2>
 
@@ -21,8 +23,6 @@
 
 
         <div class="forms" tal:repeat="form com_meego_packages/forms">
-            <!--div class="formtitle" tal:content="form/title"></div-->
-
             <div class="header">
                 <div class="title">Form Title</div>
                 <div class="version">Submitter</div>
