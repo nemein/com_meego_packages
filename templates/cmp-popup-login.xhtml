@@ -4,7 +4,7 @@
                 <div tal:condition="exists:midgardmvc_core_services_authentication_message" class="errors" tal:content="midgardmvc_core_services_authentication_message">Lorem ipsum</div>
 
                 <form method='post' action='/mgd:login'>
-                    <input tal:condition="exists:current_component/redirect_url" type="hidden" name="redirect" tal:attributes="value current_component/redirect_url" />
+                    <input tal:condition="exists:redirect_link" type="hidden" name="redirect" tal:attributes="value redirect_link" />
 
                     <div class="login_app_un">
                         <div class="poll_app_untitle" i18n:domain="midgardmvc_core" i18n:translate="'username'">Username:</div><div class="poll_app_unbox"><input type="text" name="username" /></div>
