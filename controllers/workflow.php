@@ -69,9 +69,13 @@ class com_meego_packages_controllers_workflow
         }
 
         // Workflow completed, redirect to package instance
-        $this->mvc->head->relocate
-        (
-            $this->mvc->dispatcher->generate_url
+        if ($this->request->isset_data_item('redirect_link'))
+        {
+            $redirect_link = $this->request->get_data_item('redirect_link');
+        }
+        else
+        {
+            $redirect_link = midgardmvc_core::get_instance()->dispatcher->generate_url
             (
                 'package_instance',
                 array
@@ -83,8 +87,10 @@ class com_meego_packages_controllers_workflow
                     'arch' => $args['arch']
                 ),
                 $this->request
-            )
-        );
+            );
+        }
+        // Workflow completed, redirect to package instance
+        midgardmvc_core::get_instance()->head->relocate($redirect_link);
     }
 
     /**
@@ -166,12 +172,15 @@ class com_meego_packages_controllers_workflow
 
         $values = $this->workflow_definition->resume($this->execution->guid, $list_of_variables);
 
-        if (!isset($values['execution']))
+        if (! isset($values['execution']))
         {
-            // Workflow completed, redirect to package instance
-            midgardmvc_core::get_instance()->head->relocate
-            (
-                midgardmvc_core::get_instance()->dispatcher->generate_url
+            if ($this->request->isset_data_item('redirect_link'))
+            {
+                $redirect_link = $this->request->get_data_item('redirect_link');
+            }
+            else
+            {
+                $redirect_link = midgardmvc_core::get_instance()->dispatcher->generate_url
                 (
                     'package_instance',
                     array
@@ -183,8 +192,10 @@ class com_meego_packages_controllers_workflow
                         'arch' => $args['arch']
                     ),
                     $this->request
-                )
-            );
+                );
+            }
+            // Workflow completed, redirect to package instance
+            midgardmvc_core::get_instance()->head->relocate($redirect_link);
         }
 
         // populate the package
@@ -216,16 +227,23 @@ class com_meego_packages_controllers_workflow
 
             $form = midgardmvc_ui_forms_generator::get_by_form($db_form, false);
 
-            if (array_key_exists('HTTP_REFERER', $_SERVER))
+            if ($this->request->isset_data_item('redirect_link'))
             {
-                $cancel_url = $_SERVER['HTTP_REFERER'];
+                $redirect_link = $this->request->get_data_item('redirect_link');
             }
             else
             {
-                $cancel_url = "/";
+                if(array_key_exists('HTTP_REFERER', $_SERVER))
+                {
+                    $redirect_link = $_SERVER['HTTP_REFERER'];
+                }
+                else
+                {
+                    $redirect_link = '';
+                }
             }
 
-            $form->set_cancel(null, $this->mvc->i18n->get('cancel', 'midgardmvc_helper_forms'), $cancel_url);
+            $form->set_cancel(null, $this->mvc->i18n->get('cancel', 'midgardmvc_helper_forms'), $redirect_link);
 
             return array
             (
