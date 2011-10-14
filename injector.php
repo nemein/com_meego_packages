@@ -48,6 +48,8 @@ class com_meego_packages_injector
             $route->template_aliases['topbar'] = 'cmp-menubar';
         }
 
+        // login link with redirct specified
+        $request->set_data_item('redirect_link', $this->mvc->context->get_request(0)->get_path());
         // placeholder for a link to list staging apps
         $request->set_data_item('staging_link', false);
         // set if user is admin
