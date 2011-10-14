@@ -173,7 +173,7 @@ class com_meego_packages_injector
                     && $repository->repoos == $os
                     && $this->mvc->configuration->top_projects[$repository->projectname]['staging'])
                 {
-                    $workflows = com_meego_packages_controllers_workflow::get_open_workflows_for_osux($repository->repoos, $repository->repoosversion, $repository->repoosux);
+                    $workflows = com_meego_packages_controllers_workflow::get_open_workflows_for_osux($repository->repoos, $repository->repoosversion, $matched['ux']);
 
                     if (count($workflows))
                     {
@@ -185,7 +185,7 @@ class com_meego_packages_injector
                             (
                                 'os' => $os,
                                 'version' => (string) $repository->repoosversion,
-                                'ux' => $repository->repoosux
+                                'ux' => $matched['ux']
                             ),
                             'com_meego_packages'
                         );
