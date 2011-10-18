@@ -27,7 +27,7 @@ class com_meego_packages_workflow_action_notifyboss implements ezcWorkflowServic
             && $value)
         {
             $project_name = $package[0]->repoprojectname;
-            $package_name = $package[0]->packagename;
+            $package_name = $package[0]->packageparent;
 
             $qa_results_dir = $qa_results_dir. '/' . $project_name;
 
