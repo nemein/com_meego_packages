@@ -2,6 +2,7 @@
 class com_meego_packages_injector
 {
     var $mvc = null;
+    var $request = null;
     var $part = 'applications';
 
     public function __construct()
@@ -37,6 +38,8 @@ class com_meego_packages_injector
      */
     public function inject_template(midgardmvc_core_request $request)
     {
+        $this->request = $request;
+
         $route = $request->get_route();
 
         if ($route->id == "apps_index")
@@ -173,23 +176,28 @@ class com_meego_packages_injector
                     && $repository->repoos == $os
                     && $this->mvc->configuration->top_projects[$repository->projectname]['staging'])
                 {
-                    $workflows = com_meego_packages_controllers_workflow::get_open_workflows_for_osux($repository->repoos, $repository->repoosversion, $matched['ux']);
+                    $cnt = com_meego_packages_controllers_application::count_number_of_apps($repository->repoos, $repository->repoosversion, 0, $matched['ux'], 'staging');
 
-                    if (count($workflows))
+                    if ($cnt)
                     {
-                        // if there is at least 1 workflow then we set and show the link in the templates
-                        $link = $this->mvc->dispatcher->generate_url
-                        (
-                            'staging_basecategories_os_version_ux',
-                            array
+                        $workflows = com_meego_packages_controllers_workflow::get_open_workflows_for_osux($repository->repoos, $repository->repoosversion, $matched['ux']);
+
+                        if (count($workflows))
+                        {
+                            // if there is at least 1 workflow then we set and show the link in the templates
+                            $link = $this->mvc->dispatcher->generate_url
                             (
-                                'os' => $os,
-                                'version' => (string) $repository->repoosversion,
-                                'ux' => $matched['ux']
-                            ),
-                            'com_meego_packages'
-                        );
-                        $request->set_data_item('staging_link', $link);
+                                'staging_basecategories_os_version_ux',
+                                array
+                                (
+                                    'os' => $os,
+                                    'version' => (string) $repository->repoosversion,
+                                    'ux' => $matched['ux']
+                                ),
+                                'com_meego_packages'
+                            );
+                            $request->set_data_item('staging_link', $link);
+                        }
                     }
                 }
             }
