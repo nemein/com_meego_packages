@@ -276,7 +276,7 @@ class com_meego_packages_controllers_application
         else
         {
             // this sets data['packages'] and we just need to filter that
-            $packages = self::get_filtered_applications($this->data['os'], $this->data['version'], 0, $this->data['ux'], $filter_type);
+            $packages = self::get_filtered_applications($this->data['os'], $this->data['version'], 0, $this->data['ux'], $args['packagetitle'], $filter_type);
         }
 
         $this->data['rows'] = false;
@@ -589,6 +589,8 @@ class com_meego_packages_controllers_application
      */
     public function get_filtered_applications($os = null, $os_version = null, $packagecategory_id = 0, $ux_name = false, $package_title = false, $filter_type = 'top')
     {
+        $this->mvc->log("Get filtered apps: " . $os . ', ' . $os_version . ', ' . $packagecategory_id . ', ' . $ux_name . ', ' . $package_title . ', ' . $filter_type, 'debug');
+
         $apps = null;
         $packages = array();
         $os_constraint = null;
@@ -692,7 +694,6 @@ class com_meego_packages_controllers_application
                         }
                         $qc->add_constraint($qc2);
                     }
-
                     break;
                 case 'top':
                 default:
