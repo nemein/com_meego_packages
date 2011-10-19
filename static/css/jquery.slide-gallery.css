@@ -27,7 +27,7 @@ padding: 0;
 .slide-gallery .slide-image-wrapper {
 width: 100%;
 height: 255px;
-margin-bottom: 30px;
+padding-bottom: 30px;
 position: relative;
 overflow: hidden;
 }
