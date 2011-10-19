@@ -469,9 +469,9 @@ class com_meego_packages_controllers_package
                     throw new midgardmvc_exception_notfound("Repository not found");
                 }
                 $qc->add_constraint(new midgard_query_constraint(
-                    new midgard_query_property('repository'),
+                    new midgard_query_property('reponame'),
                     '=',
-                    new midgard_query_value($repository[0]->id)
+                    new midgard_query_value($repository[0]->name)
                 ));
             }
 
@@ -503,7 +503,8 @@ class com_meego_packages_controllers_package
 
             if (count($packages) == 1)
             {
-                $package = $package[0];
+                $package = $packages[0];
+
                 // Relocate to package directly
                 $this->mvc->head->relocate
                 (

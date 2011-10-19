@@ -6,10 +6,30 @@ isOPERA = ((ua.indexOf("opera") != -1) );
 isFF = ((ua.indexOf("firefox") != -1) );
 isSafari = ((ua.indexOf("safari") != -1) );
 
-jQuery(document).ready(function() {
+jQuery(document).ready(function()
+{
     jQuery('.login  ul li:last').addClass('last');
     jQuery('nav ul li:first').addClass('first');
+
+    // register for the search input box changes
+    jQuery('div.search input').change(function()
+    {
+        jQuery('div.search a').attr('href', '/search?q=' + jQuery('div.search input').attr('value'));
+    });
+
+    // hitting enter in the input field should trigger a click on the search button
+    jQuery('div.search input').keyup(
+        function(event)
+        {
+            if(event.keyCode == 13)
+            {
+                window.location = jQuery('div.search a').attr('href');
+            }
+        }
+    );
+
 });
+
 
 function popup_comment() {
     jQuery("#popup_comment").modal({
