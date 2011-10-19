@@ -245,6 +245,9 @@ class com_meego_packages_injector
      */
     private function add_head_elements()
     {
+        // can be used for selective loads
+        $route_id = $this->request->get_route()->id;
+
         $this->mvc->head->add_jsfile(MIDGARDMVC_STATIC_URL . '/eu_urho_widgets/js/jquery.rating/jquery.rating.js');
 
         if ($this->part == 'applications')
@@ -282,6 +285,23 @@ class com_meego_packages_injector
                 'href' => MIDGARDMVC_STATIC_URL . '/com_meego_ratings/css/cmr-ratings.css'
             )
         );
+
+        if ($route_id == "apps_by_title")
+        {
+            // slide gallery stuff
+            $this->mvc->head->add_jsfile(MIDGARDMVC_STATIC_URL . '/com_meego_packages/js/jquery.slide-gallery.js');
+            $this->mvc->head->add_jsfile(MIDGARDMVC_STATIC_URL . '/com_meego_packages/js/gallery.js');
+
+            $this->mvc->head->add_link
+            (
+                array
+                (
+                    'rel' => 'stylesheet',
+                    'type' => 'text/css',
+                    'href' => MIDGARDMVC_STATIC_URL . '/com_meego_packages/css/jquery.slide-gallery.css'
+                )
+            );
+        }
     }
 
 
