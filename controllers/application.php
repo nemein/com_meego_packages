@@ -908,14 +908,15 @@ class com_meego_packages_controllers_application
                 $_icon_marker = 'icon.png';
                 $_screenshot_marker = 'screenshot.png';
 
+                $this->data['packages'][$package->packagetitle]['screenshots'] = false;
+
                 foreach ($attachments as $attachment)
                 {
                     if ($attachment->mimetype == 'image/png')
                     {
-                        if (    strrpos($attachment->name, $_screenshot_marker) !== false
-                             && ! $this->data['packages'][$package->packagetitle]['screenshoturl'])
+                        if (strrpos($attachment->name, $_screenshot_marker) !== false)
                         {
-                            $this->data['packages'][$package->packagetitle]['screenshoturl'] = $this->mvc->dispatcher->generate_url
+                            $this->data['packages'][$package->packagetitle]['screenshots'][] = $this->mvc->dispatcher->generate_url
                             (
                                 'attachmentserver_variant',
                                 array
@@ -945,6 +946,11 @@ class com_meego_packages_controllers_application
                         }
                     }
                 }
+            }
+
+            if (count($this->data['packages'][$package->packagetitle]['screenshots']))
+            {
+                $this->data['packages'][$package->packagetitle]['screenshoturl'] = $this->data['packages'][$package->packagetitle]['screenshots'][0];
             }
 
             // if the UX is empty then we consider the package to be good for all UXes
