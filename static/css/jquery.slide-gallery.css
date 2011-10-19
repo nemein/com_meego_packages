@@ -165,7 +165,7 @@ width: 100%;
 }
 .slide-gallery .slide-thumbs #slide-thumb-list {
 float: left;
-width: 9000px;
+/*width: 9000px;*/
 list-style: none;
 
 }

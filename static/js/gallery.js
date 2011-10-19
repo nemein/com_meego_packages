@@ -8,14 +8,13 @@ jQuery(function()
             init: function()
             {
                 var w = 0;
+                var list = jQuery('#slide-thumb-list li');
 
-                //var lis = document.getElementById('slide-thumb-list').getElementsByTagName('li');
-                jQuery('#slide-thumb-list li').each(function(index)
-                {
-                    w += jQuery(this).width();
+                jQuery.each(list, function(index, value) {
+                    w += value.clientHeight;
                 });
 
-                w = (616 - w) / 2;
+                w = (jQuery('.slide-gallery').width() - w) / 2;
 
                 if (w >= 0)
                 {
