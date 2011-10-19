@@ -1,0 +1,16 @@
+<div id="slide-gallery" class="slide-gallery" tal:condition="true: package/screenshots">
+  <div class="slide-image-wrapper">
+  </div>
+
+  <div class="slide-nav">
+    <div class="slide-thumbs">
+      <ul id="slide-thumb-list">
+        <li tal:repeat="screenshot package/screenshots">
+          <a tal:attributes="href screenshot">
+            <img tal:attributes="src screenshot"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

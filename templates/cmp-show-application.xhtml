@@ -64,7 +64,8 @@
                         <a tal:define="main_url php:midgardmvc.context.get_request(0).get_path(); url string:/mgd:login?redirect=$main_url" tal:attributes="href url" i18n:translate="'command_login_to_comment'"/>
                     </div>
 
-                    <div class="app_slider"><img src="/midgardmvc-static/com_meego_packages/images/slider.jpg" /></div>
+                    <mgd:include>cmp-screenshot-slider</mgd:include>
+
                 </div>
                 <div class="clear"></div>
                 <div class="app_comment">
