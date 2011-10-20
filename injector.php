@@ -55,6 +55,8 @@ class com_meego_packages_injector
         $request->set_data_item('redirect_link', $this->mvc->context->get_request(0)->get_path());
         // placeholder for a link to list staging apps
         $request->set_data_item('staging_link', false);
+        // palceholder for search query
+        $request->set_data_item('search', false);
         // set if user is admin
         $request->set_data_item('admin', false);
         // admins get a link to category management UI
