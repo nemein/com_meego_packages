@@ -1,19 +1,26 @@
         <div class="app_list" tal:condition="true: matched">
             <div class="staging_warning" tal:condition="true: staging_area" i18n:translate="'title_staging_area'">Staging Area</div>
             <div class="content-heading">
-                <span tal:condition="true: matched/basecategory">
+                <span tal:condition="php: array_key_exists('basecategory', matched) && matched['basecategory']">
                     <img tal:attributes="src php:'/midgardmvc-static/com_meego_packages/images/cat-pic/clean/' . strtolower(matched['basecategory_css']) . '.png'"/>
                     ${matched/basecategory}
                 </span>
-                <span tal:condition="not: matched/basecategory" i18n:translate="'label_available_applications'"></span>
+                <span tal:condition="php: ! array_key_exists('basecategory', matched) || ! matched['basecategory']" i18n:translate="'label_available_applications'"></span>
             </div>
 
             <div class="main_list" tal:condition="not: current_component/rows">
-                <span  i18n:translate="'no_available_applications_in_category'"></span>
-                <br/><br/>
-                <a tal:attributes="href string:/basecategories/${matched/os}/${matched/version}/${matched/ux}">
-                    <span i18n:translate="'label_back_to_categories'">Back to categories</span>
-                </a>
+                <tal:block tal:condition="true: current_component/search">
+                    <div i18n:translate="'label_no_search_results'">
+                        <tal:block i18n:name="query">${com_meego_packages/search}</tal:block>
+                    </div>
+                </tal:block>
+                <tal:block tal:condition="not: current_component/search">
+                    <span i18n:translate="'no_available_applications_in_category'"></span>
+                    <br/><br/>
+                    <a tal:attributes="href string:/basecategories/${matched/os}/${matched/version}/${matched/ux}">
+                        <span i18n:translate="'label_back_to_categories'">Back to categories</span>
+                    </a>
+                </tal:block>
             </div>
 
             <div class="main_list" tal:condition="true: current_component/rows" tal:repeat="row current_component/rows">

@@ -19,8 +19,16 @@
                     <mgd:include>cmp-login-register</mgd:include>
 
                     <div class="search">
-                        <input type="text" name="search"/>
-                        <a id="searcha" href="">Search</a>
+                        <form action="/search">
+                            <tal:block tal:condition="true: matched">
+                            <input tal:condition="true: matched/os" type="hidden" name="os" tal:attributes="value matched/os"/>
+                            <input tal:condition="true: matched/version" type="hidden" name="version" tal:attributes="value matched/version"/>
+                            <input tal:condition="true: matched/ux" type="hidden" name="ux" tal:attributes="value matched/ux"/>
+                            </tal:block>
+
+                            <input type="text" name="search" class="search"/>
+                            <input type="submit" name="button" class="submit" i18n:attributes="value command_search"/>
+                        </form>
                     </div>
 
                     <h1 class="logo"><a href="/">Apps for MeeGo</a></h1>
