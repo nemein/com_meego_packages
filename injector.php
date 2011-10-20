@@ -77,6 +77,13 @@ class com_meego_packages_injector
 
         $matched = $route->get_matched();
 
+        if ( ! $matched
+            && $route_id = 'search')
+        {
+            // if we have a search we may be lucky and get a nicely set matched array
+            $matched = $this->request->get_query();
+        }
+
         if (   is_array($matched)
             && array_key_exists('os', $matched)
             && array_key_exists('version', $matched)
