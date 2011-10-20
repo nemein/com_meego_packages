@@ -34,7 +34,7 @@ class com_meego_packages_controllers_search
             $this->mvc->head->relocate('/');
         }
 
-        $this->request->set_data_item('search', $query['search');
+        $this->request->set_data_item('search', $query['search']);
 
         if (   ! isset($query['os'])
             || ! isset($query['version'])
