@@ -714,6 +714,19 @@ class com_meego_packages_controllers_application
                 'LIKE',
                 new midgard_query_value($freetext_search)
             ));
+            if (! $packagecategory_constraint)
+            {
+                $freetext_search_constraint->add_constraint(new midgard_query_constraint(
+                    new midgard_query_property('packagecategoryname'),
+                    'LIKE',
+                    new midgard_query_value($freetext_search)
+                ));
+                $freetext_search_constraint->add_constraint(new midgard_query_constraint(
+                    new midgard_query_property('basecategoryname'),
+                    'LIKE',
+                    new midgard_query_value($freetext_search)
+                ));
+            }
         }
 
         $storage = new midgard_query_storage('com_meego_package_details');
