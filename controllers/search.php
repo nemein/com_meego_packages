@@ -3,7 +3,6 @@ class com_meego_packages_controllers_search
 {
     var $mvc = null;
     var $request = null;
-    var $uxmap = array();
 
     public function __construct(midgardmvc_core_request $request)
     {
@@ -62,7 +61,5 @@ class com_meego_packages_controllers_search
                 )
             );
         }
-
-
     }
 }
