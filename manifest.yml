@@ -204,10 +204,10 @@ routes:
 
     search:
         path: /search
-        controller: com_meego_packages_controllers_package
+        controller: com_meego_packages_controllers_search
         action: search
         template_aliases:
-            content: cmp-show-search
+            content: cmp-show-applications-list
 
     # base categories are defined by admins
     # base categories have one or more package categories mapped to them
