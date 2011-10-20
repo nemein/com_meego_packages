@@ -9,12 +9,12 @@
             </div>
 
             <div class="main_list" tal:condition="not: current_component/rows">
-                <tal:block tal:condition="true: current_component/search">
+                <tal:block tal:condition="true: search">
                     <div i18n:translate="'label_no_search_results'">
                         <tal:block i18n:name="query">${com_meego_packages/search}</tal:block>
                     </div>
                 </tal:block>
-                <tal:block tal:condition="not: current_component/search">
+                <tal:block tal:condition="not: search">
                     <span i18n:translate="'no_available_applications_in_category'"></span>
                     <br/><br/>
                     <a tal:attributes="href string:/basecategories/${matched/os}/${matched/version}/${matched/ux}">

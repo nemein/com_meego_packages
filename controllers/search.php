@@ -34,6 +34,8 @@ class com_meego_packages_controllers_search
             $this->mvc->head->relocate('/');
         }
 
+        $this->request->set_data_item('search', $query['search');
+
         if (   ! isset($query['os'])
             || ! isset($query['version'])
             || ! isset($query['ux']))
@@ -50,7 +52,6 @@ class com_meego_packages_controllers_search
         }
 
         $this->data['packages'] = array();
-        $this->data['search'] = $query['search'];
 
         $apps = com_meego_packages_controllers_application::get_applications($query, false, 'top');
 
