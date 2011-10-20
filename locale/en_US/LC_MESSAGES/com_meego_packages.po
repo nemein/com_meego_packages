@@ -361,3 +361,13 @@ msgstr "Applications Waiting for Review"
 msgid "title_staging_application"
 msgstr "Waiting for Review"
 
+msgid "command_search"
+msgstr "Search"
+
+msgid "title_search_results"
+msgstr "Search Results"
+
+msgid "label_no_search_results"
+msgstr "No results found for ${query}"
+
+
