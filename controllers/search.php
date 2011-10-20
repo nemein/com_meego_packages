@@ -31,7 +31,22 @@ class com_meego_packages_controllers_search
 
         if (! isset($query['search']))
         {
-            return;
+            $this->mvc->head->relocate('/');
+        }
+
+        if (   ! isset($query['os'])
+            || ! isset($query['version'])
+            || ! isset($query['ux']))
+        {
+            $os = $this->mvc->configuration->default['os'];
+            $version = $this->mvc->configuration->latest[$os]['version'];
+            $ux = $this->mvc->configuration->latest[$os]['ux'];
+
+            $search_url = rtrim($this->mvc->dispatcher->generate_url('search', array(), $this->request), '/');
+            $search_url .= '?os=' . $os . '&version=' . $version . '&ux=' . $ux;
+            $search_url .= '&search=' . $query['search'];
+
+            $this->mvc->head->relocate($search_url);
         }
 
         $this->data['packages'] = array();
