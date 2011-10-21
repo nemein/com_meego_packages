@@ -1,6 +1,9 @@
 <?php
 class com_meego_packages_workflow_action_distillreview implements ezcWorkflowServiceObject
 {
+    /**
+     * @todo: docs
+     */
     public function execute(ezcWorkflowExecution $execution)
     {
         $form = midgardmvc_ui_forms_generator::get_by_guid($execution->getVariable('review_form'));
@@ -15,6 +18,10 @@ class com_meego_packages_workflow_action_distillreview implements ezcWorkflowSer
 
         foreach ($items as $key => $item)
         {
+            if ($key == "redirect_link")
+            {
+                continue;
+            }
 
             $field = new midgardmvc_ui_forms_form_field($key);
 
