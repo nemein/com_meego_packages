@@ -73,6 +73,10 @@ class com_meego_packages_controllers_workflow
         {
             $redirect_link = $this->request->get_data_item('redirect_link');
         }
+        elseif (isset($_POST['redirect_link']))
+        {
+            $redirect_link = $_POST['redirect_link'];
+        }
         else
         {
             $redirect_link = midgardmvc_core::get_instance()->dispatcher->generate_url
@@ -89,6 +93,7 @@ class com_meego_packages_controllers_workflow
                 $this->request
             );
         }
+
         // Workflow completed, redirect to package instance
         midgardmvc_core::get_instance()->head->relocate($redirect_link);
     }
@@ -99,6 +104,7 @@ class com_meego_packages_controllers_workflow
     public function get_resume_package_instance(array $args)
     {
         $this->package = $this->load_package_instance($args);
+
         // populate the package for the template
         $this->data['package'] = $this->package;
 
@@ -178,6 +184,10 @@ class com_meego_packages_controllers_workflow
             {
                 $redirect_link = $this->request->get_data_item('redirect_link');
             }
+            elseif (isset($_POST['redirect_link']))
+            {
+                $redirect_link = $_POST['redirect_link'];
+            }
             else
             {
                 $redirect_link = midgardmvc_core::get_instance()->dispatcher->generate_url
@@ -194,6 +204,7 @@ class com_meego_packages_controllers_workflow
                     $this->request
                 );
             }
+
             // Workflow completed, redirect to package instance
             midgardmvc_core::get_instance()->head->relocate($redirect_link);
         }
@@ -245,6 +256,12 @@ class com_meego_packages_controllers_workflow
 
             $form->set_cancel(null, $this->mvc->i18n->get('cancel', 'midgardmvc_helper_forms'), $redirect_link);
 
+            // add a hidden input with the recirect link
+            // where we go upon successful submit
+            $field = $form->add_field('redirect_link', 'text');
+            $field->set_value($redirect_link);
+            $widget = $field->set_widget('hidden');
+
             return array
             (
                 'db_form' => $db_form,
@@ -260,21 +277,51 @@ class com_meego_packages_controllers_workflow
      */
     private function load_package_instance(array $args)
     {
-        $qb = com_meego_package::new_query_builder();
+        $storage = new midgard_query_storage('com_meego_package_details');
 
-        $qb->add_constraint('name', '=', $args['package']);
-        $qb->add_constraint('version', '=', $args['version']);
-        $qb->add_constraint('repository.name', '=', $args['repository']);
-        $qb->add_constraint('repository.arch', '=', $args['arch']);
+        $q = new midgard_query_select($storage);
 
-        $packages = $qb->execute();
+        $qc = new midgard_query_constraint_group('AND');
+
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('packagename'),
+            '=',
+            new midgard_query_value($args['package'])
+        ));
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('packageversion'),
+            '=',
+            new midgard_query_value($args['version'])
+        ));
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('repoprojectname'),
+            '=',
+            new midgard_query_value($args['project'])
+        ));
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('reponame'),
+            '=',
+            new midgard_query_value($args['repository'])
+        ));
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('repoarch'),
+            '=',
+            new midgard_query_value($args['arch'])
+        ));
+
+        $q->set_constraint($qc);
+        $q->execute();
+
+        $packages = $q->list_objects();
 
         if (count($packages) == 0)
         {
             throw new midgardmvc_exception_notfound("Package not found");
         }
 
-        return $packages[0];
+        $package = new com_meego_package($packages[0]->packageguid);
+
+        return $package;
     }
 
     /**
