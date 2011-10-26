@@ -30,11 +30,18 @@ class com_meego_packages_workflow_action_distillreview implements ezcWorkflowSer
             {
                 // if the answer belongs to a certain field then we process
                 // this field must be a boolean too
-                if (   $item instanceof midgardmvc_helper_forms_field_boolean
-                    && $item->get_value())
+                if ($item instanceof midgardmvc_helper_forms_field_boolean)
                 {
-                    // add +1 to the package score
-                    $package->metadata->score++;
+                    if ($item->get_value())
+                    {
+                        // add +1 to the package score
+                        $package->metadata->score++;
+                    }
+                    else
+                    {
+                        //  oh yes, we do give -1 points too ;)
+                        $package->metadata->score--;
+                    }
                     $res = $package->update();
 
                     if (! $res)
