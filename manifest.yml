@@ -69,6 +69,22 @@ routes:
         template_aliases:
             content: cmp-show-applications-list
 
+    # lists the newest apps that are avaialable for a UX / basecategory in a top project
+    newest_apps:
+        path: /newest/applications/{$os}/{$string:version}/{$ux}
+        controller: com_meego_packages_controllers_application
+        action: newest_applications
+        template_aliases:
+            content: cmp-apps-in-row-block
+
+    # lists the newest apps that are avaialable for a UX / basecategory in a top project
+    hottest_apps:
+        path: /hottest/applications/{$os}/{$string:version}/{$ux}
+        controller: com_meego_packages_controllers_application
+        action: hottest_applications
+        template_aliases:
+            content: cmp-apps-in-row-block
+
     # show a package overview based on UX / basecategory / packagetitle
     apps_by_title:
         path: /applications/{$os}/{$string:version}/{$ux}/{$basecategory}/{$packagetitle}

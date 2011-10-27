@@ -1,0 +1,16 @@
+            <div class="main_list" tal:condition="true: current_component/rows" tal:repeat="row current_component/rows">
+                <div class="list_item" tal:repeat="package row">
+                    <div class="list_item_img">
+                        <img tal:condition="true: package/iconurl" tal:attributes="src package/iconurl"/>
+                        <img tal:condition="not: package/iconurl" src="/midgardmvc-static/com_meego_packages/images/placeholder_85x60.png"/>
+                    </div>
+                    <div class="list_item_more">
+                        <div class="list_item_title">
+                            <a tal:attributes="href package/localurl">${package/name}</a>
+                        </div>
+                        <div class="list_item_text">${package/summary}</div>
+                        <div class="list_item_poll" tal:content="structure package/stars">Stars</div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>

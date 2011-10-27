@@ -181,16 +181,32 @@ class com_meego_packages_controllers_application
      * Get staging applications that are in repos of staging projects for a base category but
      * only if they belong to a certain ux and to a top project that is configurable
      *
-     *
      * @param array of args (os, version, ux, basecategory, packagetitle)
-     * @param boolean true indicates the need of the counter only
-     * @param string filter type 'top' deal with apps in top projects; 'staging' work on apps in staging projects only
-     *
-     * is fixed and we can define joined views
      */
     public function get_staging_applications(array $args)
     {
         self::get_applications($args, false, 'staging');
+    }
+
+    /**
+     * Get staging applications that are in repos of staging projects for a base category but
+     * only if they belong to a certain ux and to a top project that is configurable
+     *
+     * @param array of args (os, version, ux, basecategory, packagetitle)
+     */
+    public function get_newest_applications(array $args)
+    {
+        self::get_applications($args, false, 'newest');
+    }
+
+    /**
+     * Get the 3 hottest application
+     *
+     * @param array of args (os, version, ux, basecategory, packagetitle)
+     */
+    public function get_hottest_applications(array $args)
+    {
+        self::get_applications($args, false, 'hottest');
     }
 
     /**
@@ -738,6 +754,18 @@ class com_meego_packages_controllers_application
         {
             switch ($filter_type)
             {
+                case 'newest':
+                    $q->set_limit(3);
+                    $q->add_order(new midgard_query_property('packagecreated'), SORT_DESC);
+                    break;
+                case 'hottest':
+                    $q->set_limit(3);
+                    $q->add_order(new midgard_query_property('statscachedratingvalue'), SORT_DESC);
+                    break;
+            }
+
+            switch ($filter_type)
+            {
                 case 'staging':
                     // filter the top projects only
                     if (count($this->mvc->configuration->top_projects) == 1)
@@ -763,6 +791,8 @@ class com_meego_packages_controllers_application
                         $qc->add_constraint($qc2);
                     }
                     break;
+                case 'newest':
+                case 'hottest':
                 case 'top':
                 default:
                     // filter the top projects only

@@ -43,10 +43,12 @@
         </div>
 
         <footer>
-            <div class="open_wrapper" >
-                <mgd:include>cmp-hottest-block</mgd:include>
+            <div class="open_wrapper" tal:condition="true: matched">
+                <h2 class="title" i18n:translate="'label_newest'">Newest</h2>
+                <div tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_packages', 'newest_apps', array('os' => matched['os'], 'version' => matched['version'], 'ux' => matched['ux']))"></div>
                 <div class="separator"></div>
-                <mgd:include>cmp-newest-block</mgd:include>
+                <h2 class="title" i18n:translate="'label_hottest'">Hottest</h2>
+                <div tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_packages', 'hottest_apps', array('os' => matched['os'], 'version' => matched['version'], 'ux' => matched['ux']))"></div>
             </div>
             <div class="clear"></div>
             <div class="wrapper">
