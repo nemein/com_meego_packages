@@ -893,7 +893,7 @@ class com_meego_packages_controllers_package
 
         if (count($packages))
         {
-            $retval['average_rating'] = round($sum / $rates, 1);
+            $retval['average_rating'] = ($rates) ? round($sum / $rates, 1) : 0;
             $retval['number_of_rates'] = $rates;
         }
 
