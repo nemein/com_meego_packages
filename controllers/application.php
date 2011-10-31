@@ -438,19 +438,19 @@ class com_meego_packages_controllers_application
             $this->data['rows'][] = array_slice($this->data['packages'], ($i - 1) * $per_row, $per_row, true);
         }
 
+        $this->data['can_post'] = false;
+
         // if an exact application is shown
         if (   $this->data['packagetitle']
             && count($this->data['packages']))
         {
-            // enable commenting
+            // enable commenting and check if user has rated yet
             if ($this->mvc->authentication->is_user())
             {
                 $this->data['can_post'] = true;
+                $this->data['can_rate'] = self::can_rate($this->data['packages'][$this->data['packagetitle']]['packageguid']);
+
                 self::enable_commenting($filter_type);
-            }
-            else
-            {
-                $this->data['can_post'] = false;
             }
         }
 
@@ -1393,8 +1393,12 @@ class com_meego_packages_controllers_application
                 if (   $rating->rating
                     || $rating->commentid)
                 {
-                    // add a new property containing the stars to the rating object
-                    $rating->stars = com_meego_ratings_controllers_rating::draw_stars($rating->rating);
+                    if ($rating->rating)
+                    {
+                        // add a new property containing the stars to the rating object
+                        $rating->stars = com_meego_ratings_controllers_rating::draw_stars($rating->rating);
+                    }
+
                     // pimp the posted date
                     $rating->date = gmdate('Y-m-d H:i e', strtotime($rating->posted));
                     // avatar part
@@ -1427,6 +1431,45 @@ class com_meego_packages_controllers_application
                 array_push($retval, $rating);
             }
             unset ($ratings);
+        }
+
+        return $retval;
+    }
+
+    /**
+     * Checks is the currently logged in user has rated an object or not
+     * Returns true if he / she did not rate yet.
+     * @param GUID of the package
+     * @return boolean
+     */
+    public function can_rate($guid)
+    {
+        $retval = true;
+
+        $user = $this->mvc->authentication->get_user();
+
+        $storage = new midgard_query_storage('com_meego_package_ratings');
+        $q = new midgard_query_select($storage);
+
+        $qc = new midgard_query_constraint_group('AND');
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('authorguid'),
+            '=',
+            new midgard_query_value($user->guid)
+        ));
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('guid'),
+            '=',
+            new midgard_query_value($guid)
+        ));
+
+        $q->execute();
+
+        $ratings = $q->list_objects();
+
+        if (count($ratings))
+        {
+            $retval = false;
         }
 
         return $retval;
