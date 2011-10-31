@@ -1045,7 +1045,7 @@ class com_meego_packages_controllers_application
                                 array
                                 (
                                     'guid' => $attachment->guid,
-                                    'variant' => '',
+                                    'variant' => 'icon',
                                     'filename' => $attachment->name,
                                 ),
                                 '/'
