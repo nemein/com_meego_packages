@@ -871,10 +871,15 @@ class com_meego_packages_controllers_package
         $packages = $q->list_objects();
 
         $sum = 0;
+        $rates = 0;
         foreach ($packages as $package)
         {
-            // get the rating sum
-            $sum += $package->rating;
+            if ($package->rating)
+            {
+                // get the rating sum
+                $sum += $package->rating;
+                ++$rates;
+            }
 
             if ($package->commentid)
             {
@@ -888,7 +893,8 @@ class com_meego_packages_controllers_package
 
         if (count($packages))
         {
-            $retval['average_rating'] = round($sum / count($packages), 1);
+            $retval['average_rating'] = round($sum / $rates, 1);
+            $retval['number_of_rates'] = $rates;
         }
 
         return $retval;

@@ -55,9 +55,14 @@
                     <div class="app_poll">
                         <a tal:condition="true: current_component/can_post" href="#popup_comment" onclick="popup_comment()">
                             <span class="stars" tal:content="structure package/stars">Stars</span>
+                            <span tal:condition="true: package/number_of_rates" class="rates">(${package/number_of_rates})</span>
                         </a>
+<!--
                         <a tal:condition="not: current_component/can_post" tal:define="main_url php:midgardmvc.context.get_request(0).get_path(); url string:/mgd:login?redirect=$main_url" tal:attributes="href url">
+-->
+                        <a tal:condition="not: current_component/can_post" href="#login" onclick="popup_login()">
                             <span class="stars" tal:content="structure package/stars">Stars</span>
+                            <span tal:condition="true: package/number_of_rates" class="rates">(${package/number_of_rates})</span>
                         </a>
                     </div>
                     <div class="app_content">${package/description}</div>
@@ -100,7 +105,7 @@
                                     <div class="app_comment_name">${rating/authorfirstname} ${rating/authorlastname}</div>
                                     <div class="app_comment_date">${rating/date}</div>
                                     <div class="app_comment_poll">
-                                        <div tal:condition="rating/stars" tal:content="structure rating/stars">Stars</div>
+                                        <div tal:condition="exists: rating/stars" tal:content="structure rating/stars">Stars</div>
                                     </div>
                                 </div>
                             </div>

@@ -316,8 +316,11 @@ msgstr "Login to rate"
 msgid "label_application_homepage"
 msgstr "Application homepage"
 
-msgid "label_rate_and_comment"
-msgstr "Rate and write a comment"
+msgid "label_rate_or_comment"
+msgstr "Rate or write a comment"
+
+msgid "label_comment"
+msgstr "Write a comment"
 
 msgid "title_available_arch_variants"
 msgstr "Other downloads"

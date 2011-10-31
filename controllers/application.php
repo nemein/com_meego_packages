@@ -973,9 +973,14 @@ class com_meego_packages_controllers_application
 
                 // gather some basic stats
                 $stats = com_meego_packages_controllers_package::get_statistics($package->packagetitle);
-
                 // set the total number of comments
                 $this->data['packages'][$package->packagetitle]['number_of_comments'] = $stats['number_of_comments'];
+
+                if (array_key_exists('number_of_rates', $stats))
+                {
+                    // total number of rates
+                    $this->data['packages'][$package->packagetitle]['number_of_rates'] = $stats['number_of_rates'];
+                }
 
                 // the stars as html snippet for the average rating; should be used as-is in the template
                 $this->data['packages'][$package->packagetitle]['average_rating'] = $stats['average_rating'];

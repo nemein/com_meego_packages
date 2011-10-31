@@ -780,16 +780,28 @@ padding-bottom: 5px;
 
 .app_poll {
 position: absolute;
-margin: 0px 0px 0px 550px;
+margin: 0px 0px 0px 530px;
+}
+
+.app_poll a {
+background: url("/midgardmvc-static/com_meego_packages/images/app_poll_background.png") no-repeat scroll center top transparent;
+display: block;
+width: 155px;
+height: 38px;
+text-align: center;
+padding: 7px 0 0;
 }
 
 .app_poll span.stars {
-background: url("/midgardmvc-static/com_meego_packages/images/app_poll_background.png") no-repeat scroll center top transparent;
-display: block;
 height: 38px;
-padding: 7px 0 0;
-text-align: center;
 width: 125px;
+}
+
+.app_poll span.rates {
+color: grey;
+font-family: DIN-Bold;
+font-size: 14px;
+margin: 0 0 0 5px;
 }
 
 .app_content {
