@@ -57,9 +57,6 @@
                             <span class="stars" tal:content="structure package/stars">Stars</span>
                             <span tal:condition="true: package/number_of_rates" class="rates">(${package/number_of_rates})</span>
                         </a>
-<!--
-                        <a tal:condition="not: current_component/can_post" tal:define="main_url php:midgardmvc.context.get_request(0).get_path(); url string:/mgd:login?redirect=$main_url" tal:attributes="href url">
--->
                         <a tal:condition="not: current_component/can_post" href="#login" onclick="popup_login()">
                             <span class="stars" tal:content="structure package/stars">Stars</span>
                             <span tal:condition="true: package/number_of_rates" class="rates">(${package/number_of_rates})</span>
@@ -93,26 +90,27 @@
                     <div class="clear"></div>
 
                     <div class="app_comment_main" tal:condition="true: package/ratings">
-                        <div class="app_comment_block" tal:repeat="rating package/ratings">
-                            <div class="app_comment_block_user">
-                                <div class="app_comment_block_pic">
-                                    <a tal:condition="true: rating/avatar" tal:attributes="href rating/avatarurl">
-                                        <img tal:attributes="src rating/avatar" />
-                                    </a>
-                                    <img tal:condition="not: rating/avatar" src="/midgardmvc-static/com_meego_packages/images/no_image.jpg" />
-                                </div>
-                                <div class="app_comment_block_more">
-                                    <div class="app_comment_name">${rating/authorfirstname} ${rating/authorlastname}</div>
-                                    <div class="app_comment_date">${rating/date}</div>
-                                    <div class="app_comment_poll">
-                                        <div tal:condition="exists: rating/stars" tal:content="structure rating/stars">Stars</div>
+                        <tal:block tal:repeat="rating package/ratings">
+                            <div tal:condition="true: rating/show" class="app_comment_block">
+                                <div class="app_comment_block_user">
+                                    <div class="app_comment_block_pic">
+                                        <a tal:condition="true: rating/avatar" tal:attributes="href rating/avatarurl">
+                                            <img tal:attributes="src rating/avatar" />
+                                        </a>
+                                        <img tal:condition="not: rating/avatar" src="/midgardmvc-static/com_meego_packages/images/no_image.jpg" />
+                                    </div>
+                                    <div class="app_comment_block_more">
+                                        <div class="app_comment_name">${rating/authorfirstname} ${rating/authorlastname}</div>
+                                        <div class="app_comment_date">${rating/date}</div>
+                                        <div class="app_comment_poll">
+                                            <div tal:condition="exists: rating/stars" tal:content="structure rating/stars">Stars</div>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="app_comment_block_comment">${rating/comment}</div>
+                                <div class="clear"></div>
                             </div>
-                            <div class="app_comment_block_comment">${rating/comment}</div>
-                            <div class="clear"></div>
-                        </div>
-
+                        </tal:block>
                         <div class="app_comment_write">
                             <a href="#popup_comment" onclick="popup_comment()"><img src="/midgardmvc-static/com_meego_packages/images/writecomment.jpg" /></a>
                         </div>

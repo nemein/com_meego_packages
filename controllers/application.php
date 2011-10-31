@@ -1393,6 +1393,16 @@ class com_meego_packages_controllers_application
         {
             foreach ($ratings as $rating)
             {
+                $rating->show = true;
+
+                if (   ! $rating->commentid
+                    && ! $this->mvc->configuration->show_ratings_without_comments)
+                {
+                    $rating->show = false;
+                    array_push($retval, $rating);
+                    continue;
+                }
+
                 $rating->stars = '';
 
                 if (   $rating->rating
