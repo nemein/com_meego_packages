@@ -1460,14 +1460,20 @@ class com_meego_packages_controllers_application
         $qc->add_constraint(new midgard_query_constraint(
             new midgard_query_property('authorguid'),
             '=',
-            new midgard_query_value($user->guid)
+            new midgard_query_value($user->person)
         ));
         $qc->add_constraint(new midgard_query_constraint(
             new midgard_query_property('guid'),
             '=',
             new midgard_query_value($guid)
         ));
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('rating'),
+            '<>',
+            new midgard_query_value(0)
+        ));
 
+        $q->set_constraint($qc);
         $q->execute();
 
         $ratings = $q->list_objects();
