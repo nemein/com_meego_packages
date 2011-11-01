@@ -19,10 +19,10 @@
                         </a>
                     </div>
                     <div class="app_notes">
-                        <ul class="basic_info">
-                            <li i18n:translate="'label_app_version'"><tal:block i18n:name="version">x.y</tal:block></li>
-                            <li i18n:translate="'label_app_release'"><tal:block i18n:name="date">xxxx-xx-xx</tal:block></li>
-                            <li i18n:translate="'label_app_size'"><tal:block i18n:name="size">xxx</tal:block></li>
+                        <ul class="basic_info" tal:condition="true: package/latest">
+                            <li i18n:translate="'label_app_version'"><tal:block i18n:name="version">${package/latest/version}</tal:block></li>
+                            <li i18n:translate="'label_app_update'"><tal:block i18n:name="date">${package/latest/lastupdate}</tal:block></li>
+                            <li i18n:translate="'label_app_size'"><tal:block i18n:name="size">${package/latest/size}</tal:block></li>
                         </ul>
 
                         <div class="homepage" tal:condition="true: package/homepageurl">

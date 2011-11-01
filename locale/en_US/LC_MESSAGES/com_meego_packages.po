@@ -331,6 +331,9 @@ msgstr "Version: ${version}"
 msgid "label_app_release"
 msgstr "Release date: ${date}"
 
+msgid "label_app_update"
+msgstr "Last update: ${date}"
+
 msgid "label_app_size"
 msgstr "Size: ${size}"
 

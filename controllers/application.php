@@ -950,7 +950,7 @@ class com_meego_packages_controllers_application
     public function set_data(array $packages, $filter_type = 'top')
     {
         $older = array();
-        $latest = array('os' => '', 'version' => '', 'variants' => array());
+        $latest = array('os' => '', 'version' => '', 'size' => 'n/a', 'lastupdate' => 'n/a', 'variants' => array());
 
         $matched = $this->request->get_route()->get_matched();
 
@@ -1109,6 +1109,8 @@ class com_meego_packages_controllers_application
                 // add the variant that has the same UX as requested
                 $latest['variants'][$package->repoarch] = $package;
                 $latest['version'] = $package->packageversion;
+                $latest['lastupdate'] = $package->packagerevised->format('Y-m-d');
+                $latest['size'] = 'n/a';
                 $latest['ux'] = $package->ux;
             }
             elseif ($latest['version'] == $package->packageversion)
