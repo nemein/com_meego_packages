@@ -65,7 +65,7 @@ os_ux:
     n9:
         harmattan: Nokia N9
     meego:
-        meegoce: Nokia N900
+        meegoce: Nemo
         netbook: Netbook
         handset: Handset
         # unused UXes
