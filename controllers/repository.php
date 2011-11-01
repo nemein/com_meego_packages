@@ -58,7 +58,7 @@ class com_meego_packages_controllers_repository
         }
 
         //$repository->os = strtolower($repository->repoos);
-        $retval['translated_title'] = ucwords($this->mvc->i18n->get('title_' . $default_ux . '_ux'));
+        $retval['configured_title'] = ucwords($this->mvc->i18n->get('title_' . $default_ux . '_ux'));
         $retval['title'] = ucwords($default_ux);
         $retval['css'] = $group . ' ' . $default_ux;
 
