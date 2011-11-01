@@ -2,7 +2,7 @@
 user_profile_prefix: http://meego.com/users/
 
 # doc that explains how to submit an application
-submit_app_url: http://wiki.meego.com/MeeGo_Apps
+submit_app_url: http://wiki.meego.com/MeeGo_Apps/Packaging
 
 # whether to show ratings that have no comments
 show_ratings_without_comments: true
