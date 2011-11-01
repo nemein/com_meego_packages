@@ -235,7 +235,7 @@ class com_meego_packages_injector
         // Add the CSS and JS files needed by Packages
         $this->add_head_elements();
 
-        $matched['translated_ux'] = ucwords($this->mvc->i18n->get('title_' . $matched['ux'] . '_ux'));
+        $matched['configured_ux'] = ucwords($this->mvc->configuration->os_ux[$matched['os']][$matched['ux']]);
 
         $request->set_data_item('matched', $matched);
         $request->set_data_item('submit_app_url', $this->mvc->configuration->submit_app_url);

@@ -1,6 +1,6 @@
         <div id="popup_ver" style="display:none;" tal:condition="true: versions">
             <p i18n:translate="'instruction_select_ux_version'" tal:condition="true: matched">
-                <tal:block i18n:name="ux">${matched/translated_ux}</tal:block> Choose the version
+                <tal:block i18n:name="ux">${matched/configured_ux}</tal:block> Choose the version
             </p>
             <div class="cat-popup">
                 <div tal:condition="true: matched" tal:attributes="class string:cat-image ${matched/ux}"></div>
