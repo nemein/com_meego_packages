@@ -2,7 +2,11 @@
 
             <div tal:condition="true: current_component/packages" class="app_page" tal:define="packagetitle current_component/packagetitle; package com_meego_packages/packages/$packagetitle">
                 <div class="app_page_left">
-                    <div class="staging_warning" tal:condition="true: staging_area" i18n:translate="'title_staging_application'">Staging Application</div>
+
+                    <div tal:condition="true: staging_area" class="staging_warning">
+                        <a  tal:condition="true: staging_back_link" tal:attributes="href staging_back_link" i18n:translate="'title_staging_application'">Staging application</a>
+                        <span tal:condition="not: staging_back_link" i18n:translate="'title_staging_application'">Staging application</span>
+                    </div>
 
                     <div class="screenshot missing" tal:condition="not: package/screenshoturl"></div>
                     <div class="app_image">

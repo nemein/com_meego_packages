@@ -241,11 +241,15 @@ class com_meego_packages_injector
         $request->set_data_item('submit_app_url', $this->mvc->configuration->submit_app_url);
 
         $request->set_data_item('staging_area', false);
+
         if (substr($route->id, 0, 8) == 'staging_')
         {
             $request->set_data_item('staging_area', true);
 
             $request->set_data_item('staging_back_link', false);
+
+            $link = false;
+
             if (substr($route->id, 0, 28) == 'staging_apps_by_basecategory')
             {
                 $link = $this->mvc->dispatcher->generate_url
@@ -259,6 +263,15 @@ class com_meego_packages_injector
                     ),
                     'com_meego_packages'
                 );
+            }
+
+            if (substr($route->id, 0, 21) == 'staging_apps_by_title')
+            {
+                $link = '..';
+            }
+
+            if ($link)
+            {
                 $request->set_data_item('staging_back_link', $link);
             }
         }
