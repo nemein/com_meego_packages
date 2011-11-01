@@ -1,6 +1,6 @@
             <div class="category">
                 <div tal:condition="true: matched" tal:attributes="class string:cat-image ${matched/ux}">
-                    <span class="staging_warning" tal:condition="true: staging_area" i18n:translate="'title_staging_area'">Staging Area</span>
+                    <div tal:condition="true: staging_area" class="staging_warning" i18n:translate="'title_staging_area'">Staging area warning</div>
                 </div>
                 <div class="cat-more">
                     <ul>

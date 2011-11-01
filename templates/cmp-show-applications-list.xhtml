@@ -1,5 +1,10 @@
         <div class="app_list" tal:condition="true: matched">
-            <div class="staging_warning" tal:condition="true: staging_area" i18n:translate="'title_staging_area'">Staging Area</div>
+
+            <div tal:condition="true: staging_area" class="staging_warning">
+                <a  tal:condition="true: staging_back_link" tal:attributes="href staging_back_link" i18n:translate="'title_staging_area'">Staging area warning</a>
+                <span tal:condition="not: staging_back_link" i18n:translate="'title_staging_area'">Staging area warning</span>
+            </div>
+
             <div class="content-heading">
                 <span tal:condition="php: array_key_exists('basecategory', matched) && matched['basecategory']">
                     <img tal:attributes="src php:'/midgardmvc-static/com_meego_packages/images/cat-pic/clean/' . strtolower(matched['basecategory_css']) . '.png'"/>

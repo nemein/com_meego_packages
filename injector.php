@@ -244,6 +244,23 @@ class com_meego_packages_injector
         if (substr($route->id, 0, 8) == 'staging_')
         {
             $request->set_data_item('staging_area', true);
+
+            $request->set_data_item('staging_back_link', false);
+            if (substr($route->id, 0, 28) == 'staging_apps_by_basecategory')
+            {
+                $link = $this->mvc->dispatcher->generate_url
+                (
+                    'staging_basecategories_os_version_ux',
+                    array
+                    (
+                        'os' => $matched['os'],
+                        'version' => (string) $matched['version'],
+                        'ux' => $matched['ux']
+                    ),
+                    'com_meego_packages'
+                );
+                $request->set_data_item('staging_back_link', $link);
+            }
         }
     }
 

@@ -617,6 +617,7 @@ article .cat-image {
 float: left;
 width: 250px;
 height: 190px;
+text-align: center;
 }
 
 article .cat-more {
@@ -1248,7 +1249,8 @@ position: relative;
 top: 80px;
 }
 
-.staging_warning {
+.staging_warning,
+.staging_warning a {
 font-size: 16px;
 color: OrangeRed;
 font-family: DIN-Bold;
