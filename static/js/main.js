@@ -131,6 +131,7 @@ function popup_login() {
         }
     })
 };
+
 //-----------------------------------------------
 function debug(txt) {
     try {
@@ -172,8 +173,13 @@ function initiconmenu(id) {
     }
 //END;
 }
+
+
 //-----------------------------------------------
-jQuery('.login ul:first > li').each( function() {
+cnt = 0;
+sum = 0;
+jQuery('.login ul:first > li').each( function()
+{
     var min=jQuery(this).width();
 
     cnt++;
@@ -194,4 +200,3 @@ jQuery('.login ul:first > li').each( function() {
     jQuery(this).find('ul li.last span.r').css('width', min-10+'px');
 });
 //-----------------------------------------------
-
