@@ -83,5 +83,52 @@ class com_meego_packages_utils
 
         return $user;
     }
+
+    /**
+     * Returns the link of the avatar image that can be used in e.g. img src
+     *
+     * @param string user name
+     * @return string url
+     */
+    public function get_avatar($username = null)
+    {
+        $retval = midgardmvc_core::get_instance()->configuration->default_avatar;
+
+        if ($username)
+        {
+            midgardmvc_core::get_instance()->authorization->enter_sudo('midgardmvc_core');
+
+            // determine the person guid
+            $storage = new midgard_query_storage('midgard_user');
+            $q = new midgard_query_select($storage);
+
+            $q->set_constraint(new midgard_query_constraint(
+               new midgard_query_property('login'),
+               '=',
+               new midgard_query_value($username)
+            ));
+
+            $q->execute();
+            $q->toggle_readonly(false);
+
+            $users = $q->list_objects();
+
+            midgardmvc_core::get_instance()->authorization->leave_sudo();
+
+            if (count($users))
+            {
+                $user = $users[0];
+            }
+
+            $account = midgardmvc_account_injector::get_account($user->person);
+
+            if ($account->guid)
+            {
+                $retval = $account->avatarurl;
+            }
+        }
+
+        return $retval;
+    }
 }
 ?>

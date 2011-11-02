@@ -101,6 +101,9 @@ top_projects:
     MeeGo:1.2:Harmattan:Apps:
         description: Some description
         staging: MeeGo:1.2:Harmattan:Apps:Testing
+    home:pycage:
+        description: initial wetab imports
+        staging:
 
 # list of base categories as name: description pairs
 # base categories are supposed to map all package categories that are

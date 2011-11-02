@@ -174,7 +174,12 @@ class com_meego_packages_controllers_application
         }
 
         // ugly hack to get N9 to the beginning
-        krsort($this->data['latest']['uxes']);
+        if (   array_key_exists('latest', $this->data)
+            && is_array($this->data['latest'])
+            && array_key_exists('uxes', $this->data['latest']))
+        {
+            krsort($this->data['latest']['uxes']);
+        }
     }
 
     /**
@@ -1434,7 +1439,7 @@ class com_meego_packages_controllers_application
                             // get avatar and url to user profile page only if the user is not the midgard admin
                             try
                             {
-                                $rating->avatar = $this->mvc->dispatcher->generate_url('meego_avatar', array('username' => $user->login), '/');
+                                $rating->avatar = com_meego_packages_utils::get_avatar($user->login);
                                 $rating->avatarurl = $this->mvc->configuration->user_profile_prefix . $user->login;
                             }
                             catch (Exception $e)

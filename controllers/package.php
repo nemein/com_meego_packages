@@ -1225,7 +1225,7 @@ class com_meego_packages_controllers_package
                             // get avatar and url to user profile page only if the user is not the midgard admin
                             try
                             {
-                                $rating->avatar = $this->mvc->dispatcher->generate_url('meego_avatar', array('username' => $username), '/');
+                                $rating->avatar = com_meego_packages_utils::get_avatar($username);
                                 $rating->avatarurl = $this->mvc->configuration->user_profile_prefix . $username;
                             }
                             catch (Exception $e)

@@ -12,6 +12,8 @@ requires:
         - {type: github, user: bergie, repository: midgardmvc_ui_forms, branch: master}
     com_meego_ratings_caching:
         - {type: github, user: nemein, repository: com_meego_ratings_caching, branch: master}
+    midgardmvc_account:
+        - {type: github, user: feri, repository: midgardmvc_account, branch: master}
 
 routes:
     index:
