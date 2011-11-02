@@ -326,16 +326,16 @@ msgid "title_available_arch_variants"
 msgstr "Other downloads"
 
 msgid "label_app_version"
-msgstr "Version: ${version}"
+msgstr "Version"
 
 msgid "label_app_release"
-msgstr "Release date: ${date}"
+msgstr "Release date"
 
 msgid "label_app_update"
-msgstr "Last update: ${date}"
+msgstr "Last update"
 
 msgid "label_app_size"
-msgstr "Size: ${size}"
+msgstr "Size"
 
 msgid "feedback_no_open_workflows"
 msgstr "There are no open workflows at the moment."
@@ -376,4 +376,20 @@ msgstr "Search Results"
 msgid "label_no_search_results"
 msgstr "No results found for ${query}"
 
+msgid "label_role_downloader"
+msgstr "Maintainer"
 
+msgid "label_role_packager"
+msgstr "Packager"
+
+msgid "label_role_bugowner"
+msgstr "Bugowner"
+
+msgid "label_roles_downloader"
+msgstr "Maintainers"
+
+msgid "label_roles_packager"
+msgstr "Packagers"
+
+msgid "label_roles_bugowner"
+msgstr "Bugowners"

@@ -46,7 +46,7 @@ class com_meego_packages_utils
     }
 
     /**
-     * Retrieves the user specified by guid
+     * Retrieves the user specified by it person property
      *
      * @param guid user's person_guid
      * @return object midgard_user object
@@ -62,6 +62,45 @@ class com_meego_packages_utils
 
             $q->set_constraint(new midgard_query_constraint(
                new midgard_query_property('person'),
+               '=',
+               new midgard_query_value($guid)
+            ));
+
+            $q->execute();
+            $q->toggle_readonly(false);
+
+            $users = $q->list_objects();
+
+            if (count($users))
+            {
+                $user = $users[0];
+            }
+
+            unset($storage);
+            unset($q);
+            unset($users);
+        }
+
+        return $user;
+    }
+
+    /**
+     * Retrieves the user specified by guid
+     *
+     * @param guid user's guid
+     * @return object midgard_user object
+     */
+    public static function get_user_by_guid($guid = '')
+    {
+        $user = null;
+
+        if (mgd_is_guid($guid))
+        {
+            $storage = new midgard_query_storage('midgard_user');
+            $q = new midgard_query_select($storage);
+
+            $q->set_constraint(new midgard_query_constraint(
+               new midgard_query_property('guid'),
                '=',
                new midgard_query_value($guid)
             ));

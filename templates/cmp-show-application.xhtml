@@ -19,14 +19,34 @@
                         </a>
                     </div>
                     <div class="app_notes">
-                        <ul class="basic_info" tal:condition="true: package/latest">
-                            <li i18n:translate="'label_app_version'"><tal:block i18n:name="version">${package/latest/version}</tal:block></li>
-                            <li i18n:translate="'label_app_update'"><tal:block i18n:name="date">${package/latest/lastupdate}</tal:block></li>
-                            <li i18n:translate="'label_app_size'"><tal:block i18n:name="size">${package/latest/size}</tal:block></li>
-                        </ul>
 
-                        <div class="homepage" tal:condition="true: package/homepageurl">
-                            <a class="url" tal:attributes="href package/homepageurl" i18n:translate="'label_application_homepage'">Homepage</a>
+                        <div class="basic_info" tal:condition="true: package/latest">
+                            <div class="label" i18n:translate="'label_app_version'">Version</div>
+                            <div class="data">${package/latest/version}</div>
+                        </div>
+
+                        <div class="basic_info" tal:condition="true: package/latest">
+                            <div class="label" i18n:translate="'label_app_update'">Last update</div>
+                            <div class="data">${package/latest/lastupdate}</div>
+                        </div>
+
+                        <div class="basic_info" tal:condition="true: package/latest">
+                            <div class="label" i18n:translate="'label_app_size'">Size</div>
+                            <div class="data">${package/latest/size}</div>
+                        </div>
+
+                        <div class="basic_info" tal:condition="true: package/roles" tal:repeat="role package/roles">
+                            <div class="label" tal:content="role/title">Role</div>
+                            <div class="data" tal:repeat="user role/users">
+                                <a tal:attributes="href user/profile">${user/login}</a>
+                            </div>
+                        </div>
+
+                        <div class="basic_info" tal:condition="true: package/homepageurl">
+                            <div class="label" i18n:translate="'label_homepage'">Homepage</div>
+                            <div class="data homepage">
+                                <a class="url" tal:attributes="href package/homepageurl" i18n:translate="'label_application_homepage'">Homepage</a>
+                            </div>
                         </div>
 
                         <div class="variants" tal:condition="true: package/latest/variants">
@@ -42,15 +62,14 @@
                             </ul>
                         </div>
 
-                        <div tal:condition="true: package/workflows">
-                            <span i18n:translate="'title_open_workflows'"></span>:
-                            <div class="workflow_bar">
-                                <form tal:repeat="workflow package/workflows" method="post" tal:attributes="action workflow/url">
-                                    <input tal:condition="true: redirect_link" type="hidden" name="redirect_link" tal:attributes="value redirect_link"/>
-                                    <input type="submit" tal:attributes="value workflow/label; class workflow/css" />
-                                </form>
-                             </div>
-                        </div>
+                        <div tal:condition="true: package/workflows" class="workflow_bar">
+                            <!--<span i18n:translate="'title_open_workflows'"></span>:-->
+                            <form tal:repeat="workflow package/workflows" method="post" tal:attributes="action workflow/url">
+                                <input tal:condition="true: redirect_link" type="hidden" name="redirect_link" tal:attributes="value redirect_link"/>
+                                <input type="submit" tal:attributes="value workflow/label; class workflow/css" />
+                            </form>
+                         </div>
+
                     </div>
                 </div>
                 <div class="app_page_right">
@@ -74,21 +93,18 @@
                     <mgd:include>cmp-screenshot-slider</mgd:include>
 
                 </div>
+
                 <div class="clear"></div>
+
                 <div class="app_comment">
                     <div class="app_comment_title">
-                        <div class="app_h2" i18n:translate="'label_user_comments'">User comments</div>
+                        <div class="app_h2"  tal:condition="true: package/ratings" i18n:translate="'label_user_comments'">User comments</div>
                         <div tal:condition="true: current_component/can_post" class="app_comment_write">
                             <a href="#" onclick="popup_comment()"><img src="/midgardmvc-static/com_meego_packages/images/writecomment.jpg"/></a>
                         </div>
                         <div tal:condition="not: current_component/can_post" class="app_login_write">
                             <a href="#" class="link" onclick="popup_login()" i18n:translate="'command_login_to_comment'"></a>
                         </div>
-                    </div>
-
-                    <div class="app_forms" tal:condition="true: staging_area">
-                        <div class="app_h2" i18n:translate="'label_user_tests'">User Tests</div>
-                        <div class="forms" tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_packages', 'package_posted_forms', array('package' => com_meego_packages['packages'][com_meego_packages['packagetitle']]['packageguid']))"></div>
                     </div>
 
                     <div class="clear"></div>
@@ -124,6 +140,14 @@
                         </div>
 
                     </div>
+
+                    <div class="app_forms" tal:condition="true: package/posted_forms">
+                        <div class="app_h2" i18n:translate="'label_user_tests'">User Tests</div>
+                        <div class="forms" tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_packages', 'package_posted_forms', array('package' => com_meego_packages['packages'][com_meego_packages['packagetitle']]['packageguid']))"></div>
+                    </div>
+
+                    <div class="clear"></div>
+
                 </div>
 
                 <mgd:include>cmp-popup-rate-comment-application</mgd:include>

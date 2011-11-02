@@ -750,7 +750,7 @@ overflow: hidden;
 
 .app_download {
 width: 100%;
-margin: 20px 0px 20px 0px;
+margin: 15px 0px 15px 0px;
 }
 
 .app_notes {
@@ -1216,17 +1216,15 @@ vertical-align: top;
 }
 
 /* app notes */
-.app_notes div.homepage {
-margin: 0 0 10px 0;
-}
-
-.app_notes ul.basic_info {
-margin: 0 0 10px 0;
+.app_notes div.basic_info {
+margin-bottom: 3px;
 padding: 0;
 }
 
-.app_notes ul.basic_info li {
-list-style: none;
+.app_notes div.basic_info .label {
+border-bottom: 1px solid lightgrey;
+margin-bottom: 4px;
+font-weight: bold;
 }
 
 .app_notes div.variants {
@@ -1241,6 +1239,11 @@ margin: 0 0 0 10px;
 .app_notes div.variants ul li {
 list-style: none;
 padding: 0;
+}
+
+.app_notes .workflow_bar {
+margin-top: 15px;
+margin-bottom: 15px;
 }
 
 div.submit_your_app {

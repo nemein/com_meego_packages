@@ -477,6 +477,8 @@ class com_meego_packages_controllers_application
             throw new midgardmvc_exception_notfound($error_msg);
         }
 
+        $this->data['profile_prefix'] = $this->mvc->configuration->user_profile_prefix;
+
         // we return this counter as it is used by count_number_of_apps()
         return $apps_counter;
     }
@@ -976,10 +978,17 @@ class com_meego_packages_controllers_application
                 // set the name
                 $this->data['packages'][$package->packagetitle]['name'] = $package->packagetitle;
 
+                // get roles
+                $this->data['packages'][$package->packagetitle]['roles'] = self::get_roles($package->packageguid);
+
                 // gather some basic stats
                 $stats = com_meego_packages_controllers_package::get_statistics($package->packagetitle);
+
                 // set the total number of comments
                 $this->data['packages'][$package->packagetitle]['number_of_comments'] = $stats['number_of_comments'];
+
+                // fgure out if there are posted forms for this app
+                $this->data['packages'][$package->packagetitle]['posted_forms'] = count(com_meego_packages_forms::get_all_forms($package->packageguid));
 
                 if (array_key_exists('number_of_rates', $stats))
                 {
@@ -1115,7 +1124,7 @@ class com_meego_packages_controllers_application
                 $latest['variants'][$package->repoarch] = $package;
                 $latest['version'] = $package->packageversion;
                 $latest['lastupdate'] = $package->packagerevised->format('Y-m-d');
-                $latest['size'] = 'n/a';
+                $latest['size'] = ($package->packagesize) ?  (int) ($package->packagesize / 1024) . ' kb' : 'n/a';
                 $latest['ux'] = $package->ux;
             }
             elseif ($latest['version'] == $package->packageversion)
@@ -1215,6 +1224,7 @@ class com_meego_packages_controllers_application
                     'css' => $workflow_data['css']
                 );
             }
+
         } //foreach
 
         // let's unset the default variant, so we don't list it among the "other downloads"
@@ -1283,11 +1293,11 @@ class com_meego_packages_controllers_application
         {
             $this->data['postaction'] = $this->mvc->dispatcher->generate_url
             (
-                'rating_create', array
+                'apps_rating_create', array
                 (
                     'to' => $this->data['packageguid']
                 ),
-                'com_meego_ratings_caching'
+                'com_meego_packages'
             );
         }
     }
@@ -1295,77 +1305,32 @@ class com_meego_packages_controllers_application
     /**
      * Process application comments and ratings
      *
-     * It basically adds the comment and rating to each architecture variant of
-     * the latest version of the app, because these are the versions downloadable
-     * on the detailed apps view page
+     * It intercepts the POST and checks if multiple rating is allowed
+     * and the user can rate the object
+     * If the user has already rated an object and multiple rating is not allowed
+     * then it takes away rating from the POST and passes on the request
+     * to the proper controller that will process it.
      *
      */
     public function post_comment_application(array $args)
     {
-        if (   ! is_array($_POST)
-            || ! isset($_POST['packageguid']))
+        if (! self::can_rate($args['to']))
         {
-            $this->mvc->head->relocate($_POST['relocate']);
+            unset($_POST['rating']);
         }
 
-        $this->data['feedback'] = false;
+        $route_id = 'rating_create';
 
-        $guid = $_POST['packageguid'];
+        $request = midgardmvc_core_request::get_for_intent('com_meego_ratings_caching', false);
+        $request->add_component_to_chain($this->mvc->component->get('com_meego_ratings_caching'));
 
-        $comment = null;
+        $routes = $this->mvc->component->get_routes($request);
 
-        // if comment is also given then create a new comment entry
-        if (isset($_POST['comment']))
-        {
-            $content = $_POST['comment'];
-            if (strlen($content))
-            {
-                // save comment only if it is not empty
-                $comment = new com_meego_comments_comment();
+        $request->set_arguments($routes[$route_id]->set_variables($args));
+        $request->set_route($routes[$route_id]);
+        $request->set_method('post');
 
-                $comment->to = $guid;
-                $comment->content = $content;
-
-                if (! $comment->create())
-                {
-                    die ("can't create comment");
-                }
-            }
-        }
-
-        if (isset($_POST['rating']))
-        {
-            $rate = $_POST['rating'];
-
-            if ($rate > $this->mvc->configuration->maxrate)
-            {
-                $rate = $this->mvc->configuration->maxrate;
-            }
-
-            $rating = new com_meego_ratings_rating();
-
-            $rating->to = $guid;
-            $rating->rating = $rate;
-
-            if (is_object($comment))
-            {
-                $rating->comment = $comment->id;
-            }
-
-            if ($rating->create())
-            {
-                $this->data['feedback'] = 'ok';
-            }
-            else
-            {
-                $this->data['feedback'] = 'nok';
-            }
-        }
-
-        if (isset($_POST['relocate']))
-        {
-            midgardmvc_core::get_instance()->head->relocate($_POST['relocate']);
-        }
+        $this->mvc->dispatcher->dispatch($request);
     }
 
     /**
@@ -1495,9 +1460,68 @@ class com_meego_packages_controllers_application
 
         $ratings = $q->list_objects();
 
-        if (count($ratings))
+        if (   count($ratings)
+            && ! $this->mvc->configuration->allow_multiple_rating)
         {
             $retval = false;
+        }
+
+        return $retval;
+    }
+
+    /**
+     * Gathers roles that belong to a package
+     * @param guid of a package
+     * @return array
+     */
+    public function get_roles($package_guid)
+    {
+        $retval = array();
+
+        $storage = new midgard_query_storage('com_meego_package_role');
+        $q = new midgard_query_select($storage);
+
+        $q->set_constraint(new midgard_query_constraint (
+            new midgard_query_property('package'),
+            '=',
+            new midgard_query_value($package_guid)
+        ));
+
+        $q->execute();
+
+        $roles = $q->list_objects();
+
+        if ($roles)
+        {
+            foreach ($roles as $role)
+            {
+                if (! array_key_exists($role->role, $retval))
+                {
+                    $retval[$role->role] = array();
+                    $retval[$role->role]['users'] = array();
+                }
+                if (isset($role->user))
+                {
+                    $user = com_meego_packages_utils::get_user_by_guid($role->user);
+
+                    if (! array_key_exists($user->login, $retval[$role->role]['users']))
+                    {
+                        $retval[$role->role]['users'][$user->login] = array();
+                    }
+
+                    $retval[$role->role]['users'][$user->login]['login'] = $user->login;
+                    $retval[$role->role]['users'][$user->login]['profile'] = $this->mvc->configuration->user_profile_prefix . $user->login;
+                }
+
+                if (count($retval[$role->role]['users']) > 1)
+                {
+                    $retval[$role->role]['title'] = $this->mvc->i18n->get('label_roles_' . $role->role);
+                }
+                else
+                {
+                    $retval[$role->role]['title'] = $this->mvc->i18n->get('label_role_' . $role->role);
+                }
+            }
         }
 
         return $retval;

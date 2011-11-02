@@ -105,7 +105,7 @@ routes:
 
     # application rating
     apps_rating_create:
-        path: /rating/create/{$packagetitle}
+        path: /rating/create/{$to}
         controller: com_meego_packages_controllers_application
         action: comment_application
         template_aliases:
