@@ -97,6 +97,7 @@ class com_meego_packages_injector
             if (array_key_exists('basecategory', $matched))
             {
                 $decoded = rawurldecode($matched['basecategory']);
+                $matched['basecategory'] = $decoded;
 
                 if (array_key_exists($decoded, $this->mvc->configuration->basecategory_css_map))
                 {

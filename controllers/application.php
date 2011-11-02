@@ -298,6 +298,7 @@ class com_meego_packages_controllers_application
         if (   array_key_exists('basecategory', $args)
             && $args['basecategory'])
         {
+            $args['basecategory'] = urldecode($args['basecategory']);
             $this->data['basecategory'] = strtolower($args['basecategory']);
             // this sets data['packages'] and we just need to filter that
             $packages = self::get_applications_by_criteria($args, $filter_type, $freetext_search);
@@ -623,7 +624,7 @@ class com_meego_packages_controllers_application
      */
     public function get_filtered_applications($os = null, $os_version = null, $packagecategory_id = 0, $ux_name = false, $package_title = false, $filter_type = 'top', $freetext_search = null)
     {
-        $this->mvc->log("Get filtered apps: " . $os . ', ' . $os_version . ', ' . $packagecategory_id . ', ' . $ux_name . ', ' . $package_title . ', ' . $filter_type, 'debug');
+        $this->mvc->log("Get filtered apps: " . $os . ', ' . $os_version . ', ' . $packagecategory_id . ', ' . $ux_name . ', ' . $package_title . ', ' . $filter_type, 'info');
 
         $apps = null;
         $packages = array();
@@ -686,7 +687,7 @@ class com_meego_packages_controllers_application
             ));
         }
 
-        if (is_string($package_title)
+        if (   is_string($package_title)
             && strlen($package_title))
         {
             $packagetitle_constraint = new midgard_query_constraint(
