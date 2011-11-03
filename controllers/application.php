@@ -926,10 +926,10 @@ class com_meego_packages_controllers_application
             // filter packages by their titles (see configuration: package_filters)
             foreach ($filters as $filter)
             {
-                if (preg_match($filter, $package->packagetitle))
+                if (   preg_match($filter, $package->packagetitle)
+                    || preg_match($filter, $package->packagename))
                 {
                     $filtered = true;
-                    break;
                 }
             }
 
