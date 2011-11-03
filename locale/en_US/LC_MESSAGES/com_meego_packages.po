@@ -377,7 +377,7 @@ msgid "label_no_search_results"
 msgstr "No results found for ${query}"
 
 msgid "label_role_downloader"
-msgstr "Maintainer"
+msgstr "Publisher"
 
 msgid "label_role_packager"
 msgstr "Packager"
@@ -386,7 +386,7 @@ msgid "label_role_bugowner"
 msgstr "Bugowner"
 
 msgid "label_roles_downloader"
-msgstr "Maintainers"
+msgstr "Publishers"
 
 msgid "label_roles_packager"
 msgstr "Packagers"
