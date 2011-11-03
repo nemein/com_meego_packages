@@ -334,8 +334,8 @@ msgstr "Release date"
 msgid "label_app_update"
 msgstr "Last update"
 
-msgid "label_app_size"
-msgstr "Size"
+msgid "label_app_download_size"
+msgstr "Download size"
 
 msgid "feedback_no_open_workflows"
 msgstr "There are no open workflows at the moment."
@@ -385,6 +385,9 @@ msgstr "Packager"
 msgid "label_role_bugowner"
 msgstr "Bugowner"
 
+msgid "label_role_maintainer"
+msgstr "Maintainer"
+
 msgid "label_roles_downloader"
 msgstr "Publishers"
 
@@ -393,3 +396,6 @@ msgstr "Packagers"
 
 msgid "label_roles_bugowner"
 msgstr "Bugowners"
+
+msgid "label_roles_maintainer"
+msgstr "Maintainers"
