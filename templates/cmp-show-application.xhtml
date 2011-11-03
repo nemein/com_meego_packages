@@ -98,7 +98,7 @@
 
                 <div class="app_comment">
                     <div class="app_comment_title">
-                        <div class="app_h2"  tal:condition="true: package/ratings" i18n:translate="'label_user_comments'">User comments</div>
+                        <div class="app_h2"  tal:condition="true: package/is_there_comment" i18n:translate="'label_user_comments'">User comments</div>
                         <div tal:condition="true: current_component/can_post" class="app_comment_write">
                             <a href="#" onclick="popup_comment()"><img src="/midgardmvc-static/com_meego_packages/images/writecomment.jpg"/></a>
                         </div>

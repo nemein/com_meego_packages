@@ -1021,7 +1021,9 @@ class com_meego_packages_controllers_application
                     $this->data['packages'][$package->packagetitle]['ratings'] = array();
                 }
 
-                $this->data['packages'][$package->packagetitle]['ratings'] = self::prepare_ratings($package->packagetitle);
+                $ratings = self::prepare_ratings($package->packagetitle);
+                $this->data['packages'][$package->packagetitle]['ratings'] = $ratings['ratings'];
+                $this->data['packages'][$package->packagetitle]['is_there_comment'] = $ratings['comment'];
 
                 // set a summary
                 $this->data['packages'][$package->packagetitle]['summary'] = $package->packagesummary;
@@ -1356,7 +1358,10 @@ class com_meego_packages_controllers_application
      */
     public function prepare_ratings($application_title = null)
     {
-        $retval = array();
+        // the array to be returned
+        // the comment flag is set to tru when the 1st comment found
+        // this will help the template to display some headinhs only if needed
+        $retval = array('ratings' => null, 'comment' => false);
 
         $storage = new midgard_query_storage('com_meego_package_ratings');
         $q = new midgard_query_select($storage);
@@ -1395,6 +1400,11 @@ class com_meego_packages_controllers_application
                 if (   $rating->rating
                     || $rating->commentid)
                 {
+                    if ($rating->commentid)
+                    {
+                        $retval['comment'] = true;
+                    }
+
                     if ($rating->rating)
                     {
                         // add a new property containing the stars to the rating object
@@ -1430,7 +1440,7 @@ class com_meego_packages_controllers_application
                     }
                 }
 
-                array_push($retval, $rating);
+                array_push($retval['ratings'], $rating);
             }
             unset ($ratings);
         }
