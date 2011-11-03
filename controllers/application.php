@@ -1361,7 +1361,7 @@ class com_meego_packages_controllers_application
         // the array to be returned
         // the comment flag is set to tru when the 1st comment found
         // this will help the template to display some headinhs only if needed
-        $retval = array('ratings' => null, 'comment' => false);
+        $retval = array('ratings' => array(), 'comment' => false);
 
         $storage = new midgard_query_storage('com_meego_package_ratings');
         $q = new midgard_query_select($storage);
