@@ -306,7 +306,7 @@ class com_meego_packages_controllers_application
         else
         {
             // this sets data['packages'] and we just need to filter that
-            $packages = self::get_filtered_applications($this->data['os'], $this->data['version'], 0, $this->data['ux'], $args['packagetitle'], $filter_type, $freetext_search);
+            $packages = self::get_filtered_applications($this->data['os'], $this->data['version'], 0, 0, $this->data['ux'], $args['packagetitle'], $filter_type, $freetext_search);
         }
 
         $this->data['rows'] = false;
@@ -568,11 +568,11 @@ class com_meego_packages_controllers_application
             {
                 if ($args['packagetitle'])
                 {
-                    $filtered = self::get_filtered_applications($args['os'], null, $relation->packagecategory, $ux, $args['packagetitle'], $filter_type, $freetext_search);
+                    $filtered = self::get_filtered_applications($args['os'], null, $relation->packagecategory, $basecategory->id, $ux, $args['packagetitle'], $filter_type, $freetext_search);
                 }
                 else
                 {
-                    $filtered = self::get_filtered_applications($args['os'], $args['version'], $relation->packagecategory, $ux, $args['packagetitle'], $filter_type, $freetext_search);
+                    $filtered = self::get_filtered_applications($args['os'], $args['version'], $relation->packagecategory, $basecategory->id, $ux, $args['packagetitle'], $filter_type, $freetext_search);
                 }
 
                 if (is_array($filtered))
@@ -622,7 +622,7 @@ class com_meego_packages_controllers_application
      *
      * @return array of com_meego_package_details objects
      */
-    public function get_filtered_applications($os = null, $os_version = null, $packagecategory_id = 0, $ux_name = false, $package_title = false, $filter_type = 'top', $freetext_search = null)
+    public function get_filtered_applications($os = null, $os_version = null, $packagecategory_id = 0, $basecategory_id = 0, $ux_name = false, $package_title = false, $filter_type = 'top', $freetext_search = null)
     {
         $this->mvc->log("Get filtered apps: " . $os . ', ' . $os_version . ', ' . $packagecategory_id . ', ' . $ux_name . ', ' . $package_title . ', ' . $filter_type, 'info');
 
@@ -632,6 +632,7 @@ class com_meego_packages_controllers_application
         $os_version_constraint = null;
         $repo_constraint = null;
         $packagecategory_constraint = null;
+        $basecategory_constraint = null;
         $ux_constraint = null;
         $packagetitle_constraint = null;
         $freetext_search_constraint = null;
@@ -666,6 +667,15 @@ class com_meego_packages_controllers_application
                 new midgard_query_property('packagecategory'),
                 '=',
                 new midgard_query_value($packagecategory_id)
+            );
+        }
+
+        if ($basecategory_id)
+        {
+            $basecategory_constraint = new midgard_query_constraint(
+                new midgard_query_property('basecategory'),
+                '=',
+                new midgard_query_value($basecategory_id)
             );
         }
 
@@ -842,6 +852,10 @@ class com_meego_packages_controllers_application
         if ($packagecategory_constraint)
         {
             $qc->add_constraint($packagecategory_constraint);
+        }
+        if ($basecategory_constraint)
+        {
+            $qc->add_constraint($basecategory_constraint);
         }
         if ($ux_constraint)
         {

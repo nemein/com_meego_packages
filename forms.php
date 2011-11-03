@@ -70,7 +70,7 @@ class com_meego_packages_forms
                 {
                     $retval['forms'][$post->formtitle]['title'] = $post->formtitle;
                 }
-                $retval['forms'][$post->formtitle]['posts'][] = $post;
+                $retval['forms'][$post->formtitle]['posts'][$post->forminstanceguid] = $post;
             }
         }
 
@@ -83,7 +83,7 @@ class com_meego_packages_forms
      */
     public function get_all_forms($package_guid = null)
     {
-        $retval = false;
+        $retval = array();
 
         $storage = new midgard_query_storage('com_meego_package_forms_posted');
 
@@ -101,7 +101,13 @@ class com_meego_packages_forms
 
         $q->execute();
 
-        $retval = $q->list_objects();
+        $forms = $q->list_objects();
+
+        foreach ($forms as $form)
+        {
+            // don't return duplicates
+            $retval[$form->forminstanceguid] = $form;
+        }
 
         return $retval;
     }
