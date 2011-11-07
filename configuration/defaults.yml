@@ -137,6 +137,8 @@ basecategory_css_map:
 package_filters:
     # filter the testing enabler package(s)
     - /^apps-testing-enabler-harmattan.*$/
+    # filter apps client itself
+    - /^org.formeego.apps.*$/
     # no source packages
     - /^(.*)\-src$/
     # no data packages
@@ -147,7 +149,7 @@ package_filters:
     - /^(.*)\-devel$/
     # no debug packages
     - /^(.*)-debug\w*$/
-    # libs are no apps
+    # libs are not apps
     - /^(.*)-lib[s]$/
 
 # the maximum rate that can be given to a package

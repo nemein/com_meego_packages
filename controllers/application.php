@@ -773,11 +773,9 @@ class com_meego_packages_controllers_application
             switch ($filter_type)
             {
                 case 'newest':
-                    $q->set_limit(3);
                     $q->add_order(new midgard_query_property('packagecreated'), SORT_DESC);
                     break;
                 case 'hottest':
-                    $q->set_limit(3);
                     $q->add_order(new midgard_query_property('statscachedratingvalue'), SORT_DESC);
                     break;
             }
@@ -901,6 +899,14 @@ class com_meego_packages_controllers_application
 
         //echo 'all packages: ' . count($all_objects) . ', apps after filtering: ' . count($apps) . "\n";
         //ob_flush();
+
+        // cut the array to 3 members only
+        switch ($filter_type)
+        {
+            case 'newest':
+            case 'hottest':
+                $apps = array_slice($apps, 0, 3);
+        }
 
         return $apps;
     }
