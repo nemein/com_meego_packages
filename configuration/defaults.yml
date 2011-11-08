@@ -2,7 +2,7 @@
 user_profile_prefix: http://meego.com/users/
 
 # doc that explains how to submit an application
-submit_app_url: http://wiki.meego.com/MeeGo_Apps/Packaging
+submit_app_url: http://wiki.meego.com/MeeGo_Apps/Submit
 
 # whether to show ratings that have no comments
 show_ratings_without_comments: false
@@ -67,6 +67,7 @@ os_map:
 os_ux:
     n9:
         harmattan: Nokia N9
+        client: 'http://apps.formeego.org/n9client'
     meego:
         meegoce: Nemo
         netbook: Netbook
