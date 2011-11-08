@@ -2,7 +2,7 @@
                         <div class="popup_nav_title">
                             <ul>
                                 <li i18n:translate="'instruction_select_ux'">Choose your ux</li>
-                                <li i18n:translate="'instruction_select_version'">Choose your version</li>
+                                <li i18n:translate="'instruction_select_release'">Choose your release</li>
                             </ul>
                         </div>
                         <div class="popup_nav_items" tal:condition="true: matched">
@@ -11,9 +11,7 @@
                                     <a href="#popup_ux" onclick="popup_ux()">${matched/configured_ux}</a>
                                 </li>
                                 <li>
-                                    <a href="#popup_ver" onclick="popup_ver()" i18n:translate="'label_ux_version'">
-                                    <tal:block i18n:name="version">${matched/version}</tal:block>
-                                    </a>
+                                    <a href="#popup_ver" onclick="popup_ver()">${matched/prettyversion}</a>
                                 </li>
                             </ul>
                         </div>

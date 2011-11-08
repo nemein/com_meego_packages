@@ -1,15 +1,13 @@
         <div id="popup_ver" style="display:none;" tal:condition="true: versions">
-            <p i18n:translate="'instruction_select_ux_version'" tal:condition="true: matched">
-                <tal:block i18n:name="ux">${matched/configured_ux}</tal:block> Choose the version
+            <p i18n:translate="'instruction_select_ux_release'" tal:condition="true: matched">
+                <tal:block i18n:name="ux">${matched/configured_ux}</tal:block> Choose the release
             </p>
             <div class="cat-popup">
                 <div tal:condition="true: matched" tal:attributes="class string:cat-image ${matched/ux}"></div>
                 <div class="cat-more">
                     <ul>
                         <li tal:repeat="version versions">
-                            <a tal:attributes="href version/url" i18n:translate="'label_ux_version'">
-                            <tal:block i18n:name="version">${version/version}</tal:block>
-                            </a>
+                            <a tal:attributes="href version/url">${version/prettyversion}</a>
                         </li>
                     </ul>
                 </div>

@@ -127,6 +127,16 @@ class com_meego_packages_injector
                 $ux = $this->mvc->configuration->latest[$os]['ux'];
             }
 
+            $matched['prettyversion'] = $matched['version'];
+
+            if (array_key_exists('versions', $this->mvc->configuration->os_map[$matched['os']]))
+            {
+                if (array_key_exists($matched['version'], $this->mvc->configuration->os_map[$matched['os']]['versions']))
+                {
+                    $matched['prettyversion'] = $this->mvc->configuration->os_map[$matched['os']]['versions'][$matched['version']];
+                }
+            }
+
             if ($redirect)
             {
                 //throw new midgardmvc_exception_notfound("Please pick a valid UX, " . $matched['ux'] . " does not exist.", 404);
@@ -170,10 +180,23 @@ class com_meego_packages_injector
                         || $repository->repoosux == $matched['ux']
                         && ! array_key_exists($repository->repoosversion, $versions))
                     {
+                        $prettyversion = $repository->repoosversion;
+
+                        if (array_key_exists('versions', $this->mvc->configuration->os_map[$repository->repoos]))
+                        {
+                            if (array_key_exists($repository->repoosversion, $this->mvc->configuration->os_map[$repository->repoos]['versions']))
+                            {
+                                $prettyversion = $this->mvc->configuration->os_map[$repository->repoos]['versions'][$repository->repoosversion];
+                            }
+                        }
+
                         $_repo = com_meego_packages_controllers_application::populate_repo_ux($repository, $matched['ux']);
-                        $versions[$repository->repoosversion] = array (
+
+                        $versions[$repository->repoosversion] = array
+                        (
                             'version' => $repository->repoosversion,
-                            'url' => $_repo['url']
+                            'url' => $_repo['url'],
+                            'prettyversion' => $prettyversion
                         );
                     }
                 }
@@ -226,10 +249,21 @@ class com_meego_packages_injector
         if (   is_array($matched)
             && (   ! array_key_exists('os', $matched)
                 || ! array_key_exists('version', $matched)
+                || ! array_key_exists('prettyversion', $matched)
                 || ! array_key_exists('ux', $matched)))
         {
             $matched = array_merge($matched, $this->mvc->configuration->latest[$this->mvc->configuration->default['os']]);
             $matched['os'] = $this->mvc->configuration->default['os'];
+            $matched['prettyversion'] = $matched['version'];
+
+            if (array_key_exists('versions', $this->mvc->configuration->os_map[$matched['os']]))
+            {
+                if (array_key_exists($matched['version'], $this->mvc->configuration->os_map[$matched['os']]['versions']))
+                {
+                    $matched['prettyversion'] = $this->mvc->configuration->os_map[$matched['os']]['versions'][$matched['version']];
+                }
+            }
+
             $this->part = 'packages';
         }
 
