@@ -901,11 +901,22 @@ class com_meego_packages_controllers_application
         //ob_flush();
 
         // cut the array to 3 members only
-        switch ($filter_type)
+        $scope = 3;
+
+        if (array_key_exists('scope', $_GET))
         {
-            case 'newest':
-            case 'hottest':
-                $apps = array_slice($apps, 0, 3);
+            $scope = $_GET['scope'];
+        }
+
+        if (   is_numeric($scope)
+            && $scope != 'all')
+        {
+            switch ($filter_type)
+            {
+                case 'newest':
+                case 'hottest':
+                    $apps = array_slice($apps, 0, $scope);
+            }
         }
 
         return $apps;
