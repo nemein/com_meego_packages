@@ -613,6 +613,17 @@ article .category {
 width: 100%;
 }
 
+article .catwrapper {
+float: left;
+width: 250px;
+height: 240px;
+}
+
+article .getclient {
+width: 250px;
+text-align: center;
+}
+
 article .cat-image {
 float: left;
 width: 250px;
