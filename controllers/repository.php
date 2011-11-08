@@ -93,7 +93,7 @@ class com_meego_packages_controllers_repository
             if ($repository->os)
             {
                 $orig_os = $repository->os;
-                $repository->os = $this->mvc->configuration->os_map[$repository->os];
+                $repository->os = $this->mvc->configuration->os_map[$repository->os]['name'];
 
                 $os = new com_meego_os($repository->osversion);
 

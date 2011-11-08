@@ -156,7 +156,7 @@ class com_meego_packages_controllers_application
                 && $repository->repoosversion == $latest[$repository->repoos]['version'])
             {
                 // a nicer title for the OS
-                //$this->data['latest'][$repository->repoos]['title'] = $this->mvc->configuration->os_map[$repository->repoos] . ' ' . $repository->repoosversion;
+                //$this->data['latest'][$repository->repoos]['title'] = $this->mvc->configuration->os_map[$repository->repoos]['name'] . ' ' . $repository->repoosversion;
 
                 if (! strlen($repository->repoosux))
                 {
