@@ -59,9 +59,15 @@ latest:
 # map of os names used in the DB
 # Their pretty names could be used in the UI
 os_map:
-    n9: Harmattan
-    meego: MeeGo
-    wetabos: WeTab
+    n9:
+        name: Harmattan
+        versions:
+            pr1.0: "PR1.0/PR1.1"
+            pr1.1: "PR1.0/PR1.1"
+    meego:
+        name: MeeGo
+    wetabos:
+        name: WeTab
 
 # Listing all UXes an OS may have
 os_ux:
