@@ -399,3 +399,6 @@ msgstr "Bugowners"
 
 msgid "label_roles_maintainer"
 msgstr "Maintainers"
+
+msgid "label_get_client"
+msgstr "Download the client app"
