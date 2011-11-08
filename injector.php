@@ -238,6 +238,15 @@ class com_meego_packages_injector
 
         $matched['configured_ux'] = ucwords($this->mvc->configuration->os_ux[$matched['os']][$matched['ux']]);
 
+        if (array_key_exists('client', $this->mvc->configuration->os_ux[$matched['os']]))
+        {
+            $matched['appsclient'] = $this->mvc->configuration->os_ux[$matched['os']]['client'];
+        }
+        else
+        {
+            $matched['appsclient'] = false;
+        }
+
         $request->set_data_item('matched', $matched);
         $request->set_data_item('submit_app_url', $this->mvc->configuration->submit_app_url);
 
@@ -341,48 +350,6 @@ class com_meego_packages_injector
                 )
             );
         }
-    }
-
-
-    /**
-     * Sets the breadcrumb
-     *
-     * @param object midgardmvc_core_request  object to assign 'breadcrumb' for templates
-     */
-    public function set_breadcrumb(midgardmvc_core_request $request)
-    {
-        $nexturl = '';
-        $breadcrumb = array();
-
-        /*
-        $nexturl = $this->mvc->dispatcher->generate_url('index', array(), $request);
-        $firstitem = array(
-            'title' => $this->mvc->i18n->get('title_apps'),
-            'localurl' => $nexturl,
-            'last' => false
-        );
-
-        $breadcrumb[] = $firstitem;
-        */
-
-        $cnt = 0;
-
-        foreach ($request->argv as $arg)
-        {
-            $nexturl .= '/' . $arg;
-
-            $item = array(
-                'title' => ucfirst($arg),
-                'localurl' => $nexturl,
-                'last' => (count($request->argv) - 1 == $cnt) ? true : false
-            );
-
-            $breadcrumb[] = $item;
-
-            ++$cnt;
-        }
-
-        $request->set_data_item('breadcrumb', $breadcrumb);
     }
 }
 ?>
