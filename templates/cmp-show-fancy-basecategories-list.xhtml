@@ -1,6 +1,13 @@
             <div class="category">
-                <div tal:condition="true: matched" tal:attributes="class string:cat-image ${matched/ux}">
-                    <div tal:condition="true: staging_area" class="staging_warning" i18n:translate="'title_staging_area'">Staging area warning</div>
+                <div class="catwrapper" tal:condition="true: matched">
+                    <div tal:attributes="class string:cat-image ${matched/ux}">
+                        <div tal:condition="true: staging_area" class="staging_warning" i18n:translate="'title_staging_area'">Staging area warning</div>
+                    </div>
+                    <div class="getclient" tal:condition="true: matched/appsclient">
+                        <a tal:attributes="href matched/appsclient">
+                            <img src="/midgardmvc-static/com_meego_packages/images/download_client.png"/>
+                        </a>
+                    </div>
                 </div>
                 <div class="cat-more">
                     <ul>
