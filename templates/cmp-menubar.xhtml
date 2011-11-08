@@ -24,12 +24,12 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="">
+                                <a tal:attributes="href string:/hottest/applications/${matched/os}/${matched/version}/${matched/ux}">
                                     <tal:block i18n:translate="'label_hottest'">Hottest</tal:block>
                                 </a>
                             </li>
                             <li>
-                                <a href="">
+                                <a tal:attributes="href string:/newest/applications/${matched/os}/${matched/version}/${matched/ux}">
                                     <tal:block i18n:translate="'label_newest'">Newest</tal:block>
                                 </a>
                             </li>
