@@ -247,6 +247,8 @@ class com_meego_packages_controllers_application
         $this->data['categorytree'] = false;
         $this->data['packagetitle'] = false;
 
+        $default_os = $this->mvc->configuration->default['os'];
+
         if (   array_key_exists('os', $args)
             && $args['os'])
         {
@@ -254,7 +256,7 @@ class com_meego_packages_controllers_application
         }
         else
         {
-            $args['os'] = $this->mvc->configuration->latest['os'];
+            $args['os'] = $default_os;
         }
 
         if (   array_key_exists('version', $args)
@@ -264,7 +266,14 @@ class com_meego_packages_controllers_application
         }
         else
         {
-            $args['version'] = $this->mvc->configuration->latest['version'];;
+            if (array_key_exists($args['os'], $this->mvc->configuration->latest))
+            {
+                $args['version'] = $this->mvc->configuration->latest[$args['os']]['version'];
+            }
+            else
+            {
+                $args['version'] = $this->mvc->configuration->latest[$default_os]['version'];
+            }
         }
 
         if (   array_key_exists('ux', $args)
