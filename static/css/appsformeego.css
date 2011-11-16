@@ -646,16 +646,14 @@ padding: 0px 0px 5px 0px;
 }
 
 article .cat-more div.staging a {
-width: 200px;
+width: 260px;
 text-transform: uppercase;
 list-style: none;
 font-size: 16px;
-padding: 20px 0px 5px 65px;
 font-family: DIN-Bold;
 color: #4792A5;
-margin: 0px 0px 0px -55px;
-display: block;
-height: 60px;
+margin: 20px 0 0 0;
+float: right;
 }
 
 article .cat-more ul li img {

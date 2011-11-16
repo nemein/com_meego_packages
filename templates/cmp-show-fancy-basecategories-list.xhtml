@@ -15,10 +15,10 @@
                             <img tal:attributes="src string:/midgardmvc-static/com_meego_packages/images/cat-pic/${basecategory/css}.png"/>
                             <a tal:attributes="href basecategory/localurl">${basecategory/name}<span class="counter">(${basecategory/apps_counter})</span></a>
                         </li>
-                        <li tal:condition="true: staging_link">
-                            <mgd:include>cmp-staging-basecategories-link</mgd:include>
-                        </li>
                     </ul>
+                    <div tal:condition="true: staging_link">
+                        <mgd:include>cmp-staging-basecategories-link</mgd:include>
+                    </div>
                 </div>
                 <div class="clear"></div>
             </div>

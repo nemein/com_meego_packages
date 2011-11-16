@@ -336,6 +336,13 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
                 $basecategory->localurl = $this->get_url_browse_basecategory($args['os'], $args['version'], $args['ux'], $basecategory->name, 'top');
                 // count all apps that are in this category for that UX
                 $basecategory->apps_counter = com_meego_packages_controllers_application::count_number_of_apps($args['os'], $args['version'], $basecategory->name, $args['ux'], 'top');
+
+                if (   ! $this->mvc->configuration->show_empty_categories
+                    && $basecategory->apps_counter == 0)
+                {
+                    continue;
+                }
+
                 // set the css class to be used to display this base category
                 $basecategory->css = self::tidy_up($basecategory->name);
                 // populate data
@@ -371,6 +378,13 @@ class com_meego_packages_controllers_basecategory extends midgardmvc_core_contro
                 $basecategory->localurl = $this->get_url_browse_basecategory($args['os'], $args['version'], $args['ux'], $basecategory->name, 'staging');
                 // count all apps that are in this category for that UX
                 $basecategory->apps_counter = com_meego_packages_controllers_application::count_number_of_apps($args['os'], $args['version'], $basecategory->name, $args['ux'], 'staging');
+
+                if (   ! $this->mvc->configuration->show_empty_categories
+                    && $basecategory->apps_counter == 0)
+                {
+                    continue;
+                }
+
                 // set the css class to be used to display this base category
                 $basecategory->css = self::tidy_up($basecategory->name);
                 // populate data

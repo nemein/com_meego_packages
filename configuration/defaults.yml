@@ -10,6 +10,9 @@ show_ratings_without_comments: false
 # whether user's can rate the same object multiple times
 allow_multiple_rating: false
 
+# flag for hiding empty categories
+show_empty_categories: false
+
 # thumbnail sizes for screenshots and icons
 attachmentserver_variants:
     sidesquare:
