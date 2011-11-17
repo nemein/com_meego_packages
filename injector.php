@@ -38,6 +38,12 @@ class com_meego_packages_injector
      */
     public function inject_template(midgardmvc_core_request $request)
     {
+        if (! $this->mvc->configuration->exists('default'))
+        {
+            // workaround to avoid an exception while templating
+            return true;
+        }
+
         $this->request = $request;
 
         $route = $request->get_route();
@@ -252,7 +258,9 @@ class com_meego_packages_injector
                 || ! array_key_exists('prettyversion', $matched)
                 || ! array_key_exists('ux', $matched)))
         {
-            $matched = array_merge($matched, $this->mvc->configuration->latest[$this->mvc->configuration->default['os']]);
+            $default_os = $this->mvc->configuration->default['os'];
+            $matched = array_merge($matched, $this->mvc->configuration->latest[$default_os]);
+
             $matched['os'] = $this->mvc->configuration->default['os'];
             $matched['prettyversion'] = $matched['version'];
 
