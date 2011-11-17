@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Apps for MeeGo</title>
+        <meta charset="utf-8" />
+
+        <tal:block tal:replace="php: MIDCOM.head.print_elements()" />
+
+        <link rel="icon" type="image/png" href="/midgardmvc-static/com_meego_packages/favicon.png"/>
+        <link href="/midgardmvc-static/com_meego_packages/css/appsformeego.css" type="text/css" rel="stylesheet"/>
+        <script src="/midgardmvc-static/com_meego_packages/js/main.js" type="text/javascript"></script>
+        <script src="/midgardmvc-static/com_meego_packages/js/jquery.simplemodal.js" type="text/javascript"></script>
+    </head>
+
+    <body>
+        <div id="main_center">
+            <header>
+                <div class="header_wrapper" i18n:domain="com_meego_packages">
+                    <div class="login">
+                        <ul tal:condition="php: ! midgardmvc_core::get_instance().authentication.is_user()">
+                            <li>
+                                <a href="#login" onclick="popup_login()">Login</a>
+                            </li>
+                            <li>
+                                <a href="https://meego.com/user/register" title="" i18n:domain="midgardmvc_core" i18n:translate="'register'">Register</a>
+                            </li>
+                        </ul>
+                        <ul tal:condition="php:midgardmvc_core::get_instance().authentication.is_user()">
+                            <tal:block tal:define="user php:midgardmvc_core::get_instance().authentication.get_user(); username php:user.login">
+                            <li><a href="http://meego.com/user/me" title="" tal:content="username"></a></li>
+                            <tal:block tal:condition="true: admin">
+                                <li><a href="/repositories">Repositories</a></li>
+                                <li><a href="/basecategories/admin">Categories</a></li>
+                                <li><a href="/workflows/admin">Workflows</a></li>
+                            </tal:block>
+                            <li><a href="/mgd:logout" i18n:domain="midgardmvc_core" i18n:translate="'logout'" title="">Logout</a></li>
+                          </tal:block>
+                        </ul>
+                    </div>
+
+                    <div class="search">
+                        <form action="/search">
+                            <tal:block tal:condition="true: matched">
+                            <input tal:condition="true: matched/os" type="hidden" name="os" tal:attributes="value matched/os"/>
+                            <input tal:condition="true: matched/version" type="hidden" name="version" tal:attributes="value matched/version"/>
+                            <input tal:condition="true: matched/ux" type="hidden" name="ux" tal:attributes="value matched/ux"/>
+                            </tal:block>
+
+                            <input type="text" name="search" class="search"/>
+                            <input type="submit" class="submit" i18n:attributes="value command_search"/>
+                        </form>
+                    </div>
+
+                    <h1 class="logo"><a href="/">Apps for MeeGo</a></h1>
+
+                </div>
+            </header>
+
+            <article id="content">
+                <h1 tal:content="midgardmvc_core_exceptionhandler/header">HTTP Error: 404 not found</h1>
+
+                <div class="errors" tal:content="midgardmvc_core_exceptionhandler/message">Lorem ipsum</div>
+
+                <ul tal:condition="true: midgardmvc_core_exceptionhandler/trace">
+                    <li tal:repeat="trace midgardmvc_core_exceptionhandler/trace">
+                        ${trace/class}${trace/type}${trace/function} in ${trace/file} on line ${trace/line}
+                    </li>
+                </ul>
+            </article>
+        </div>
+        <footer>
+            <div class="wrapper">
+                <ul>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+                <br/>
+                MeeGo is a registered trademark of The Linux Foundation.
+            </div>
+        </footer>
+
+        <div id="popup_ux" style="display:none;" tal:condition="true: uxes">
+            <p i18n:translate="'instruction_select_user_experience'">Choose your user experience</p>
+            <ul class="userexp">
+                <li tal:repeat="ux uxes" tal:attributes="class string:block ${ux/css}">
+                    <a tal:attributes="href ux/url">${ux/configured_title}</a>
+                </li>
+            </ul>
+            <div class="clear"></div>
+            <div id="buttonset_popup">
+                <div class="popup_button"><a class="simplemodal-close" href="#">
+                    <img src="/midgardmvc-static/com_meego_packages/images/cancel.png"/></a>
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+
+        <div id="popup_ver" style="display:none;" tal:condition="true: versions">
+            <p i18n:translate="'instruction_select_ux_release'" tal:condition="true: matched">
+                <tal:block i18n:name="ux">${matched/configured_ux}</tal:block> Choose the release
+            </p>
+            <div class="cat-popup">
+                <div tal:condition="true: matched" tal:attributes="class string:cat-image ${matched/ux}"></div>
+                <div class="cat-more">
+                    <ul>
+                        <li tal:repeat="version versions">
+                            <a tal:attributes="href version/url">${version/prettyversion}</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="clear"></div>
+                <div id="buttonset_popup">
+                    <div class="popup_button">
+                        <a class="simplemodal-close" href="#"><img src="/midgardmvc-static/com_meego_packages/images/cancel.png"/></a>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+
+        <div id="popup_login" style="display:none;">
+            <p i18n:domain="midgardmvc_core" i18n:translate="'login'">Login</p>
+            <div class="login-popup">
+                <div tal:condition="exists:midgardmvc_core_services_authentication_message" class="errors" tal:content="midgardmvc_core_services_authentication_message">Lorem ipsum</div>
+
+                <form method='post' action='/mgd:login'>
+                    <input tal:condition="exists:redirect_link" type="hidden" name="redirect" tal:attributes="value redirect_link" />
+
+                    <div class="login_app_un">
+                        <div class="poll_app_untitle" i18n:domain="midgardmvc_core" i18n:translate="'username'">Username:</div><div class="poll_app_unbox"><input type="text" name="username" /></div>
+                    </div>
+                    <div class="login_app_pw">
+                        <div class="poll_app_pwtitle" i18n:domain="midgardmvc_core" i18n:translate="'password'">Password:</div><div class="poll_app_pwbox"><input type="password" name="password" /></div>
+                    </div>
+                    <div class="clear"></div>
+                    <div id="buttonset_popup">
+                        <div class="popup_button">
+                            <input type='submit' class="submit login" name='login' value='Login' i18n:domain="midgardmvc_core" i18n:attributes="value login" />
+                        </div>
+                        <div class="popup_button">
+                            <a class="simplemodal-close" href="#" ><img src="/midgardmvc-static/com_meego_packages/images/cancel.png" /></a>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
