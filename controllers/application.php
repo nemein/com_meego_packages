@@ -327,9 +327,15 @@ class com_meego_packages_controllers_application
 
         if (! count($packages))
         {
-            // say something
             $this->data['packages'] = array();
-            return 0;
+
+            if ($this->data['packagetitle'])
+            {
+                // what if we just redirect?
+                $url = '..';
+                $this->mvc->head->relocate($url);
+            }
+            return false;
         }
 
         // enable for testing, if you need large packages array for paging
@@ -469,11 +475,17 @@ class com_meego_packages_controllers_application
             }
         }
 
+        $this->data['profile_prefix'] = $this->mvc->configuration->user_profile_prefix;
+
         // if have no apps then return a 404
         // may not even get here since we return already well above
         if (   ! count($this->data['packages'])
             && ! $counter)
         {
+            // what if we just redirect?
+            $url = '..';
+            $this->mvc->head->relocate($url);
+
             if ($this->data['packagetitle'])
             {
                 $error_msg = $this->mvc->i18n->get('no_such_package');
@@ -486,8 +498,6 @@ class com_meego_packages_controllers_application
             // oops, there are no packages for this base category..
             throw new midgardmvc_exception_notfound($error_msg);
         }
-
-        $this->data['profile_prefix'] = $this->mvc->configuration->user_profile_prefix;
 
         // we return this counter as it is used by count_number_of_apps()
         return $apps_counter;
@@ -1270,8 +1280,11 @@ class com_meego_packages_controllers_application
 
         } //foreach
 
-        // let's unset the default variant, so we don't list it among the "other downloads"
-        unset($this->data['packages'][$package->packagetitle]['latest']['variants'][$index]);
+        if (isset($package))
+        {
+            // let's unset the default variant, so we don't list it among the "other downloads"
+            unset($this->data['packages'][$package->packagetitle]['latest']['variants'][$index]);
+        }
 
         // and we don't need this either
         unset($latest);
