@@ -151,9 +151,9 @@ function inittabs(selector) {
 }
 //-----------------------------------------------
 function initiconmenu(id) {
-    var mainelement=jQuery('#'+id);
+    var mainelement=jQuery('#' + id);
 
-    jQuery(mainelement).find('.icons li a').click( function(event) {
+    jQuery(mainelement).find('.icons li a').live( function(event) {
         //event.preventDefault();
 
         jQuery(mainelement).find('.icons li a').removeClass('active');
