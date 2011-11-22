@@ -783,8 +783,16 @@ class com_meego_packages_controllers_application
         }
 
         $storage = new midgard_query_storage('com_meego_package_details');
+
         $q = new midgard_query_select($storage);
+
         $qc = new midgard_query_constraint_group('AND');
+
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('packagehidden'),
+            '=',
+            new midgard_query_value(0)
+        ));
 
         //filter either top projects or staging projects
         if (count($this->mvc->configuration->top_projects))
@@ -1038,7 +1046,7 @@ class com_meego_packages_controllers_application
                 // set the total number of comments
                 $this->data['packages'][$package->packagetitle]['number_of_comments'] = $stats['number_of_comments'];
 
-                // fgure out if there are posted forms for this app
+                // figure out if there are posted forms for this app
                 $this->data['packages'][$package->packagetitle]['posted_forms'] = count(com_meego_packages_forms::get_all_forms($package->packageguid));
 
                 if (array_key_exists('number_of_rates', $stats))
@@ -1245,6 +1253,12 @@ class com_meego_packages_controllers_application
                 $this->request
             );
 
+            // do not bother any further for hidden instances
+            if ($package->packagehidden)
+            {
+                continue;
+            }
+
             // get the workflows for this package
             // todo: this will get workflows for older versions too!
             if (! array_key_exists('workflows', $this->data['packages'][$package->packagetitle]))
@@ -1253,6 +1267,7 @@ class com_meego_packages_controllers_application
             }
 
             $object = new com_meego_package($package->packageguid);
+
             $list_of_workflows = midgardmvc_helper_workflow_utils::get_workflows_for_object($object);
 
             foreach ($list_of_workflows as $workflow => $workflow_data)
@@ -1277,7 +1292,6 @@ class com_meego_packages_controllers_application
                     'css' => $workflow_data['css']
                 );
             }
-
         } //foreach
 
         if (isset($package))
@@ -1416,6 +1430,7 @@ class com_meego_packages_controllers_application
         );
 
         $q->add_order(new midgard_query_property('posted', $storage), SORT_DESC);
+
         $q->execute();
 
         $ratings = $q->list_objects();
