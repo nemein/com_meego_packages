@@ -329,6 +329,10 @@ class com_meego_packages_controllers_workflow
      */
     private function load_workflow(array $args)
     {
+        if ($this->package->metadata->hidden)
+        {
+            return null;
+        }
         $list_of_workflows = midgardmvc_helper_workflow_utils::get_workflows_for_object($this->package);
 
         if (! isset($list_of_workflows[$args['workflow']]))
@@ -446,6 +450,7 @@ class com_meego_packages_controllers_workflow
 
         if ($qc)
         {
+
             $q->set_constraint($qc);
         }
         $q->execute();

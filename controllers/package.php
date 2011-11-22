@@ -385,7 +385,10 @@ class com_meego_packages_controllers_package
 
         unset($relations, $relation, $_relation, $_url, $typemap);
 
-        $list_of_workflows = midgardmvc_helper_workflow_utils::get_workflows_for_object($this->data['package']);
+        if (! $this->data['package'].packagehidden)
+        {
+            $list_of_workflows = midgardmvc_helper_workflow_utils::get_workflows_for_object($this->data['package']);
+        }
 
         // @todo: get completed workflows and offer an index page for admins
         // to list of forms and get an accumulated result
