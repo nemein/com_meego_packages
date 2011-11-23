@@ -38,34 +38,37 @@ class com_meego_packages_controllers_workflow
     {
         $this->package = $this->load_package_instance($args);
 
-        $workflow_class = $this->load_workflow($args);
-
-        $this->mvc->component->load_library('Workflow');
-
-        $workflow = new $workflow_class();
-        $values = $workflow->start($this->package);
-
-        if (isset($values['execution']))
+        if (! $this->package->metadata->hidden)
         {
-            // Workflow suspended and needs input, redirect to workflow page
-            $this->mvc->head->relocate
-            (
-                $this->mvc->dispatcher->generate_url
+            $workflow_class = $this->load_workflow($args);
+
+            $this->mvc->component->load_library('Workflow');
+
+            $workflow = new $workflow_class();
+            $values = $workflow->start($this->package);
+
+            if (isset($values['execution']))
+            {
+                // Workflow suspended and needs input, redirect to workflow page
+                $this->mvc->head->relocate
                 (
-                    'package_instance_workflow_resume',
-                    array
+                    $this->mvc->dispatcher->generate_url
                     (
-                        'package' => $this->package->name,
-                        'version' => $this->package->version,
-                        'project' => $args['project'],
-                        'repository' => $args['repository'],
-                        'arch' => $args['arch'],
-                        'workflow' => $args['workflow'],
-                        'execution' => $values['execution'],
-                    ),
-                    $this->request
-                )
-            );
+                        'package_instance_workflow_resume',
+                        array
+                        (
+                            'package' => $this->package->name,
+                            'version' => $this->package->version,
+                            'project' => $args['project'],
+                            'repository' => $args['repository'],
+                            'arch' => $args['arch'],
+                            'workflow' => $args['workflow'],
+                            'execution' => $values['execution'],
+                        ),
+                        $this->request
+                    )
+                );
+            }
         }
 
         // Workflow completed, redirect to package instance
@@ -307,6 +310,11 @@ class com_meego_packages_controllers_workflow
             new midgard_query_property('repoarch'),
             '=',
             new midgard_query_value($args['arch'])
+        ));
+        $qc->add_constraint(new midgard_query_constraint(
+            new midgard_query_property('packagehidden'),
+            '=',
+            new midgard_query_value(0)
         ));
 
         $q->set_constraint($qc);
