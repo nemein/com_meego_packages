@@ -1268,29 +1268,32 @@ class com_meego_packages_controllers_application
 
             $object = new com_meego_package($package->packageguid);
 
-            $list_of_workflows = midgardmvc_helper_workflow_utils::get_workflows_for_object($object);
-
-            foreach ($list_of_workflows as $workflow => $workflow_data)
+            if (! $object->metadata->hidden)
             {
-                $this->data['packages'][$package->packagetitle]['workflows'][] = array
-                (
-                    'label' => $workflow_data['label'],
-                    'url' => $this->mvc->dispatcher->generate_url
+                $list_of_workflows = midgardmvc_helper_workflow_utils::get_workflows_for_object($object);
+
+                foreach ($list_of_workflows as $workflow => $workflow_data)
+                {
+                    $this->data['packages'][$package->packagetitle]['workflows'][] = array
                     (
-                        'package_instance_workflow_start',
-                        array
+                        'label' => $workflow_data['label'],
+                        'url' => $this->mvc->dispatcher->generate_url
                         (
-                            'package' => $package->packagename,
-                            'version' => $package->packageversion,
-                            'project' => $package->repoprojectname,
-                            'repository' => $package->reponame,
-                            'arch' => $package->repoarch,
-                            'workflow' => $workflow,
+                            'package_instance_workflow_start',
+                            array
+                            (
+                                'package' => $package->packagename,
+                                'version' => $package->packageversion,
+                                'project' => $package->repoprojectname,
+                                'repository' => $package->reponame,
+                                'arch' => $package->repoarch,
+                                'workflow' => $workflow,
+                            ),
+                            'com_meego_packages'
                         ),
-                        'com_meego_packages'
-                    ),
-                    'css' => $workflow_data['css']
-                );
+                        'css' => $workflow_data['css']
+                    );
+                }
             }
         } //foreach
 
