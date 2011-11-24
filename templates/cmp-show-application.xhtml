@@ -94,6 +94,11 @@
 
                 <div class="clear"></div>
 
+                <div class="app_forms" tal:condition="true: package/posted_forms">
+                    <div class="app_h2" i18n:translate="'label_user_tests'">User Tests</div>
+                    <tal:block tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_packages', 'package_posted_forms', array('package' => com_meego_packages['packages'][com_meego_packages['packagetitle']]['packageguid']))"></tal:block>
+                </div>
+
                 <div class="app_comment">
                     <div class="app_comment_title">
                         <div class="app_h2"  tal:condition="true: package/is_there_comment" i18n:translate="'label_user_comments'">User comments</div>
@@ -142,11 +147,6 @@
                             <a href="#" class="link" onclick="popup_login()" i18n:translate="'command_login_to_comment'"></a>
                         </div>
 
-                    </div>
-
-                    <div class="app_forms" tal:condition="true: package/posted_forms">
-                        <div class="app_h2" i18n:translate="'label_user_tests'">User Tests</div>
-                        <div class="forms" tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_packages', 'package_posted_forms', array('package' => com_meego_packages['packages'][com_meego_packages['packagetitle']]['packageguid']))"></div>
                     </div>
 
                     <div class="clear"></div>

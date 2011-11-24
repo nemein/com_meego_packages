@@ -1279,6 +1279,9 @@ div.app_page div.app_forms {
 float: left;
 }
 
-div.app_page div.app_forms div.forms {
+div.app_page div.app_forms div.list {
+border-top: 1px solid #E5E5E5;
+padding-left: 170px;
 float: right;
+margin-bottom: 20px;
 }
