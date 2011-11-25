@@ -1,23 +1,24 @@
             <div tal:condition="true: current_component/packages/$packagetitle" class="app_page" tal:define="packagetitle current_component/packagetitle; package com_meego_packages/packages/$packagetitle">
                 <div class="app_page_left">
-
                     <div tal:condition="true: staging_area" class="staging_warning">
-                        <a  tal:condition="true: staging_back_link" tal:attributes="href staging_back_link" i18n:translate="'title_staging_application'">Staging application</a>
+                        <a tal:condition="true: staging_back_link" tal:attributes="href staging_back_link" i18n:translate="'title_staging_application'">Staging application</a>
                         <span tal:condition="not: staging_back_link" i18n:translate="'title_staging_application'">Staging application</span>
                     </div>
 
                     <div class="screenshot missing" tal:condition="not: package/screenshoturl"></div>
+
                     <div class="app_image">
                         <img tal:condition="true: package/screenshoturl" tal:attributes="src package/screenshoturl"/>
                         <img tal:condition="not: package/screenshoturl" src="/midgardmvc-static/com_meego_packages/images/app_image.png"/>
                     </div>
+
                     <div class="app_download">
                         <a tal:condition="true: package/defaultdownloadurl" tal:attributes="href package/defaultdownloadurl">
                             <img src="/midgardmvc-static/com_meego_packages/images/download.png"/>
                         </a>
                     </div>
-                    <div class="app_notes">
 
+                    <div class="app_notes">
                         <div class="basic_info" tal:condition="true: package/latest">
                             <div class="label" i18n:translate="'label_app_version'">Version</div>
                             <div class="data">${package/latest/version}</div>
@@ -61,15 +62,17 @@
                         </div>
 
                         <div tal:condition="true: package/workflows" class="workflow_bar">
-                            <!--<span i18n:translate="'title_open_workflows'"></span>:-->
-                            <form tal:repeat="workflow package/workflows" method="post" tal:attributes="action workflow/url">
+                            <a tal:condition="not: current_component/can_post" tal:repeat="workflow package/workflows" onclick="popup_login('clickqa')">
+                                <div tal:attributes="class workflow/css"></div>
+                            </a>
+                            <form tal:condition="true: current_component/can_post" tal:repeat="workflow package/workflows" method="post" tal:attributes="action workflow/url">
                                 <input tal:condition="true: redirect_link" type="hidden" name="redirect_link" tal:attributes="value redirect_link"/>
                                 <input type="submit" tal:attributes="value workflow/label; class workflow/css" />
                             </form>
                          </div>
-
                     </div>
                 </div>
+
                 <div class="app_page_right">
                     <div class="app_title">${package/name}</div>
                     <div class="app_category">${package/basecategoryname}</div>
@@ -95,7 +98,7 @@
                 <div class="clear"></div>
 
                 <div class="app_forms" tal:condition="true: package/posted_forms">
-                    <div class="app_h2" i18n:translate="'label_user_tests'">User Tests</div>
+                    <div class="app_h2 full" i18n:translate="'label_user_tests'">User Tests</div>
                     <tal:block tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_packages', 'package_posted_forms', array('package' => com_meego_packages['packages'][com_meego_packages['packagetitle']]['packageguid']))"></tal:block>
                 </div>
 

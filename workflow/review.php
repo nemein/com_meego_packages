@@ -8,11 +8,6 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
             return false;
         }
 
-        if (! midgardmvc_core::get_instance()->authentication->is_user())
-        {
-            return false;
-        }
-
         // Check that the package's repository has a form
         $repository = new com_meego_repository($object->repository);
 
@@ -47,7 +42,10 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
             return false;
         }
 
-        //TODO: Check that object is reviewable
+        if (! midgardmvc_core::get_instance()->authentication->is_user())
+        {
+            return true;
+        }
 
         $user = midgardmvc_core::get_instance()->authentication->get_person();
 

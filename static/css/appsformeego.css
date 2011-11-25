@@ -863,6 +863,12 @@ padding-top: 15px;
 padding-bottom: 5px;
 }
 
+.app_h2.full {
+width: 100%;
+border-bottom: 1px solid #e5e5e5;
+padding: 15px 0 15px 0;
+}
+
 .app_comment_block {
 width:900px;
 padding: 10px 0px 15px 0px;
@@ -1197,12 +1203,16 @@ margin: 0;
 cursor: pointer;
 }
 
+.workflow_bar div.community_qa_n9,
+.workflow_bar div.community_qa_meego,
+.workflow_bar div.community_qa_wetab,
 .workflow_bar input.community_qa_n9,
 .workflow_bar input.community_qa_meego,
 .workflow_bar input.community_qa_wetab {
 background: url(/midgardmvc-static/com_meego_packages/images/community_qa.png) no-repeat 0 0px;
 width: 174px;
 height: 38px;
+cursor: pointer;
 }
 
 div.workflow input.midgardmvc_helper_forms_form_save,
@@ -1280,7 +1290,6 @@ float: left;
 }
 
 div.app_page div.app_forms div.list {
-border-top: 1px solid #E5E5E5;
 padding-left: 170px;
 float: right;
 margin-bottom: 20px;
