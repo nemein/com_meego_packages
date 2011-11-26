@@ -18,14 +18,22 @@ class com_meego_packages_workflow_action_distillreview implements ezcWorkflowSer
 
         foreach ($items as $key => $item)
         {
-            if ($key == "redirect_link")
+            if (   $key == "redirect_link"
+                || $key == "execution")
             {
                 continue;
             }
 
-            $field = new midgardmvc_ui_forms_form_field($key);
+            try
+            {
+                $field = new midgardmvc_ui_forms_form_field($key);
+            }
+            catch(Exception $e)
+            {
+                midgardmvc_core::get_instance()->log('Invalid field detected in distill review: ' . $key . ', value: ' . $item, 'warning');
+            }
 
-            // ugly hardcoded check, but what can we do..
+            // todo: ugly hardcoded check, but what can we do..
             if ($field->title == "Should the application be in this application catalog?")
             {
                 // if the answer belongs to a certain field then we process

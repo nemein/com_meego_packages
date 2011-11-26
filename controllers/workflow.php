@@ -36,6 +36,8 @@ class com_meego_packages_controllers_workflow
      */
     public function post_start_package_instance(array $args)
     {
+        $this->mvc->log('Posted start QA', 'info');
+
         $this->package = $this->load_package_instance($args);
 
         if (! $this->package->metadata->hidden)
@@ -50,24 +52,23 @@ class com_meego_packages_controllers_workflow
             if (isset($values['execution']))
             {
                 // Workflow suspended and needs input, redirect to workflow page
-                $this->mvc->head->relocate
+                $formurl =  $this->mvc->dispatcher->generate_url
                 (
-                    $this->mvc->dispatcher->generate_url
+                    'package_instance_workflow_resume',
+                    array
                     (
-                        'package_instance_workflow_resume',
-                        array
-                        (
-                            'package' => $this->package->name,
-                            'version' => $this->package->version,
-                            'project' => $args['project'],
-                            'repository' => $args['repository'],
-                            'arch' => $args['arch'],
-                            'workflow' => $args['workflow'],
-                            'execution' => $values['execution'],
-                        ),
-                        $this->request
-                    )
+                        'package' => $this->package->name,
+                        'version' => $this->package->version,
+                        'project' => $args['project'],
+                        'repository' => $args['repository'],
+                        'arch' => $args['arch'],
+                        'workflow' => $args['workflow'],
+                        'execution' => $values['execution'],
+                    ),
+                    $this->request
                 );
+
+                $this->mvc->head->relocate($formurl);
             }
         }
 
@@ -97,6 +98,8 @@ class com_meego_packages_controllers_workflow
             );
         }
 
+        $this->mvc->log('Posted start QA finished', 'info');
+
         // Workflow completed, redirect to package instance
         midgardmvc_core::get_instance()->head->relocate($redirect_link);
     }
@@ -106,6 +109,10 @@ class com_meego_packages_controllers_workflow
      */
     public function get_resume_package_instance(array $args)
     {
+        $request = $this->mvc->context->get_request();
+        $route = $request->get_route();
+        $route->template_aliases['root'] = 'cmp-html-snippet';
+
         $this->package = $this->load_package_instance($args);
 
         // populate the package for the template
@@ -152,6 +159,12 @@ class com_meego_packages_controllers_workflow
      */
     public function post_resume_package_instance(array $args)
     {
+        $request = $this->mvc->context->get_request();
+        $route = $request->get_route();
+        $route->template_aliases['root'] = 'cmp-html-snippet';
+
+        $this->mvc->log('QA resume start', 'info');
+
         $this->get_resume_package_instance($args);
 
         if (empty($this->data['forms']))
@@ -181,39 +194,23 @@ class com_meego_packages_controllers_workflow
 
         $values = $this->workflow_definition->resume($this->execution->guid, $list_of_variables);
 
-        if (! isset($values['execution']))
-        {
-            if ($this->request->isset_data_item('redirect_link'))
-            {
-                $redirect_link = $this->request->get_data_item('redirect_link');
-            }
-            elseif (isset($_POST['redirect_link']))
-            {
-                $redirect_link = $_POST['redirect_link'];
-            }
-            else
-            {
-                $redirect_link = midgardmvc_core::get_instance()->dispatcher->generate_url
-                (
-                    'package_instance',
-                    array
-                    (
-                        'package' => $this->package->name,
-                        'version' => $this->package->version,
-                        'project' => $args['project'],
-                        'repository' => $args['repository'],
-                        'arch' => $args['arch']
-                    ),
-                    $this->request
-                );
-            }
-
-            // Workflow completed, redirect to package instance
-            midgardmvc_core::get_instance()->head->relocate($redirect_link);
-        }
-
         // populate the package
         $this->data['package'] = $this->package;
+
+        if (! isset($values['execution']))
+        {
+            // Workflow resumed
+            unset ($this->data['forms']);
+            unset ($this->data['package']);
+
+            $this->data['workflow'] = 'resumed';
+            $this->data['posted_forms'] = $this->mvc->templating->dynamic_load('com_meego_packages', 'package_posted_forms', array('package' => $this->package->guid), true);
+
+            // return json; see init_qa.js for processing the response
+            $route->template_aliases['root'] = 'midgardmvc-show-json';
+        }
+
+        $this->mvc->log('QA resume finished', 'info');
     }
 
     /**
@@ -254,6 +251,11 @@ class com_meego_packages_controllers_workflow
                 // where we go upon successful submit
                 $field = $form->add_field('redirect_link', 'text');
                 $field->set_value($redirect_link);
+                $widget = $field->set_widget('hidden');
+
+                // add a hidden input with the execution guid
+                $field = $form->add_field('execution', 'text');
+                $field->set_value($execution->guid);
                 $widget = $field->set_widget('hidden');
 
                 return array

@@ -337,6 +337,8 @@ class com_meego_packages_injector
         // can be used for selective loads
         $route_id = $this->request->get_route()->id;
 
+        $this->mvc->head->add_jsfile(MIDGARDMVC_STATIC_URL . '/com_meego_packages/js/init_qa.js');
+
         $this->mvc->head->add_jsfile(MIDGARDMVC_STATIC_URL . '/eu_urho_widgets/js/jquery.rating/jquery.rating.js');
 
         if ($this->part == 'applications')

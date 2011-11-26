@@ -283,6 +283,7 @@ routes:
         action: start_package_instance
         template_aliases:
             content: cmp-show-package_instance_workflow
+            root: cmp-html-snippet
 
     package_instance_workflow_resume:
         path: /package/{$package}/{$version}/{$project}/{$repository}/{$arch}/workflow/{$workflow}/{$execution}
@@ -290,6 +291,7 @@ routes:
         action: resume_package_instance
         template_aliases:
             content: cmp-show-package_instance_workflow
+            root: cmp-html-snippet
 
     package_posted_forms:
         path: /package/{$package}/posts

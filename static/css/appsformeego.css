@@ -1203,16 +1203,16 @@ margin: 0;
 cursor: pointer;
 }
 
-.workflow_bar div.community_qa_n9,
-.workflow_bar div.community_qa_meego,
-.workflow_bar div.community_qa_wetab,
-.workflow_bar input.community_qa_n9,
-.workflow_bar input.community_qa_meego,
-.workflow_bar input.community_qa_wetab {
+.workflow_bar div.qa,
+.workflow_bar input.qa {
 background: url(/midgardmvc-static/com_meego_packages/images/community_qa.png) no-repeat 0 0px;
 width: 174px;
 height: 38px;
 cursor: pointer;
+}
+
+.workflow_bar div.qa * {
+display: none;
 }
 
 div.workflow input.midgardmvc_helper_forms_form_save,
@@ -1293,4 +1293,9 @@ div.app_page div.app_forms div.list {
 padding-left: 170px;
 float: right;
 margin-bottom: 20px;
+}
+
+div.qa_form {
+display: none;
+margin: 20px 0 20px 210px;
 }
