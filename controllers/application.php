@@ -2,6 +2,7 @@
 class com_meego_packages_controllers_application
 {
     var $mvc = null;
+    var $isuser = false;
     var $request = null;
 
     public function __construct(midgardmvc_core_request $request)
@@ -9,6 +10,7 @@ class com_meego_packages_controllers_application
         $this->request = $request;
 
         $this->mvc = midgardmvc_core::get_instance();
+        $this->isuser = $this->mvc->authentication->is_user();
 
         $this->mvc->i18n->set_translation_domain('com_meego_packages');
 
@@ -249,6 +251,9 @@ class com_meego_packages_controllers_application
 
         $default_os = $this->mvc->configuration->default['os'];
 
+        // this method is called from other classes too
+        $this->isuser = $this->mvc->authentication->is_user();
+
         if (   array_key_exists('os', $args)
             && $args['os'])
         {
@@ -466,7 +471,7 @@ class com_meego_packages_controllers_application
             && count($this->data['packages']))
         {
             // enable commenting and check if user has rated yet
-            if ($this->mvc->authentication->is_user())
+            if ($this->isuser)
             {
                 $this->data['can_post'] = true;
                 $this->data['can_rate'] = self::can_rate($this->data['packages'][$this->data['packagetitle']]['packageguid']);
@@ -1274,6 +1279,11 @@ class com_meego_packages_controllers_application
 
                 foreach ($list_of_workflows as $workflow => $workflow_data)
                 {
+                    if (! $this->isuser)
+                    {
+                        $workflow_data['css'] .= ' login';
+                    }
+
                     $this->data['packages'][$package->packagetitle]['workflows'][] = array
                     (
                         'label' => $workflow_data['label'],
