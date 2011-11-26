@@ -223,53 +223,45 @@ class com_meego_packages_controllers_workflow
     {
         $list_of_variables = $execution->getVariables();
 
-        foreach ($list_of_variables as $name => $value)
+        if (array_key_exists('review_form', $list_of_variables))
         {
-            if (! mgd_is_guid($value))
-            {
-                continue;
-            }
+            $guid = $list_of_variables['review_form'];
 
-            try
+            if (mgd_is_guid($guid))
             {
-                $db_form = new midgardmvc_ui_forms_form($value);
-            }
-            catch (midgard_error_exception $e)
-            {
-                continue;
-            }
+                $db_form = new midgardmvc_ui_forms_form($list_of_variables['review_form']);
+                $form = midgardmvc_ui_forms_generator::get_by_form($db_form, false);
 
-            $form = midgardmvc_ui_forms_generator::get_by_form($db_form, false);
-
-            if ($this->request->isset_data_item('redirect_link'))
-            {
-                $redirect_link = $this->request->get_data_item('redirect_link');
-            }
-            else
-            {
-                if(array_key_exists('HTTP_REFERER', $_SERVER))
+                if ($this->request->isset_data_item('redirect_link'))
                 {
-                    $redirect_link = $_SERVER['HTTP_REFERER'];
+                    $redirect_link = $this->request->get_data_item('redirect_link');
                 }
                 else
                 {
-                    $redirect_link = '';
+                    if(array_key_exists('HTTP_REFERER', $_SERVER))
+                    {
+                        $redirect_link = $_SERVER['HTTP_REFERER'];
+                    }
+                    else
+                    {
+                        $redirect_link = '';
+                    }
                 }
+
+                $form->set_cancel(null, $this->mvc->i18n->get('cancel', 'midgardmvc_helper_forms'), $redirect_link);
+
+                // add a hidden input with the recirect link
+                // where we go upon successful submit
+                $field = $form->add_field('redirect_link', 'text');
+                $field->set_value($redirect_link);
+                $widget = $field->set_widget('hidden');
+
+                return array
+                (
+                    'db_form' => $db_form,
+                    'form' => $form
+                );
             }
-
-            $form->set_cancel(null, $this->mvc->i18n->get('cancel', 'midgardmvc_helper_forms'), $redirect_link);
-
-            // add a hidden input with the recirect link
-            // where we go upon successful submit
-            $field = $form->add_field('redirect_link', 'text');
-            $field->set_value($redirect_link);
-            $widget = $field->set_widget('hidden');
-
-            return array
-            (
-                'db_form' => $db_form,
-                'form' => $form
-            );
         }
 
         return null;
