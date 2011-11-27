@@ -3,6 +3,11 @@
             <div tal:condition="true: staging_area" class="staging_warning">
                 <a  tal:condition="true: staging_back_link" tal:attributes="href staging_back_link" i18n:translate="'title_staging_area'">Staging area warning</a>
                 <span tal:condition="not: staging_back_link" i18n:translate="'title_staging_area'">Staging area warning</span>
+                <div class="qa_help">
+                    <a tal:condition="true: community_qa_url" tal:attributes="href community_qa_url">
+                        <img src="/midgardmvc-static/com_meego_packages/images/want_to_help_testing_apps.png"/>
+                    </a>
+                </div>
             </div>
 
             <div class="content-heading">

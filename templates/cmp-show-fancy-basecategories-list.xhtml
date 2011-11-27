@@ -9,6 +9,11 @@
                         </a>
                     </div>
                 </div>
+                <div class="qa_help" tal:condition="true: staging_area">
+                    <a tal:condition="true: community_qa_url" tal:attributes="href community_qa_url">
+                        <img src="/midgardmvc-static/com_meego_packages/images/want_to_help_testing_apps.png"/>
+                    </a>
+                </div>
                 <div class="cat-more">
                     <ul>
                         <li tal:repeat="basecategory com_meego_packages/basecategories">

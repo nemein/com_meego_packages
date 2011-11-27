@@ -297,8 +297,8 @@ class com_meego_packages_injector
         if (substr($route->id, 0, 8) == 'staging_')
         {
             $request->set_data_item('staging_area', true);
-
             $request->set_data_item('staging_back_link', false);
+            $request->set_data_item('community_qa_url', $this->mvc->configuration->community_qa_url);
 
             $link = false;
 
