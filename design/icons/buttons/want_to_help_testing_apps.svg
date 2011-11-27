@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 15.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   width="841.89px"
+   height="595.28px"
+   viewBox="0 0 841.89 595.28"
+   enable-background="new 0 0 841.89 595.28"
+   xml:space="preserve"
+   inkscape:version="0.48.1 r9760"
+   sodipodi:docname="want_to_help_testing_apps.svg"
+   inkscape:export-filename="/home/sopi/work/midgard2/com_meego_packages/static/images/want_to_help_testing_apps.png"
+   inkscape:export-xdpi="89.940002"
+   inkscape:export-ydpi="89.940002"><metadata
+   id="metadata3830"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs3828">
+	
+	
+
+		<defs
+   id="defs3804">
+			<path
+   id="SVGID_1_"
+   d="m 378.142,259.642 h 121 c 2.76,0 5,2.236 5,4.998 v 28 c 0,2.762 -2.24,5 -5,5 h -121 c -2.76,0 -4.999,-2.238 -4.999,-5 v -28 c 0,-2.762 2.239,-4.998 4.999,-4.998 l 0,0 z"
+   inkscape:connector-curvature="0" />
+		</defs>
+		<clipPath
+   id="SVGID_2_">
+			<use
+   xlink:href="#SVGID_1_"
+   overflow="visible"
+   id="use3808"
+   style="overflow:visible"
+   x="0"
+   y="0"
+   width="841.89001"
+   height="595.28003" />
+		</clipPath>
+		
+	</defs><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1440"
+   inkscape:window-height="851"
+   id="namedview3826"
+   showgrid="false"
+   showborder="false"
+   inkscape:showpageshadow="false"
+   inkscape:zoom="3.510703"
+   inkscape:cx="470.12199"
+   inkscape:cy="356.65244"
+   inkscape:window-x="0"
+   inkscape:window-y="27"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_1" />
+
+
+
+<rect
+   style="fill:#6fbedc;fill-opacity:1;stroke:none"
+   id="rect3009"
+   width="300"
+   height="38"
+   x="320.57928"
+   y="219.62758"
+   ry="7"
+   rx="6.9999995" /><text
+   xml:space="preserve"
+   style="font-size:20px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:DIN PFL;-inkscape-font-specification:Sans Bold"
+   x="334.94617"
+   y="245.74757"
+   id="text3858"
+   sodipodi:linespacing="125%"><tspan
+     sodipodi:role="line"
+     id="tspan3860"
+     x="334.94617"
+     y="245.74757"
+     style="fill:#ffffff">WANT TO HELP TESTING APPS?</tspan></text>
+</svg>
