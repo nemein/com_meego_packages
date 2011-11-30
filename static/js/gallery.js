@@ -11,7 +11,7 @@ jQuery(function()
                 var list = jQuery('#slide-thumb-list li');
 
                 jQuery.each(list, function(index, value) {
-                    w += value.clientHeight;
+                    w += value.clientWidth;
                 });
 
                 w = (jQuery('.slide-gallery').width() - w) / 2;
@@ -68,7 +68,7 @@ function initGallery()
         w += jQuery(this).width();
     });
 
-    w = (616 - w) / 2;
+    w = (646 - w) / 2;
 
     if (w >= 0)
     {

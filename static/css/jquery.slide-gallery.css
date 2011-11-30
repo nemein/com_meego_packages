@@ -12,12 +12,10 @@ padding: 0;
 
 #slide-gallery {
 float: left;
-padding: 30px;
+padding: 15px;
 background: url(/midgardmvc-static/com_meego_packages/images/gallery/background.jpg);
-}
-
-.slide-gallery {
-width: 616px;
+width: 646px;
+height: 369px;
 }
 
 .slide-gallery, .slide-gallery * {
@@ -25,9 +23,17 @@ margin: 0;
 padding: 0;
 }
 .slide-gallery .slide-image-wrapper {
+/*
+    float: left;
+    height: 300px;
+    margin-right: 6px;
+    overflow: hidden;
+    position: relative;
+    width: 500px;
+*/
 width: 100%;
-height: 255px;
-padding-bottom: 30px;
+height: 300px;
+padding-bottom: 10px;
 position: relative;
 overflow: hidden;
 }
@@ -42,7 +48,7 @@ border: 1px solid #CCC;
 position: absolute;
 right: 0;
 top: 0;
-width: 25%;
+width: 70px;
 height: 100%;
 cursor: pointer;
 display: block;
@@ -52,7 +58,7 @@ z-index: 100;
 position: absolute;
 left: 0;
 top: 0;
-width: 25%;
+width: 70px;
 height: 100%;
 cursor: pointer;
 display: block;
@@ -160,15 +166,16 @@ background: url(/midgardmvc-static/com_meego_packages/images/gallery/ad_scroll_f
 
 
 .slide-gallery .slide-nav .slide-thumbs {
+/* float: right; */
 overflow: hidden;
 width: 100%;
 }
 .slide-gallery .slide-thumbs #slide-thumb-list {
 float: left;
-/*width: 9000px;*/
+/*width: 100px !important;*/
 list-style: none;
-
 }
+
 .slide-gallery .slide-thumbs li {
 float: left;
 padding-right: 5px;
