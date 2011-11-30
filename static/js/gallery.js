@@ -7,14 +7,9 @@ jQuery(function()
             // you want to preload
             init: function()
             {
-                var w = 0;
-                var list = jQuery('#slide-thumb-list li');
-
-                jQuery.each(list, function(index, value) {
-                    w += value.clientWidth;
-                });
-
-                w = (jQuery('.slide-gallery').width() - w) / 2;
+                gal = jQuery('.slide-gallery').width();
+                w = jQuery('#slide-thumb-list').width();
+                w = (gal - w) / 2;
 
                 if (w >= 0)
                 {
@@ -57,25 +52,3 @@ jQuery(function()
     );
 
 });
-
-function initGallery()
-{
-    var w = 0;
-
-    //var lis = document.getElementById('slide-thumb-list').getElementsByTagName('li');
-    jQuery('#slide-thumb-list li').each(function(index)
-    {
-        w += jQuery(this).width();
-    });
-
-    w = (646 - w) / 2;
-
-    if (w >= 0)
-    {
-        jQuery('.slide-back').css('display', 'none');
-        jQuery('.slide-forward').css('display', 'none');
-        jQuery('#slide-thumb-list').css('paddingLeft', w);
-    }
-};
-
-//var t=setTimeout("initGallery()", 100);
