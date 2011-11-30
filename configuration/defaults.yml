@@ -165,10 +165,16 @@ sql_package_filters:
     - %-devel
     # no debug packages
     - %-debug%
+    # some more debug
+    - %-dbg%
     # libs are not apps
     - %-lib
-    # libs are not apps
+    # some more libs
     - %-libs
+    # docs
+    - %-doc%
+    # runtime?
+    - %-runtime%
 
 # the maximum rate that can be given to a package
 maxrate: 5
