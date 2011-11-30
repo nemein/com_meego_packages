@@ -152,28 +152,26 @@ basecategory_css_map:
 # package title matching the filters will not shown in the catalog
 sql_package_filters:
     # filter the testing enabler package(s)
-    - %apps-testing-enabler-harmattan%
+    - apps-testing-enabler-harmattan
     # filter apps client itself
-    - %org.formeego.apps%
+    - org.formeego.apps
     # no source packages
-    - %-src
+    - %-src%
     # no data packages
-    - %-data
+    - %-data%
     # no dev packages
     - %-dev
-    # no dev packages
     - %-devel
     # no debug packages
-    - %-debug%
-    # some more debug
-    - %-dbg%
+    - %-debug
+    - %-debuginfo
+    - %-dbg
     # libs are not apps
     - %-lib
-    # some more libs
     - %-libs
     # docs
     - %-doc%
-    # runtime?
+    # runtime
     - %-runtime%
 
 # the maximum rate that can be given to a package

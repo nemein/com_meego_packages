@@ -791,13 +791,13 @@ class com_meego_packages_controllers_application
 
         $q = new midgard_query_select($storage);
 
-        $qc = new midgard_query_constraint_group('AND');
+        $qc = new midgard_query_constraint_group('OR');
 
         // filter all hidden packages
         $qc->add_constraint(new midgard_query_constraint(
             new midgard_query_property('packagehidden'),
             '=',
-            new midgard_query_value(0)
+            new midgard_query_value(1)
         ));
 
         // filter packages by their names
@@ -805,8 +805,34 @@ class com_meego_packages_controllers_application
         {
             $qc->add_constraint(new midgard_query_constraint(
                 new midgard_query_property('packagename'),
-                'NOT LIKE',
+                'LIKE',
                 new midgard_query_value($filter)
+            ));
+            $qc->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('packagetitle'),
+                'LIKE',
+                new midgard_query_value($filter)
+            ));
+        }
+        $q->set_constraint($qc);
+        $q->execute();
+
+        $filtered = array();
+
+        foreach ($q->list_objects() as $package)
+        {
+            $filtered[] = $package->packageid;
+        }
+
+        // reset $qc
+        $qc = new midgard_query_constraint_group('AND');
+
+        if (count($filtered))
+        {
+            $qc->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('packageid'),
+                'NOT IN',
+                new midgard_query_value($filtered)
             ));
         }
 
