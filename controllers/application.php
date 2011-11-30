@@ -1109,7 +1109,7 @@ class com_meego_packages_controllers_application
                                 array
                                 (
                                     'guid' => $attachment->guid,
-                                    'variant' => 'sidesquare',
+                                    'variant' => 'prop480x300',
                                     'filename' => $attachment->name,
                                 ),
                                 '/'

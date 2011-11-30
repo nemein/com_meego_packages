@@ -18,12 +18,16 @@ show_empty_categories: false
 
 # thumbnail sizes for screenshots and icons
 attachmentserver_variants:
+    prop480x300:
+        scale:
+            width: 480
+            height: 300
     sidesquare:
         croppedThumbnail:
             width: 250
             height: 250
     thumbnail:
-        croppedThumbnail:
+        scale:
             width: 100
             height: 100
     icon:
