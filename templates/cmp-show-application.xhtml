@@ -132,7 +132,7 @@
                                     <div class="app_comment_package_version" i18n:translate="'label_ux_version'">
                                         <tal:block i18n:name="version">${rating/version}</tal:block>
                                     </div>
-                                    ${rating/comment}
+                                   <tal:block tal:content="php: str_replace('\r', '', rating.comment)"></tal:block>
                                 </div>
                                 <div class="clear"></div>
                             </div>
