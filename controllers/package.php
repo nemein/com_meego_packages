@@ -481,9 +481,6 @@ class com_meego_packages_controllers_package
             $q->set_constraint($qc);
             $q->execute();
 
-            // filter package names according to configuration
-            $packages = com_meego_packages_controllers_application::filter_titles($q->list_objects(), $this->mvc->configuration->package_filters);
-
             return $packages;
         }
     }

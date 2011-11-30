@@ -793,11 +793,22 @@ class com_meego_packages_controllers_application
 
         $qc = new midgard_query_constraint_group('AND');
 
+        // filter all hidden packages
         $qc->add_constraint(new midgard_query_constraint(
             new midgard_query_property('packagehidden'),
             '=',
             new midgard_query_value(0)
         ));
+
+        // filter packages by their names
+        foreach ($this->mvc->configuration->sql_package_filters as $filter)
+        {
+            $qc->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('packagename'),
+                'NOT LIKE',
+                new midgard_query_value($filter)
+            ));
+        }
 
         //filter either top projects or staging projects
         if (count($this->mvc->configuration->top_projects))
@@ -922,15 +933,12 @@ class com_meego_packages_controllers_application
         {
             // no unique array in case an exact package was requested
             // otherwise we will loose the available architectures
-            $apps = self::filter_titles($all_objects, $this->mvc->configuration->package_filters, false);
+            $apps = self::filter_titles($all_objects, false);
         }
         else
         {
-            $apps = self::filter_titles($all_objects, $this->mvc->configuration->package_filters, false);
+            $apps = self::filter_titles($all_objects, true);
         }
-
-        //echo 'all packages: ' . count($all_objects) . ', apps after filtering: ' . count($apps) . "\n";
-        //ob_flush();
 
         // cut the array to 3 members only
         $scope = 3;
@@ -959,11 +967,11 @@ class com_meego_packages_controllers_application
      * Also filters out those packages that do not belong to any basecatgory yet
      *
      * @param array with com_meego_package_details objects
-     * @param array of filters as per configured
      * @param boolean make the return array contain unique items only
+     *
      * @return array associative array of com_meego_package_details objects
      */
-    public function filter_titles(array $packages, array $filters, $unique = false)
+    public function filter_titles(array $packages, $unique = false)
     {
         $apps = array();
         $localpackages = array();
@@ -971,16 +979,6 @@ class com_meego_packages_controllers_application
         foreach ($packages as $package)
         {
             $filtered = false;
-
-            // filter packages by their titles (see configuration: package_filters)
-            foreach ($filters as $filter)
-            {
-                if (   preg_match($filter, $package->packagetitle)
-                    || preg_match($filter, $package->packagename))
-                {
-                    $filtered = true;
-                }
-            }
 
             $basecategory = com_meego_packages_controllers_package::determine_base_category($package);
 

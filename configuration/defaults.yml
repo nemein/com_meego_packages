@@ -148,26 +148,27 @@ base_categories:
 basecategory_css_map:
     Location & Navigation: location
 
-# package filter regular expression
-# package title matching the filters will not shown in the "downloads" area
-# filters need delimeters e.g. / character at the beginning and at the end
-package_filters:
+# SQL style package filters
+# package title matching the filters will not shown in the catalog
+sql_package_filters:
     # filter the testing enabler package(s)
-    - /^apps-testing-enabler-harmattan.*$/
+    - %apps-testing-enabler-harmattan%
     # filter apps client itself
-    - /^org.formeego.apps.*$/
+    - %org.formeego.apps%
     # no source packages
-    - /^(.*)\-src$/
+    - %-src
     # no data packages
-    - /^(.*)\-data$/
+    - %-data
     # no dev packages
-    - /^(.*)\-dev$/
+    - %-dev
     # no dev packages
-    - /^(.*)\-devel$/
+    - %-devel
     # no debug packages
-    - /^(.*)-debug\w*$/
+    - %-debug%
     # libs are not apps
-    - /^(.*)-lib[s]$/
+    - %-lib
+    # libs are not apps
+    - %-libs
 
 # the maximum rate that can be given to a package
 maxrate: 5
