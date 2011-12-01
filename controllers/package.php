@@ -1275,18 +1275,27 @@ class com_meego_packages_controllers_package
      */
     public function get_posted_form_instance(array $args)
     {
-        // @todo: check user
-        $this->forminstance = new midgardmvc_ui_forms_form_instance($args['forminstance']);
-        $form = new midgardmvc_ui_forms_form($this->forminstance->form);
+        $forminstance = new midgardmvc_ui_forms_form_instance($args['forminstance']);
+        $form = new midgardmvc_ui_forms_form($forminstance->form);
 
         // get user info
-        $user = com_meego_packages_utils::get_user_by_person_guid($this->forminstance->metadata->creator);
+        $currentuser = com_meego_packages_utils::get_current_user();
+        $formcreator = com_meego_packages_utils::get_user_by_person_guid($forminstance->metadata->creator);
 
-        if ($user)
+        $form_to_return = midgardmvc_ui_forms_load::load_form(midgardmvc_ui_forms_generator::get_by_guid($form->guid), $forminstance);
+        $form_to_return->set_readonly(true);
+
+        if ($currentuser)
         {
-            $this->data['title'] = $form->title . " submitted by " . $user->login;
-            $this->data['form'] = midgardmvc_ui_forms_load::load_form(midgardmvc_ui_forms_generator::get_by_guid($form->guid), $this->forminstance);
-            $this->data['form']->set_readonly(true);
+            if ($forminstance->metadata->creator == $currentuser->person)
+            {
+                $form_to_return->set_readonly(false);
+            }
         }
+
+        $this->data['title'] = $form->title . " submitted by " . $formcreator->login;
+        $this->data['form'] = $form_to_return;
+
+        unset ($form_to_return);
     }
 }

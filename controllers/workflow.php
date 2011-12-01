@@ -224,6 +224,7 @@ class com_meego_packages_controllers_workflow
         {
             $db_form = new midgardmvc_ui_forms_form($list_of_variables['review_form']);
             $form = midgardmvc_ui_forms_generator::get_by_form($db_form, false);
+            $form->set_readonly(false);
 
             if ($this->request->isset_data_item('redirect_link'))
             {
