@@ -222,10 +222,10 @@ class com_meego_packages_controllers_workflow
 
         if (array_key_exists('review_form', $list_of_variables))
         {
-            $guid = $list_of_variables['review_form'];
+//            $guid = $list_of_variables['review_form'];
 
-            if (mgd_is_guid($guid))
-            {
+//            if (mgd_is_guid($guid))
+//            {
                 $db_form = new midgardmvc_ui_forms_form($list_of_variables['review_form']);
                 $form = midgardmvc_ui_forms_generator::get_by_form($db_form, false);
 
@@ -263,7 +263,7 @@ class com_meego_packages_controllers_workflow
                     'db_form' => $db_form,
                     'form' => $form
                 );
-            }
+//            }
         }
 
         return null;
