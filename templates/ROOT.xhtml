@@ -43,7 +43,7 @@
         </div>
 
         <footer>
-            <div class="open_wrapper" tal:condition="true: matched">
+            <div class="open_wrapper" tal:condition="true: bottomblocks">
                 <h2 class="title" i18n:translate="'label_newest'">Newest</h2>
                 <div tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_packages', 'newest_apps', array('os' => matched['os'], 'version' => matched['version'], 'ux' => matched['ux']))"></div>
                 <div class="separator"></div>

@@ -65,6 +65,8 @@ class com_meego_packages_injector
         $request->set_data_item('admin', false);
         // admins get a link to category management UI
         $request->set_data_item('category_admin_url', false);
+        // flag to show newest and hottest blocks
+        $request->set_data_item('bottomblocks', false);
 
         if ($this->mvc->authentication->is_user())
         {
@@ -290,7 +292,20 @@ class com_meego_packages_injector
         }
 
         $request->set_data_item('matched', $matched);
+        if (count($matched))
+        {
+            // if we have matched then show the newest and hottest blocks
+            $request->set_data_item('bottomblocks', true);
+        }
+
         $request->set_data_item('submit_app_url', $this->mvc->configuration->submit_app_url);
+
+        // don't show newest and hottest blocks if any of these were requested explicitly
+        if (   $route->id == "newest_apps"
+            || $route->id == "hottest_apps")
+        {
+            $request->set_data_item('bottomblocks', false);
+        }
 
         $request->set_data_item('staging_area', false);
 
