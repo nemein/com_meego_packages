@@ -58,7 +58,12 @@ class com_meego_packages_controllers_repository
         }
 
         //$repository->os = strtolower($repository->repoos);
-        $retval['configured_title'] = ucwords($this->mvc->configuration->os_ux[$os->name][$default_ux]);
+        $retval['configured_title'] = ucwords($default_ux);
+
+        if (array_key_exists($os->name, $this->mvc->configuration->os_ux))
+        {
+            $retval['configured_title'] = ucwords($this->mvc->configuration->os_ux[$os->name][$default_ux]);
+        }
 
         $retval['title'] = ucwords($default_ux);
         $retval['css'] = $group . ' ' . $default_ux;
