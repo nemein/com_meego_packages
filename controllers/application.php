@@ -641,7 +641,8 @@ class com_meego_packages_controllers_application
      * @param integer package category id
      * @param string ux name
      * @param string package title
-     * @param string filter type "top" or "staging"
+     * @param string filter type "top" or "staging" or "mix" (means both top and staging)
+     *               default filter type: top
      * @param string for free text search: title, name, summary, filename will be searched.
      *
      * @return array of com_meego_package_details objects
@@ -793,14 +794,17 @@ class com_meego_packages_controllers_application
 
         $qc = new midgard_query_constraint_group('OR');
 
-        // filter all hidden packages
-        $qc->add_constraint(new midgard_query_constraint(
-            new midgard_query_property('packagehidden'),
-            '=',
-            new midgard_query_value(1)
-        ));
+        if ($filter_type != 'mix')
+        {
+            // filter all hidden packages unless we are in mix filtering mode
+            $qc->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('packagehidden'),
+                '=',
+                new midgard_query_value(1)
+            ));
+        }
 
-        // filter packages by their names
+        // filter packages by their names (we always do this)
         foreach ($this->mvc->configuration->sql_package_filters as $filter)
         {
             $qc->add_constraint(new midgard_query_constraint(
@@ -824,7 +828,7 @@ class com_meego_packages_controllers_application
             $filtered[] = $package->packageid;
         }
 
-        // reset $qc
+        // reset $qc and do a new query including all package IDs that must be filtered
         $qc = new midgard_query_constraint_group('AND');
 
         if (count($filtered))
@@ -836,9 +840,11 @@ class com_meego_packages_controllers_application
             ));
         }
 
-        //filter either top projects or staging projects
+        //filter for top, staging or both types of projects
         if (count($this->mvc->configuration->top_projects))
         {
+            $repoproject_filter = null;
+
             switch ($filter_type)
             {
                 case 'newest':
@@ -851,58 +857,22 @@ class com_meego_packages_controllers_application
 
             switch ($filter_type)
             {
+                case 'mix':
+                    $repoproject_filter = self::get_repoproject_filter('mix');
+                    break;
                 case 'staging':
-                    // filter the top projects only
-                    if (count($this->mvc->configuration->top_projects) == 1)
-                    {
-                        $top_project = array_keys($this->mvc->configuration->top_projects);
-                        $qc->add_constraint(new midgard_query_constraint(
-                            new midgard_query_property('repoprojectname'),
-                            '=',
-                            new midgard_query_value($top_project[0]['staging'])
-                        ));
-                    }
-                    else
-                    {
-                        $qc2 = new midgard_query_constraint_group('OR');
-                        foreach ($this->mvc->configuration->top_projects as $top_project => $details)
-                        {
-                            $qc2->add_constraint(new midgard_query_constraint(
-                                new midgard_query_property('repoprojectname'),
-                                '=',
-                                new midgard_query_value($details['staging'])
-                            ));
-                        }
-                        $qc->add_constraint($qc2);
-                    }
+                    $repoproject_filter = self::get_repoproject_filter('staging');
                     break;
                 case 'newest':
                 case 'hottest':
                 case 'top':
                 default:
-                    // filter the top projects only
-                    if (count($this->mvc->configuration->top_projects) == 1)
-                    {
-                        $top_project = array_keys($this->mvc->configuration->top_projects);
-                        $qc->add_constraint(new midgard_query_constraint(
-                            new midgard_query_property('repoprojectname'),
-                            '=',
-                            new midgard_query_value($top_project[0])
-                        ));
-                    }
-                    else
-                    {
-                        $qc2 = new midgard_query_constraint_group('OR');
-                        foreach ($this->mvc->configuration->top_projects as $top_project => $details)
-                        {
-                            $qc2->add_constraint(new midgard_query_constraint(
-                                new midgard_query_property('repoprojectname'),
-                                '=',
-                                new midgard_query_value($top_project)
-                            ));
-                        }
-                        $qc->add_constraint($qc2);
-                    }
+                    $repoproject_filter = self::get_repoproject_filter('top');
+            }
+
+            if ($repoproject_filter)
+            {
+                $qc->add_constraint($repoproject_filter);
             }
         }
 
@@ -948,7 +918,7 @@ class com_meego_packages_controllers_application
         }
 
         // sort by title
-        $q->add_order(new midgard_query_property('packagetitle', $storage), SORT_ASC);
+        //$q->add_order(new midgard_query_property('packagetitle', $storage), SORT_ASC);
 
         $q->execute();
 
@@ -1642,4 +1612,107 @@ class com_meego_packages_controllers_application
 
         return $retval;
     }
+
+    /**
+     * returns a query contraint
+     * @param string filter type:    top: top projects only
+     *                           staging: staging projects only
+     *                               mix: top and staging projects both
+     *
+     * @return query constraint or query contstraint group
+     */
+    public function get_repoproject_filter($type = 'top')
+    {
+        $retval = null;
+        $queryvalue = array();
+
+        if (count($this->mvc->configuration->top_projects) == 1)
+        {
+            $top_project = array_keys($this->mvc->configuration->top_projects);
+
+            if (   $type == 'top'
+                || $type == 'mix')
+            {
+                $queryvalue['top'] = new midgard_query_value($top_project[0]);
+            }
+            if (    $type == 'staging'
+                ||  $type == 'mix')
+            {
+                $queryvalue['staging'] = new midgard_query_value($top_project[0]['staging']);
+            }
+
+            if ($type == 'mix')
+            {
+                $retval = new midgard_query_constraint_group('OR');
+                $retval->add_constraint(new midgard_query_constraint(
+                    new midgard_query_property('repoprojectname'),
+                    '=',
+                    $queryvalue['top']
+                ));
+                $retval->add_constraint(new midgard_query_constraint(
+                    new midgard_query_property('repoprojectname'),
+                    '=',
+                    $queryvalue['staging']
+                ));
+            }
+            else
+            {
+                if (array_key_exists($type, $queryvalue))
+                {
+                    $retval = new midgard_query_constraint(
+                        new midgard_query_property('repoprojectname'),
+                        '=',
+                        $queryvalue[$type]
+                    );
+                }
+            }
+        }
+        else
+        {
+            $retval = new midgard_query_constraint_group('OR');
+            foreach ($this->mvc->configuration->top_projects as $top_project => $details)
+            {
+                if (   $type == 'top'
+                    || $type == 'mix')
+                {
+                    $queryvalue['top'] = new midgard_query_value($top_project);
+                }
+                if (    $type == 'staging'
+                    ||  $type == 'mix')
+                {
+                    $queryvalue['staging'] = new midgard_query_value($details['staging']);
+                }
+                if ($type == 'mix')
+                {
+                    $retval->add_constraint(new midgard_query_constraint(
+                        new midgard_query_property('repoprojectname'),
+                        '=',
+                        $queryvalue['top']
+                    ));
+                    $retval->add_constraint(new midgard_query_constraint(
+                        new midgard_query_property('repoprojectname'),
+                        '=',
+                        $queryvalue['staging']
+                    ));
+                }
+                else
+                {
+                    if (array_key_exists($type, $queryvalue))
+                    {
+                        $retval->add_constraint(new midgard_query_constraint(
+                            new midgard_query_property('repoprojectname'),
+                            '=',
+                            $queryvalue[$type]
+                        ));
+                    }
+                }
+            }
+        }
+
+        return $retval;
+    }
+
+
+
+
 }
