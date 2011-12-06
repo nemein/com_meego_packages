@@ -1306,3 +1306,12 @@ div.qa_help {
 float: right;
 margin-bottom: 20px;
 }
+
+div.element div.review_form {
+display: none;
+margin:  10px;
+overflow: hidden;
+}
+
+
+
