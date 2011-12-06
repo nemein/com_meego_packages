@@ -535,10 +535,9 @@ width: 35em;
 height: 10em;
 }
 
-div.edit_form form label input,
-div.edit_form form label textarea,
-div.edit_form form label select,
-div.show_form form label input {
+div.edit_form form input,
+div.edit_form form textarea,
+div.edit_form form select {
 display: block;
 }
 
@@ -546,8 +545,8 @@ div.edit_form form label {
 margin: 1em 0 0 0;
 }
 
-div.edit_field form label input,
-div.edit_field form label select {
+div.edit_field form input,
+div.edit_field form select {
 margin: 0 1em 0 1em;
 }
 
@@ -577,26 +576,26 @@ div.obs {
 margin: 1em 0 0 0;
 }
 
-div.workflow form label ul.radio
-div.edit_form form label ul.radio
-div.show_form form label ul.radio {
+div.workflow form ul.radio
+div.edit_form form ul.radio
+div.show_form form ul.radio {
 margin: 0 0 0 1em;
 padding: 0;
 }
 
-div.workflow form label ul.radio li,
-div.edit_form form label ul.radio li,
-div.show_form form label ul.radio li {
+div.workflow form ul.radio li,
+div.edit_form form ul.radio li,
+div.show_form form ul.radio li {
 display: inline-block;
 margin: 10px;
 list-style: none;
 }
 
-div.workflow form label ul.radio li span,
-div.workflow form label ul.radio li input,
-div.edit_form form label ul.radio li span,
-div.edit_form form label ul.radio li input,
-div.show_form form label ul.radio li span,
-div.show_form form label ul.radio li input {
+div.workflow form ul.radio li span,
+div.workflow form ul.radio li input,
+div.edit_form form ul.radio li span,
+div.edit_form form ul.radio li input,
+div.show_form form ul.radio li span,
+div.show_form form ul.radio li input {
 display: inline;
 }
