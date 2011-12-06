@@ -208,10 +208,12 @@ line-height: 2em;
 background: lightgrey;
 border-bottom: 1px solid grey;
 font-weight: bold;
+padding: 4px;
 }
 
 div.element {
-line-height: 2em;
+line-height: 3em;
+padding: 4px;
 }
 
 div.element.odd {
@@ -223,7 +225,11 @@ background-color: lightgrey;
 }
 
 div.list div.header div,
-div.list div.element div {
+div.list div.element div.title,
+div.list div.element div.version,
+div.list div.element div.posts,
+div.list div.element div.action,
+div.list div.element div.projectname {
 display: inline-block;
 margin: 0 0 0.1em 0;
 }
