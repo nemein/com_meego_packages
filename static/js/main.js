@@ -8,6 +8,13 @@ isSafari = ((ua.indexOf("safari") != -1) );
 
 jQuery(document).ready(function()
 {
+    if (typeof apps !== 'object')
+    {
+        // our apps object that will handle UI interactions and logging
+        apps = new Apps(false);
+        apps.init.call(apps);
+    }
+
     jQuery('.login  ul li:last').addClass('last');
     jQuery('nav ul li:first').addClass('first');
 });
