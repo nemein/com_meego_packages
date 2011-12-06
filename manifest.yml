@@ -306,6 +306,7 @@ routes:
         action: posted_form_instance
         template_aliases:
             content: cmp-admin-posted-form-instance
+            root: cmp-html-snippet
 
     workflows:
         path: /workflows
@@ -322,3 +323,13 @@ routes:
         action: admin_index
         template_aliases:
             content: cmp-admin-index-workflows
+
+    # fetching i18n string from JS mainly
+    i18n:
+        path: /i18n/{$id}
+        controller: com_meego_packages_utils
+        action: i18n_string
+        root_only: true
+        template_aliases:
+            root: midgardmvc-show-json
+
