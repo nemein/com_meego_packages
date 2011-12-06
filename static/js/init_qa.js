@@ -68,4 +68,40 @@ jQuery(document).ready(function()
             }
         });
     });
+    // View submitted QA forms
+    jQuery('div.app_forms div.list div.forms div.element a').live('click', function(event) {
+        event.preventDefault();
+
+        parent = jQuery(event.currentTarget).parentsUntil('div.element').parent();
+        visible = parent.children('div.review_form').length;
+
+        // reset labels
+        jQuery('div.app_forms div.list div.forms div.element div.posts a').text(apps.i18n.showQAform);
+        // remove any other review form
+        jQuery('div.app_forms div.list div.forms div.element div.review_form')
+            .slideUp('slow')
+            .remove();
+
+        if (visible == 0)
+        {
+            href = jQuery(event.currentTarget).attr("href");
+
+            if (typeof href !== 'undefined')
+            {
+                jQuery.ajax({
+                    url: href,
+                    type: 'GET',
+                    success: function(data, textStatus, jqXHR) {
+                        parent.append('<div class="review_form"></div>');
+                        parent.children('div.review_form').html(data);
+                        parent.children('div.review_form').slideDown('slow');
+                        parent.children('div.posts').children('a.qalink').text(apps.i18n.hideQAform);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        apps.log.call(apps, 'error fetching QA form for review: ' + textStatus);
+                    }
+                });
+            }
+        }
+    });
 });
