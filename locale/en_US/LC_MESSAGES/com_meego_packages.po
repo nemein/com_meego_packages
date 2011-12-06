@@ -402,3 +402,19 @@ msgstr "Maintainers"
 
 msgid "label_get_client"
 msgstr "Download the client app"
+
+msgid "label_form_title"
+msgstr "Form"
+
+msgid "label_form_submitter"
+msgstr "Submitter"
+
+msgid "label_form_result"
+msgstr "Result"
+
+msgid "label_show_posted_form"
+msgstr "See form"
+
+msgid "label_hide_posted_form"
+msgstr "Hide form"
+
