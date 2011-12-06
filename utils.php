@@ -169,5 +169,19 @@ class com_meego_packages_utils
 
         return $retval;
     }
+
+    /**
+     * Returns the translated i18n string
+     *
+     * @param string id of the string
+     * @return string
+     */
+    public function get_i18n_string(array $args)
+    {
+        if (array_key_exists('id', $args))
+        {
+            $this->data['i18n'] = midgardmvc_core::get_instance()->i18n->get($args['id']);
+        }
+    }
 }
 ?>
