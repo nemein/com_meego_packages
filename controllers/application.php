@@ -1206,6 +1206,13 @@ class com_meego_packages_controllers_application
             {
                 // index was set at the beginning of this method
                 $this->data['packages'][$package->packagetitle]['defaultdownloadurl'] = $latest['variants'][$index]->packageinstallfileurl;
+
+                // set a different downloadurl in case the configured download schema for this OS is 'apps'
+                if (   array_key_exists('download', $this->mvc->configuration->os_ux[$latest['variants'][$index]->repoos])
+                    && $this->mvc->configuration->os_ux[$latest['variants'][$index]->repoos]['download'] == 'apps')
+                {
+                    $this->data['packages'][$package->packagetitle]['defaultdownloadurl'] = 'apps://' . $latest['variants'][$index]->packageid;
+                }
             }
 
             // set the latest of this package

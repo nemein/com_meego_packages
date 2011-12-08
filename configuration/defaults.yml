@@ -84,6 +84,8 @@ os_ux:
     n9:
         harmattan: Nokia N9
         client: 'http://apps.formeego.org/n9client'
+        # The preferred download scheme http (for ypm files) or apps
+        download: apps
     meego:
         meegoce: Nemo
         netbook: Netbook
