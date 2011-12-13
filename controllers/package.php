@@ -66,7 +66,7 @@ class com_meego_packages_controllers_package
                 'package_instance',
                 array
                 (
-                    'package' => $package->title,
+                    'package' => $package->name,
                     'version' => $package->version,
                     'project' => $args['project'],
                     'repository' => $repositories[$package->repository]->name,
@@ -127,7 +127,7 @@ class com_meego_packages_controllers_package
                 'package_instance',
                 array
                 (
-                    'package' => $package->title,
+                    'package' => $package->name,
                     'version' => $package->version,
                     'project' => $args['project'],
                     'repository' => $args['repository'],
@@ -220,7 +220,7 @@ class com_meego_packages_controllers_package
             'package',
             array
             (
-                'package' => $this->data['package']->title,
+                'package' => $this->data['package']->name,
             ),
             $this->request
         );
@@ -510,14 +510,14 @@ class com_meego_packages_controllers_package
                 (
                     $this->mvc->dispatcher->generate_url
                     (
-                        'apps_by_title',
+                        'apps_by_name',
                         array
                         (
                             'os' => $package->repoos,
                             'version' => $package->repoosversion,
                             'ux' => $package->repoosux,
                             'basecategory' => self::determine_base_category($package),
-                            'packagetitle' => $package->packagetitle
+                            'packagename' => $package->packagename
                         ),
                         $this->request
                     )
@@ -532,21 +532,16 @@ class com_meego_packages_controllers_package
                         continue;
                     }
 
-                    if (empty($package->packagetitle))
-                    {
-                        $package->packagetitle = ucfirst($package->packagename);
-                    }
-
                     $package->localurl = $this->mvc->dispatcher->generate_url
                     (
-                        'apps_by_title',
+                        'apps_by_name',
                         array
                         (
                             'os' => $package->repoos,
                             'version' => $package->repoosversion,
                             'ux' => $package->repoosux,
                             'basecategory' => self::determine_base_category($package),
-                            'packagetitle' => $package->packagetitle
+                            'packagename' => $package->packagename
                         ),
                         $this->request
                     );
@@ -589,7 +584,7 @@ class com_meego_packages_controllers_package
             );
 
             $q->set_constraint($qc);
-            $q->add_order(new midgard_query_property('packagetitle', $storage), SORT_ASC);
+            $q->add_order(new midgard_query_property('packagename', $storage), SORT_ASC);
             $q->execute();
 
             $packages = $q->list_objects();
@@ -641,10 +636,10 @@ class com_meego_packages_controllers_package
                 $packages,
                 function($a, $b)
                 {
-                    if ($a->packagetitle == $b->packagetitle) {
+                    if ($a->packagename == $b->packagename) {
                         return 0;
                     }
-                    return ($a->packagetitle < $b->packagetitle) ? -1 : 1;
+                    return ($a->packagename < $b->packagename) ? -1 : 1;
                 }
             );
 
@@ -659,7 +654,7 @@ class com_meego_packages_controllers_package
     }
 
     /**
-     * Renders an overview of a package identified by its title
+     * Renders an overview of a package identified by its name
      * The page will display all ratings and comments of all variants of the given package
      *
      * It will also show the links to the detailed pages of each individual package variants
@@ -673,7 +668,7 @@ class com_meego_packages_controllers_package
     {
         $this->data['packages'] = false;
         $this->data['categorytree'] = rawurldecode($args['categorytree']);
-        $this->data['packagetitle'] = rawurldecode($args['packagetitle']);
+        $this->data['packagename'] = rawurldecode($args['packagename']);
 
         $category = $this->determine_category_by_tree($this->data['categorytree']);
 
@@ -691,13 +686,13 @@ class com_meego_packages_controllers_package
                 new midgard_query_value($category)
             ));
             $qc->add_constraint(new midgard_query_constraint(
-                new midgard_query_property('packagetitle'),
+                new midgard_query_property('packagename'),
                 '=',
-                new midgard_query_value($this->data['packagetitle'])
+                new midgard_query_value($this->data['packagename'])
             ));
 
             $q->set_constraint($qc);
-            $q->add_order(new midgard_query_property('packagetitle', $storage), SORT_ASC);
+            $q->add_order(new midgard_query_property('packagename', $storage), SORT_ASC);
             $q->execute();
 
             $packages = $q->list_objects();
@@ -705,12 +700,12 @@ class com_meego_packages_controllers_package
             $this->set_data($packages);
 
             // collect all ratings and comments
-            $this->data['packages'][$this->data['packagetitle']]['ratings'] = array();
+            $this->data['packages'][$this->data['packagename']]['ratings'] = array();
 
             // placeholder for variant ratings
             $local_ratings = array();
 
-            foreach ($this->data['packages'][$this->data['packagetitle']]['providers'] as $provider)
+            foreach ($this->data['packages'][$this->data['packagename']]['providers'] as $provider)
             {
                 foreach ($provider['variants'] as $variant)
                 {
@@ -719,7 +714,7 @@ class com_meego_packages_controllers_package
             }
 
             // set ratings to the template
-            $this->data['packages'][$this->data['packagetitle']]['ratings'] = $local_ratings;
+            $this->data['packages'][$this->data['packagename']]['ratings'] = $local_ratings;
         }
     }
 
@@ -843,11 +838,11 @@ class com_meego_packages_controllers_package
     /**
      * Returns an array filled with some stats about a package identified by its title
      *
-     * @param string title, e.g. anki
+     * @param string name, e.g. anki
      * @return array
      *
      */
-    public function get_statistics($title)
+    public function get_statistics($name)
     {
         $retval = array
         (
@@ -855,14 +850,14 @@ class com_meego_packages_controllers_package
             'number_of_comments' => 0
         );
 
-        // get the packages that have this title
+        // get the packages that have this name
         $storage = new midgard_query_storage('com_meego_package_ratings');
         $q = new midgard_query_select($storage);
 
         $qc = new midgard_query_constraint(
-            new midgard_query_property('title'),
+            new midgard_query_property('name'),
             '=',
-            new midgard_query_value($title)
+            new midgard_query_value($name)
         );
 
         $q->set_constraint($qc);
@@ -920,17 +915,17 @@ class com_meego_packages_controllers_package
                 array
                 (
                     'categorytree' => $this->data['categorytree'],
-                    'packagetitle' => $package->packagetitle
+                    'packagename' => $package->packagename
                 ),
                 $this->request
             );
 
             // certain things must not be recorded in evert iteration of this loop
             // if we recorded the name, then we are pretty sure we recorded everything
-            if (! isset($this->data['packages'][$package->packagetitle]['name']))
+            if (! isset($this->data['packages'][$package->packagename]['name']))
             {
                 // set the name
-                $this->data['packages'][$package->packagetitle]['name'] = $package->packagetitle;
+                $this->data['packages'][$package->packagename]['name'] = $package->packagename;
 
                 if (   isset($this->data['base'])
                     && $this->data['base'])
@@ -950,7 +945,7 @@ class com_meego_packages_controllers_package
                     if (! strlen($this->data['basecategory']))
                     {
                         // local url to a package index page
-                        $this->data['packages'][$package->packagetitle]['localurl'] = $tree_url;
+                        $this->data['packages'][$package->packagename]['localurl'] = $tree_url;
                     }
                     else
                     {
@@ -972,20 +967,20 @@ class com_meego_packages_controllers_package
                         // if could not figure out the ux then provide a tree url
                         if ( ! strlen($this->data['ux']))
                         {
-                            $this->data['packages'][$package->packagetitle]['localurl'] = $tree_url;
+                            $this->data['packages'][$package->packagename]['localurl'] = $tree_url;
                         }
                         else
                         {
-                            $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
+                            $this->data['packages'][$package->packagename]['localurl'] = $this->mvc->dispatcher->generate_url
                             (
-                                'apps_by_title',
+                                'apps_by_name',
                                 array
                                 (
                                     'os' => $package->repoos,
                                     'version' => $package->repoosversion,
                                     'ux' => $this->data['ux'],
                                     'basecategory' => $this->data['basecategory'],
-                                    'packagetitle' => $package->packagetitle
+                                    'packagename' => $package->packagename
                                 ),
                                 $this->request
                             );
@@ -997,22 +992,22 @@ class com_meego_packages_controllers_package
                 else
                 {
                     // local url to a package index page
-                    $this->data['packages'][$package->packagetitle]['localurl'] = $tree_url;
+                    $this->data['packages'][$package->packagename]['localurl'] = $tree_url;
                 }
                 // gather some basic stats
-                $stats = self::get_statistics($package->packagetitle);
+                $stats = self::get_statistics($package->packagename);
 
                 // set the total number of comments
-                $this->data['packages'][$package->packagetitle]['number_of_comments'] = $stats['number_of_comments'];
+                $this->data['packages'][$package->packagename]['number_of_comments'] = $stats['number_of_comments'];
 
                 // the stars as html snippet for the average rating; should be used as-is in the template
-                $this->data['packages'][$package->packagetitle]['stars'] = com_meego_ratings_controllers_rating::draw_stars($stats['average_rating']);
+                $this->data['packages'][$package->packagename]['stars'] = com_meego_ratings_controllers_rating::draw_stars($stats['average_rating']);
 
                 // set a longer description
-                $this->data['packages'][$package->packagetitle]['description'] = $package->packagedescription;
+                $this->data['packages'][$package->packagename]['description'] = $package->packagedescription;
 
                 // set a screenshoturl if the package object has any
-                $this->data['packages'][$package->packagetitle]['screenshoturl'] = false;
+                $this->data['packages'][$package->packagename]['screenshoturl'] = false;
 
                 $_package = new com_meego_package($package->packageid);
                 $attachments = $_package->list_attachments();
@@ -1020,9 +1015,9 @@ class com_meego_packages_controllers_package
                 foreach ($attachments as $attachment)
                 {
                     if (   $attachment->mimetype == 'image/png'
-                        && ! $this->data['packages'][$package->packagetitle]['screenshoturl'])
+                        && ! $this->data['packages'][$package->packagename]['screenshoturl'])
                     {
-                        $this->data['packages'][$package->packagetitle]['screenshoturl'] = $this->mvc->dispatcher->generate_url
+                        $this->data['packages'][$package->packagename]['screenshoturl'] = $this->mvc->dispatcher->generate_url
                         (
                             'attachmentserver_variant',
                             array
@@ -1039,7 +1034,7 @@ class com_meego_packages_controllers_package
             }
 
             // we group the variants into providers. a provider is basically a project repository, e.g. home:fal
-            $this->data['packages'][$package->packagetitle]['providers'][$package->repoprojectname]['projectname'] = $package->repoprojectname;
+            $this->data['packages'][$package->packagename]['providers'][$package->repoprojectname]['projectname'] = $package->repoprojectname;
 
             // if the UX is empty then we consider the package to be good for all UXes
             // this value is used in the template to show a proper icon
@@ -1056,7 +1051,7 @@ class com_meego_packages_controllers_package
                 'package_instance',
                 array
                 (
-                    'package' => $package->packagetitle,
+                    'package' => $package->packagename,
                     'version' => $package->packageversion,
                     'project' => $package->repoprojectname,
                     'repository' => $package->reponame,
@@ -1080,21 +1075,21 @@ class com_meego_packages_controllers_package
             {
                 $package->localurl = $this->mvc->dispatcher->generate_url
                 (
-                    'apps_by_title',
+                    'apps_by_name',
                     array
                     (
                         'os' => $package->repoos,
                         'version' => $package->repoosversion,
                         'ux' => $package->ux,
                         'basecategory' => $basecategory,
-                        'packagetitle' => $package->packagetitle
+                        'packagename' => $package->packagename
                     ),
                     $this->request
                 );
             }
 
             // the variants are basically the versions built for different hardware architectures (not UXes)
-            $this->data['packages'][$package->packagetitle]['providers'][$package->repoprojectname]['variants'][] = $package;
+            $this->data['packages'][$package->packagename]['providers'][$package->repoprojectname]['variants'][] = $package;
         }
     }
 

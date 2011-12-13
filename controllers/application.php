@@ -188,7 +188,7 @@ class com_meego_packages_controllers_application
      * Get staging applications that are in repos of staging projects for a base category but
      * only if they belong to a certain ux and to a top project that is configurable
      *
-     * @param array of args (os, version, ux, basecategory, packagetitle)
+     * @param array of args (os, version, ux, basecategory, packagename)
      */
     public function get_staging_applications(array $args)
     {
@@ -199,7 +199,7 @@ class com_meego_packages_controllers_application
      * Get staging applications that are in repos of staging projects for a base category but
      * only if they belong to a certain ux and to a top project that is configurable
      *
-     * @param array of args (os, version, ux, basecategory, packagetitle)
+     * @param array of args (os, version, ux, basecategory, packagename)
      */
     public function get_newest_applications(array $args)
     {
@@ -209,7 +209,7 @@ class com_meego_packages_controllers_application
     /**
      * Get the 3 hottest application
      *
-     * @param array of args (os, version, ux, basecategory, packagetitle)
+     * @param array of args (os, version, ux, basecategory, packagename)
      */
     public function get_hottest_applications(array $args)
     {
@@ -223,7 +223,7 @@ class com_meego_packages_controllers_application
      * This is eventually filters the results of
      * get_packages_by_basecategory()
      *
-     * @param array of args (os, version, ux, basecategory, packagetitle, search)
+     * @param array of args (os, version, ux, basecategory, packagename, search)
      * @param boolean true indicates the need of the counter only
      * @param string filter type 'top' deal with apps in top projects; 'staging' work on apps in staging projects only
      *
@@ -247,7 +247,7 @@ class com_meego_packages_controllers_application
         $this->data['packages'] = array();
         $this->data['basecategory'] = false;
         $this->data['categorytree'] = false;
-        $this->data['packagetitle'] = false;
+        $this->data['packagename'] = false;
 
         $default_os = $this->mvc->configuration->default['os'];
 
@@ -291,14 +291,14 @@ class com_meego_packages_controllers_application
             $args['ux'] = false;
         }
 
-        if (   array_key_exists('packagetitle', $args)
-            && $args['packagetitle'])
+        if (   array_key_exists('packagename', $args)
+            && $args['packagename'])
         {
-            $this->data['packagetitle'] = $args['packagetitle'];
+            $this->data['packagename'] = $args['packagename'];
         }
         else
         {
-            $args['packagetitle'] = false;
+            $args['packagename'] = false;
         }
 
         $freetext_search = null;
@@ -320,7 +320,7 @@ class com_meego_packages_controllers_application
         else
         {
             // this sets data['packages'] and we just need to filter that
-            $packages = self::get_filtered_applications($this->data['os'], $this->data['version'], 0, 0, $this->data['ux'], $args['packagetitle'], $filter_type, $freetext_search);
+            $packages = self::get_filtered_applications($this->data['os'], $this->data['version'], 0, 0, $this->data['ux'], $args['packagename'], $filter_type, $freetext_search);
         }
 
         $this->data['rows'] = false;
@@ -334,7 +334,7 @@ class com_meego_packages_controllers_application
         {
             $this->data['packages'] = array();
 
-            if ($this->data['packagetitle'])
+            if ($this->data['packagename'])
             {
                 // what if we just redirect?
                 $url = '..';
@@ -467,14 +467,14 @@ class com_meego_packages_controllers_application
         $this->data['can_post'] = false;
 
         // if an exact application is shown
-        if (   $this->data['packagetitle']
+        if (   $this->data['packagename']
             && count($this->data['packages']))
         {
             // enable commenting and check if user has rated yet
             if ($this->isuser)
             {
                 $this->data['can_post'] = true;
-                $this->data['can_rate'] = self::can_rate($this->data['packages'][$this->data['packagetitle']]['packageguid']);
+                $this->data['can_rate'] = self::can_rate($this->data['packages'][$this->data['packagename']]['packageguid']);
 
                 self::enable_commenting($filter_type);
             }
@@ -491,7 +491,7 @@ class com_meego_packages_controllers_application
             $url = '..';
             $this->mvc->head->relocate($url);
 
-            if ($this->data['packagetitle'])
+            if ($this->data['packagename'])
             {
                 $error_msg = $this->mvc->i18n->get('no_such_package');
             }
@@ -553,7 +553,7 @@ class com_meego_packages_controllers_application
         {
             if ($package)
             {
-                $apps[$package->packagetitle] = $package->packagetitle;
+                $apps[$package->packagename] = $package->packagename;
             }
         }
 
@@ -590,13 +590,13 @@ class com_meego_packages_controllers_application
             // gather all packages from each relation
             foreach ($relations as $relation)
             {
-                if ($args['packagetitle'])
+                if ($args['packagename'])
                 {
-                    $filtered = self::get_filtered_applications($args['os'], null, $relation->packagecategory, $basecategory->id, $ux, $args['packagetitle'], $filter_type, $freetext_search);
+                    $filtered = self::get_filtered_applications($args['os'], null, $relation->packagecategory, $basecategory->id, $ux, $args['packagename'], $filter_type, $freetext_search);
                 }
                 else
                 {
-                    $filtered = self::get_filtered_applications($args['os'], $args['version'], $relation->packagecategory, $basecategory->id, $ux, $args['packagetitle'], $filter_type, $freetext_search);
+                    $filtered = self::get_filtered_applications($args['os'], $args['version'], $relation->packagecategory, $basecategory->id, $ux, $args['packagename'], $filter_type, $freetext_search);
                 }
 
                 if (is_array($filtered))
@@ -605,18 +605,18 @@ class com_meego_packages_controllers_application
                 }
             }
 
-            // sort the packages by title
+            // sort the packages by name
             if (count($packages))
             {
                 uasort(
                     $packages,
                     function($a, $b)
                     {
-                        if ($a->packagetitle == $b->packagetitle)
+                        if ($a->packagename == $b->packagename)
                         {
                             return 0;
                         }
-                        return ($a->packagetitle < $b->packagetitle) ? -1 : 1;
+                        return ($a->packagename < $b->packagename) ? -1 : 1;
                     }
                 );
             }
@@ -640,16 +640,16 @@ class com_meego_packages_controllers_application
      * @param string version of the OS
      * @param integer package category id
      * @param string ux name
-     * @param string package title
+     * @param string package name
      * @param string filter type "top" or "staging" or "mix" (means both top and staging)
      *               default filter type: top
      * @param string for free text search: title, name, summary, filename will be searched.
      *
      * @return array of com_meego_package_details objects
      */
-    public function get_filtered_applications($os = null, $os_version = null, $packagecategory_id = 0, $basecategory_id = 0, $ux_name = false, $package_title = false, $filter_type = 'top', $freetext_search = null)
+    public function get_filtered_applications($os = null, $os_version = null, $packagecategory_id = 0, $basecategory_id = 0, $ux_name = false, $package_name = false, $filter_type = 'top', $freetext_search = null)
     {
-        $this->mvc->log("Get filtered apps: " . $os . ', ' . $os_version . ', ' . $packagecategory_id . ', ' . $ux_name . ', ' . $package_title . ', ' . $filter_type, 'info');
+        $this->mvc->log("Get filtered apps: " . $os . ', ' . $os_version . ', ' . $packagecategory_id . ', ' . $ux_name . ', ' . $package_name . ', ' . $filter_type, 'info');
 
         $apps = null;
         $packages = array();
@@ -659,7 +659,7 @@ class com_meego_packages_controllers_application
         $packagecategory_constraint = null;
         $basecategory_constraint = null;
         $ux_constraint = null;
-        $packagetitle_constraint = null;
+        $packagename_constraint = null;
         $freetext_search_constraint = null;
 
         $repo_constraint = new midgard_query_constraint(
@@ -722,13 +722,13 @@ class com_meego_packages_controllers_application
             ));
         }
 
-        if (   is_string($package_title)
-            && strlen($package_title))
+        if (   is_string($package_name)
+            && strlen($package_name))
         {
-            $packagetitle_constraint = new midgard_query_constraint(
-                new midgard_query_property('packagetitle'),
+            $packagename_constraint = new midgard_query_constraint(
+                new midgard_query_property('packagename'),
                 '=',
-                new midgard_query_value($package_title)
+                new midgard_query_value($package_name)
             );
         }
         elseif (isset($freetext_search))
@@ -898,9 +898,9 @@ class com_meego_packages_controllers_application
         {
             $qc->add_constraint($ux_constraint);
         }
-        if ($packagetitle_constraint)
+        if ($packagename_constraint)
         {
-            $qc->add_constraint($packagetitle_constraint);
+            $qc->add_constraint($packagename_constraint);
         }
         elseif ($freetext_search_constraint)
         {
@@ -909,7 +909,7 @@ class com_meego_packages_controllers_application
 
         $q->set_constraint($qc);
 
-        if ($packagetitle_constraint)
+        if ($packagename_constraint)
         {
             // if we look for an exact title then make sure we sort packages by versions
             // this way when we do the filter_applications the associative array returned
@@ -918,14 +918,14 @@ class com_meego_packages_controllers_application
         }
 
         // sort by title
-        //$q->add_order(new midgard_query_property('packagetitle', $storage), SORT_ASC);
+        //$q->add_order(new midgard_query_property('packagename', $storage), SORT_ASC);
 
         $q->execute();
 
         $all_objects = $q->list_objects();
 
         // filter apps so that only the ones remain that are allowed by package filter configuration
-        if ($packagetitle_constraint)
+        if ($packagename_constraint)
         {
             // no unique array in case an exact package was requested
             // otherwise we will loose the available architectures
@@ -991,7 +991,7 @@ class com_meego_packages_controllers_application
 
             if ($unique)
             {
-                $localpackages[$package->packagetitle] = $package;
+                $localpackages[$package->packagename] = $package;
             }
             else
             {
@@ -1028,59 +1028,62 @@ class com_meego_packages_controllers_application
 
         foreach ($packages as $package)
         {
-            if (! isset($this->data['packages'][$package->packagetitle]['name']))
+            if (! isset($this->data['packages'][$package->packagename]['name']))
             {
                 // set the guid
-                $this->data['packages'][$package->packagetitle]['packageguid'] = $package->packageguid;
+                $this->data['packages'][$package->packagename]['packageguid'] = $package->packageguid;
 
                 // set the name
-                $this->data['packages'][$package->packagetitle]['name'] = $package->packagetitle;
+                $this->data['packages'][$package->packagename]['name'] = $package->packagename;
+
+                // set the title
+                $this->data['packages'][$package->packagename]['title'] = $package->packagetitle;
 
                 // get roles
-                $this->data['packages'][$package->packagetitle]['roles'] = self::get_roles($package->packageguid);
+                $this->data['packages'][$package->packagename]['roles'] = self::get_roles($package->packageguid);
 
                 // gather some basic stats
-                $stats = com_meego_packages_controllers_package::get_statistics($package->packagetitle);
+                $stats = com_meego_packages_controllers_package::get_statistics($package->packagename);
 
                 // set the total number of comments
-                $this->data['packages'][$package->packagetitle]['number_of_comments'] = $stats['number_of_comments'];
+                $this->data['packages'][$package->packagename]['number_of_comments'] = $stats['number_of_comments'];
 
                 // figure out if there are posted forms for this app
-                $this->data['packages'][$package->packagetitle]['posted_forms'] = count(com_meego_packages_forms::get_all_forms($package->packageguid));
+                $this->data['packages'][$package->packagename]['posted_forms'] = count(com_meego_packages_forms::get_all_forms($package->packageguid));
 
                 if (array_key_exists('number_of_rates', $stats))
                 {
                     // total number of rates
-                    $this->data['packages'][$package->packagetitle]['number_of_rates'] = $stats['number_of_rates'];
+                    $this->data['packages'][$package->packagename]['number_of_rates'] = $stats['number_of_rates'];
                 }
 
                 // the stars as html snippet for the average rating; should be used as-is in the template
-                $this->data['packages'][$package->packagetitle]['average_rating'] = $stats['average_rating'];
-                $this->data['packages'][$package->packagetitle]['stars'] = com_meego_ratings_controllers_rating::draw_stars($stats['average_rating']);
+                $this->data['packages'][$package->packagename]['average_rating'] = $stats['average_rating'];
+                $this->data['packages'][$package->packagename]['stars'] = com_meego_ratings_controllers_rating::draw_stars($stats['average_rating']);
 
                 // collect ratings and comments (used in application detailed view)
-                if (! array_key_exists('ratings', $this->data['packages'][$package->packagetitle]))
+                if (! array_key_exists('ratings', $this->data['packages'][$package->packagename]))
                 {
-                    $this->data['packages'][$package->packagetitle]['ratings'] = array();
+                    $this->data['packages'][$package->packagename]['ratings'] = array();
                 }
 
-                $ratings = self::prepare_ratings($package->packagetitle);
-                $this->data['packages'][$package->packagetitle]['ratings'] = $ratings['ratings'];
-                $this->data['packages'][$package->packagetitle]['is_there_comment'] = $ratings['comment'];
+                $ratings = self::prepare_ratings($package->packagename);
+                $this->data['packages'][$package->packagename]['ratings'] = $ratings['ratings'];
+                $this->data['packages'][$package->packagename]['is_there_comment'] = $ratings['comment'];
 
                 // set a summary
-                $this->data['packages'][$package->packagetitle]['summary'] = $package->packagesummary;
+                $this->data['packages'][$package->packagename]['summary'] = $package->packagesummary;
                 // set a longer description
-                $this->data['packages'][$package->packagetitle]['description'] = $package->packagedescription;
-                $this->data['packages'][$package->packagetitle]['basecategoryname'] = $package->basecategoryname;
+                $this->data['packages'][$package->packagename]['description'] = $package->packagedescription;
+                $this->data['packages'][$package->packagename]['basecategoryname'] = $package->basecategoryname;
                 // base category name
 
-                $this->data['packages'][$package->packagetitle]['iconurl'] = false;
-                $this->data['packages'][$package->packagetitle]['screenshoturl'] = false;
+                $this->data['packages'][$package->packagename]['iconurl'] = false;
+                $this->data['packages'][$package->packagename]['screenshoturl'] = false;
 
                 // a package may have multiple arches
                 // but we should nominate one to be the default in order to support the new design
-                $this->data['packages'][$package->packagetitle]['defaultdownloadurl'] = false;
+                $this->data['packages'][$package->packagename]['defaultdownloadurl'] = false;
 
                 $_package = new com_meego_package($package->packageid);
 
@@ -1089,7 +1092,7 @@ class com_meego_packages_controllers_application
                 $_icon_marker = 'icon.png';
                 $_screenshot_marker = 'screenshot.png';
 
-                $this->data['packages'][$package->packagetitle]['screenshots'] = false;
+                $this->data['packages'][$package->packagename]['screenshots'] = false;
 
                 foreach ($attachments as $attachment)
                 {
@@ -1097,7 +1100,7 @@ class com_meego_packages_controllers_application
                     {
                         if (strrpos($attachment->name, $_screenshot_marker) !== false)
                         {
-                            $this->data['packages'][$package->packagetitle]['screenshots'][] = $this->mvc->dispatcher->generate_url
+                            $this->data['packages'][$package->packagename]['screenshots'][] = $this->mvc->dispatcher->generate_url
                             (
                                 'attachmentserver_variant',
                                 array
@@ -1111,9 +1114,9 @@ class com_meego_packages_controllers_application
                         }
 
                         if (    strrpos($attachment->name, $_icon_marker) !== false
-                             && ! $this->data['packages'][$package->packagetitle]['iconurl'])
+                             && ! $this->data['packages'][$package->packagename]['iconurl'])
                         {
-                            $this->data['packages'][$package->packagetitle]['iconurl'] = $this->mvc->dispatcher->generate_url
+                            $this->data['packages'][$package->packagename]['iconurl'] = $this->mvc->dispatcher->generate_url
                             (
                                 'attachmentserver_variant',
                                 array
@@ -1129,9 +1132,9 @@ class com_meego_packages_controllers_application
                 }
             }
 
-            if (count($this->data['packages'][$package->packagetitle]['screenshots']))
+            if (count($this->data['packages'][$package->packagename]['screenshots']))
             {
-                $this->data['packages'][$package->packagetitle]['screenshoturl'] = $this->data['packages'][$package->packagetitle]['screenshots'][0];
+                $this->data['packages'][$package->packagename]['screenshoturl'] = $this->data['packages'][$package->packagename]['screenshots'][0];
             }
 
             // if the UX is empty then we consider the package to be good for all UXes
@@ -1151,7 +1154,7 @@ class com_meego_packages_controllers_application
                 'package_instance',
                 array
                 (
-                    'package' => $package->packagetitle,
+                    'package' => $package->packagename,
                     'version' => $package->packageversion,
                     'project' => $package->repoprojectname,
                     'repository' => $package->reponame,
@@ -1202,28 +1205,28 @@ class com_meego_packages_controllers_application
 
             // set the default download url for the package
             if (     array_key_exists($index, $latest['variants'])
-                && ! $this->data['packages'][$package->packagetitle]['defaultdownloadurl'])
+                && ! $this->data['packages'][$package->packagename]['defaultdownloadurl'])
             {
                 // index was set at the beginning of this method
-                $this->data['packages'][$package->packagetitle]['defaultdownloadurl'] = $latest['variants'][$index]->packageinstallfileurl;
+                $this->data['packages'][$package->packagename]['defaultdownloadurl'] = $latest['variants'][$index]->packageinstallfileurl;
 
                 // set a different downloadurl in case the configured download schema for this OS is 'apps'
                 if (   array_key_exists('download', $this->mvc->configuration->os_ux[$latest['variants'][$index]->repoos])
                     && $this->mvc->configuration->os_ux[$latest['variants'][$index]->repoos]['download'] == 'apps')
                 {
-                    $this->data['packages'][$package->packagetitle]['defaultdownloadurl'] = 'apps://' . $latest['variants'][$index]->packageid;
+                    $this->data['packages'][$package->packagename]['defaultdownloadurl'] = 'apps://' . $latest['variants'][$index]->packageid;
                 }
             }
 
             // set the latest of this package
-            if (! array_key_exists('latest', $this->data['packages'][$package->packagetitle]))
+            if (! array_key_exists('latest', $this->data['packages'][$package->packagename]))
             {
-                $this->data['packages'][$package->packagetitle]['latest'] = array('version' => '', 'variants' => array());
+                $this->data['packages'][$package->packagename]['latest'] = array('version' => '', 'variants' => array());
             }
 
-            if ($this->data['packages'][$package->packagetitle]['latest']['version'] <= $latest['version'])
+            if ($this->data['packages'][$package->packagename]['latest']['version'] <= $latest['version'])
             {
-                $this->data['packages'][$package->packagetitle]['latest'] = $latest;
+                $this->data['packages'][$package->packagename]['latest'] = $latest;
             }
 
             if (array_key_exists($latest['version'], $older))
@@ -1233,19 +1236,19 @@ class com_meego_packages_controllers_application
             }
 
             // always keep it up-to-date
-            $this->data['packages'][$package->packagetitle]['older'] = $older;
+            $this->data['packages'][$package->packagename]['older'] = $older;
 
             switch($filter_type)
             {
                 case 'staging':
-                    $route_id = 'staging_apps_by_title';
+                    $route_id = 'staging_apps_by_name';
                     break;
                 case 'top':
                 default:
-                    $route_id = 'apps_by_title';
+                    $route_id = 'apps_by_name';
             }
 
-            $this->data['packages'][$package->packagetitle]['localurl'] = $this->mvc->dispatcher->generate_url
+            $this->data['packages'][$package->packagename]['localurl'] = $this->mvc->dispatcher->generate_url
             (
                 $route_id,
                 array
@@ -1254,7 +1257,7 @@ class com_meego_packages_controllers_application
                     'version' => $package->repoosversion,
                     'ux' => (is_array($matched) && array_key_exists('ux', $matched)) ? $matched['ux'] : $package->ux,//$latest['ux'],
                     'basecategory' => com_meego_packages_controllers_package::determine_base_category($package), //$this->data['basecategory'],
-                    'packagetitle' => $package->packagetitle
+                    'packagename' => $package->packagename
                 ),
                 $this->request
             );
@@ -1267,9 +1270,9 @@ class com_meego_packages_controllers_application
 
             // get the workflows for this package
             // todo: this will get workflows for older versions too!
-            if (! array_key_exists('workflows', $this->data['packages'][$package->packagetitle]))
+            if (! array_key_exists('workflows', $this->data['packages'][$package->packagename]))
             {
-                $this->data['packages'][$package->packagetitle]['workflows'] = array();
+                $this->data['packages'][$package->packagename]['workflows'] = array();
             }
 
             $object = new com_meego_package($package->packageguid);
@@ -1285,7 +1288,7 @@ class com_meego_packages_controllers_application
                         $workflow_data['css'] .= ' login';
                     }
 
-                    $this->data['packages'][$package->packagetitle]['workflows'][] = array
+                    $this->data['packages'][$package->packagename]['workflows'][] = array
                     (
                         'label' => $workflow_data['label'],
                         'url' => $this->mvc->dispatcher->generate_url
@@ -1311,7 +1314,7 @@ class com_meego_packages_controllers_application
         if (isset($package))
         {
             // let's unset the default variant, so we don't list it among the "other downloads"
-            unset($this->data['packages'][$package->packagetitle]['latest']['variants'][$index]);
+            unset($this->data['packages'][$package->packagename]['latest']['variants'][$index]);
         }
 
         // and we don't need this either
@@ -1331,11 +1334,11 @@ class com_meego_packages_controllers_application
         switch($filter_type)
         {
             case 'staging':
-                $route_id = 'staging_apps_by_title';
+                $route_id = 'staging_apps_by_name';
                 break;
             case 'top':
             default:
-                $route_id = 'apps_by_title';
+                $route_id = 'apps_by_name';
         }
 
         $this->data['relocate'] = $this->mvc->dispatcher->generate_url(
@@ -1346,15 +1349,15 @@ class com_meego_packages_controllers_application
                 'version' => $matched['version'],
                 'ux' => $matched['ux'],
                 'basecategory' => $matched['basecategory'],
-                'packagetitle' => $matched['packagetitle']
+                'packagename' => $matched['packagename']
             ),
             $this->request
         );
 
-        if (count($this->data['packages'][$this->data['packagetitle']]['latest']['variants']))
+        if (count($this->data['packages'][$this->data['packagename']]['latest']['variants']))
         {
             // set all variants so user can choose
-            foreach ($this->data['packages'][$this->data['packagetitle']]['latest']['variants'] as $variant)
+            foreach ($this->data['packages'][$this->data['packagename']]['latest']['variants'] as $variant)
             {
                 $this->data['architectures'][$variant->repoarch] = array
                 (
@@ -1364,13 +1367,13 @@ class com_meego_packages_controllers_application
             }
 
             // get the 1st variant and set packageguid variable, in case we don't offer choosing a variant
-            $variant = reset($this->data['packages'][$this->data['packagetitle']]['latest']['variants']);
+            $variant = reset($this->data['packages'][$this->data['packagename']]['latest']['variants']);
             $this->data['packageguid'] = $variant->packageguid;
         }
 
         if (! array_key_exists('packageguid', $this->data))
         {
-            $this->data['packageguid'] = $this->data['packages'][$this->data['packagetitle']]['packageguid'];
+            $this->data['packageguid'] = $this->data['packages'][$this->data['packagename']]['packageguid'];
         }
 
         if (array_key_exists('packageguid', $this->data))
@@ -1423,7 +1426,7 @@ class com_meego_packages_controllers_application
      * @param string title of the application
      * @return array of ratings together with their comments
      */
-    public function prepare_ratings($application_title = null)
+    public function prepare_ratings($application_name = null)
     {
         // the array to be returned
         // the comment flag is set to tru when the 1st comment found
@@ -1437,9 +1440,9 @@ class com_meego_packages_controllers_application
         (
             new midgard_query_constraint
             (
-                new midgard_query_property('title'),
+                new midgard_query_property('name'),
                 '=',
-                new midgard_query_value($application_title)
+                new midgard_query_value($application_name)
             )
         );
 

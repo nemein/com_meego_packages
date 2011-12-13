@@ -332,7 +332,7 @@ class com_meego_packages_injector
                 );
             }
 
-            if (substr($route->id, 0, 21) == 'staging_apps_by_title')
+            if (substr($route->id, 0, 21) == 'staging_apps_by_name')
             {
                 $link = '..';
             }
@@ -392,8 +392,8 @@ class com_meego_packages_injector
             )
         );
 
-        if (   $route_id == "apps_by_title"
-            || $route_id == "staging_apps_by_title")
+        if (   $route_id == "apps_by_name"
+            || $route_id == "staging_apps_by_name")
         {
             // slide gallery stuff
             $this->mvc->head->add_jsfile(MIDGARDMVC_STATIC_URL . '/com_meego_packages/js/jquery.slide-gallery.js');

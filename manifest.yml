@@ -87,17 +87,17 @@ routes:
         template_aliases:
             content: cmp-apps-in-row-block
 
-    # show a package overview based on UX / basecategory / packagetitle
-    apps_by_title:
-        path: /applications/{$os}/{$string:version}/{$ux}/{$basecategory}/{$packagetitle}
+    # show a package overview based on UX / basecategory / packagename
+    apps_by_name:
+        path: /applications/{$os}/{$string:version}/{$ux}/{$basecategory}/{$packagename}
         controller: com_meego_packages_controllers_application
         action: applications
         template_aliases:
             content: cmp-show-application
 
-    # show a package overview based on UX / basecategory / packagetitle
-    staging_apps_by_title:
-        path: /staging/applications/{$os}/{$string:version}/{$ux}/{$basecategory}/{$packagetitle}
+    # show a package overview based on UX / basecategory / packagename
+    staging_apps_by_name:
+        path: /staging/applications/{$os}/{$string:version}/{$ux}/{$basecategory}/{$packagename}
         controller: com_meego_packages_controllers_application
         action: staging_applications
         template_aliases:
@@ -248,7 +248,7 @@ routes:
     # to give an overview of a package by listing all
     # the comments / ratings that each of its variants received
     package_overview_tree:
-        path: /packages/tree/{$categorytree}/{$packagetitle}
+        path: /packages/tree/{$categorytree}/{$packagename}
         controller: com_meego_packages_controllers_package
         action: package_overview
         template_aliases:
@@ -332,4 +332,11 @@ routes:
         root_only: true
         template_aliases:
             root: midgardmvc-show-json
+
+    archive:
+        path: /archive/{$packagename}
+        controller: com_meego_packages_controllers_applications
+        action: archive
+        template_aliases:
+            content: cmp-show-application
 

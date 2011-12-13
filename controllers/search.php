@@ -63,14 +63,14 @@ class com_meego_packages_controllers_search
             (
                 $this->mvc->dispatcher->generate_url
                 (
-                    'apps_by_title',
+                    'apps_by_name',
                     array
                     (
                         'os' => $query['os'],
                         'version' => $query['version'],
                         'ux' => $query['ux'],
                         'basecategory' => $package['basecategoryname'],
-                        'packagetitle' => $package['name']
+                        'packagename' => $package['name']
                     ),
                     $this->request
                 )
