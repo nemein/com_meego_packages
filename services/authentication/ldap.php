@@ -63,6 +63,7 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
 
     private function create_account(array $ldapuser, array $tokens)
     {
+        $person = null;
         midgardmvc_core::get_instance()->authorization->enter_sudo('midgardmvc_core');
         $transaction = new midgard_transaction();
         $transaction->begin();
