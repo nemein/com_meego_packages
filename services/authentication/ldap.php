@@ -85,6 +85,7 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
 
         $q->set_constraint($qc);
         $q->execute();
+        $q->set_readonly(false);
         $persons = $q->list_objects();
 
         if (count($persons) == 0)
@@ -142,6 +143,11 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
                 // we have one or more accounts, we can safely take the 1st one
                 $person = new midgard_person($accounts[0]->personguid);
             }
+        }
+
+        if (! $person)
+        {
+            return false;
         }
 
         $user = new midgard_user();
