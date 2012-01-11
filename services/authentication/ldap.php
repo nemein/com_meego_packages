@@ -85,7 +85,7 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
 
         $q->set_constraint($qc);
         $q->execute();
-        $q->set_readonly(false);
+        $q->toggle_readonly(false);
         $persons = $q->list_objects();
 
         if (count($persons) == 0)
