@@ -28,7 +28,7 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
     /**
      * Validate user against LDAP and then generate a session
      */
-    protected function create_login_session(array $tokens, $clientip = null)
+    public function create_login_session(array $tokens, $clientip = null)
     {
         // Validate user against LDAP
         $ldapuser = $this->ldap_authenticate($tokens);
@@ -187,7 +187,7 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
      *
      * @return Array with username (uid), firstname (cn) and email (mail) coming from LDAP
      */
-    private function ldap_authenticate(array $tokens)
+    public function ldap_authenticate(array $tokens)
     {
         if (   !isset($tokens['login'])
             || !isset($tokens['password']))
