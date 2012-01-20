@@ -33,7 +33,7 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
         // Validate user against LDAP
         $ldapuser = $this->ldap_authenticate($tokens);
 
-        if (!$ldapuser)
+        if (! $ldapuser)
         {
             return false;
         }
@@ -48,7 +48,7 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
             return true;
         }
         // Otherwise we need to create the necessary Midgard account
-        if (!$this->create_account($ldapuser, $tokens))
+        if (! $this->create_account($ldapuser, $tokens))
         {
             midgardmvc_core::get_instance()->context->get_request()->set_data_item
             (
@@ -63,6 +63,7 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
 
     private function create_account(array $ldapuser, array $tokens)
     {
+        $user = null;
         $person = null;
         midgardmvc_core::get_instance()->authorization->enter_sudo('midgardmvc_core');
         $transaction = new midgard_transaction();
@@ -86,85 +87,113 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
 
         $q->set_constraint($qc);
         $q->execute();
-        $q->toggle_readonly(false);
+        //$q->toggle_readonly(false);
         $persons = $q->list_objects();
 
         if (count($persons) == 0)
         {
-            $person = new midgard_person();
-            $person->firstname = $ldapuser['firstname'];
-            $person->lastname = $ldapuser['lastname'];
-
-            if (! $person->create())
-            {
-                midgardmvc_core::get_instance()->log
-                (
-                    __CLASS__,
-                    "Creating midgard_person for LDAP user failed: " . midgard_connection::get_instance()->get_error_string(),
-                    'warning'
-                );
-
-                $transaction->rollback();
-                midgardmvc_core::get_instance()->authorization->leave_sudo();
-                return false;
-            }
-            $person->set_parameter('midgardmvc_core_services_authentication_ldap', 'employeenumber', $ldapuser['employeenumber']);
+            $person = $this->create_person($ldapuser, $tokens);
         }
         else
         {
             // we have multiple persons with the same firstname and lastname
-            // let's check for existing midgardmvc_accounts then
-            $storage = new midgard_query_storage('midgardmvc_account');
-            $q = new midgard_query_select($storage);
+            // let's see the corresponding midgard_user object and its login field
 
-            $qc = new midgard_query_constraint_group('AND');
-
-            $qc->add_constraint(new midgard_query_constraint(
-                new midgard_query_property('firstname'),
-                '=',
-                new midgard_query_value($ldapuser['firstname'])
-            ));
-            $qc->add_constraint(new midgard_query_constraint(
-                new midgard_query_property('lastname'),
-                '=',
-                new midgard_query_value($ldapuser['lastname'])
-            ));
-            $qc->add_constraint(new midgard_query_constraint(
-                new midgard_query_property('email'),
-                '=',
-                new midgard_query_value($ldapuser['email'])
-            ));
-
-            $q->set_constraint($qc);
-            $q->execute();
-            $accounts = $q->list_objects();
-
-            if (count($accounts) > 0)
+            foreach ($persons as $person)
             {
-                // we have one or more accounts, we can safely take the 1st one
-                $person = new midgard_person($accounts[0]->personguid);
+                $user = com_meego_packages_utils::get_user_by_person_guid($person->guid);
+                if ($user->login == $tokens['login'])
+                {
+                    break;
+                }
+                else
+                {
+                    $user = null;
+                    $person = null;
+                }
             }
         }
 
-        if (! $person)
+        if (! $user)
+        {
+            if (! $person)
+            {
+                $person = $this->create_person($ldapuser, $tokens);
+            }
+
+            if ($person)
+            {
+                $user = new midgard_user();
+                $user->login = $tokens['login'];
+                $user->password = '';
+                $user->usertype = 1;
+                $user->authtype = 'LDAP';
+                $user->active = true;
+                $user->set_person($person);
+
+                if (! $user->create())
+                {
+                    midgardmvc_core::get_instance()->log
+                    (
+                        __CLASS__,
+                        "Creating midgard_user for LDAP user failed: " . midgard_connection::get_instance()->get_error_string(),
+                        'warning'
+                    );
+
+                    $transaction->rollback();
+                    midgardmvc_core::get_instance()->authorization->leave_sudo();
+                    return false;
+                }
+            }
+        }
+
+        midgardmvc_core::get_instance()->authorization->leave_sudo();
+
+        if (! $transaction->commit())
         {
             return false;
         }
 
-        $user = new midgard_user();
-        $user->login = $tokens['login'];
-        $user->password = '';
-        $user->usertype = 1;
-        $user->authtype = 'LDAP';
-        $user->active = true;
-        $user->set_person($person);
+        return true;
+    }
 
-        if (!$user->create())
+
+    /**
+     * Create and returns a user object
+     */
+    private function create_person($ldapuser = null, $tokens = null)
+    {
+        if (! $ldapuser)
+        {
+            return false;
+        }
+
+        $person = new midgard_person();
+
+        $firstname = $ldapuser['firstname'];
+        $lastname = $ldapuser['lastname'];
+
+        if (   $firstname == ''
+            || $firstname == '--')
+        {
+            $firstname = $tokens['login'];
+        }
+
+        if (   $lastname == ''
+            || $lastname == '--')
+        {
+            $lastname = '';
+        }
+
+        $person->firstname = $firstname;
+        $person->lastname = $lastname;
+
+        if (! $person->create())
         {
             midgardmvc_core::get_instance()->log
             (
                 __CLASS__,
-                "Creating midgard_user for LDAP user failed: " . midgard_connection::get_instance()->get_error_string(),
+                "Creating midgard_person for LDAP user failed: " . midgard_connection::get_instance()->get_error_string(),
                 'warning'
             );
 
@@ -173,13 +202,9 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
             return false;
         }
 
-        midgardmvc_core::get_instance()->authorization->leave_sudo();
+        $person->set_parameter('midgardmvc_core_services_authentication_ldap', 'employeenumber', $ldapuser['employeenumber']);
 
-        if (!$transaction->commit())
-        {
-            return false;
-        }
-        return true;
+        return $person;
     }
 
     /**
