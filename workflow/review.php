@@ -47,7 +47,16 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
             return true;
         }
 
-        $user = midgardmvc_core::get_instance()->authentication->get_person();
+        // safety net
+        try
+        {
+            $user = midgardmvc_core::get_instance()->authentication->get_person();
+        }
+        catch (midgard_error_exception $e)
+        {
+            // if the person object is gone we will have an exception here
+            return false;
+        }
 
         //Hasn't reviewed yet
         $storage = new midgard_query_storage('midgardmvc_ui_forms_form_instance');
@@ -158,6 +167,13 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
      */
     public function start(midgard_object $object, array $args = null)
     {
+echo "review start\n";
+ob_flush();
+        if (! midgardmvc_core::get_instance()->authentication->is_user())
+        {
+            return false;
+        }
+
         $workflow = $this->get();
 
         $execution = new midgardmvc_helper_workflow_execution_interactive($workflow);
@@ -165,11 +181,14 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
         $execution->start();
 
         $values = array();
-        if (!$execution->hasEnded())
+
+        if (! $execution->hasEnded())
         {
             $values['execution'] = $execution->guid;
             return $values;
         }
+echo "review start end\n";
+ob_flush();
         return $values;
     }
 
