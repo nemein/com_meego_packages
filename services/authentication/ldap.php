@@ -45,6 +45,24 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
         // If user is already in DB we can just log in
         if (midgardmvc_core_services_authentication_sessionauth::create_login_session($tokens, $clientip))
         {
+            // check if the logged in user has a person object
+            // if not, then create it and assign the new person to the user object
+            $user = midgardmvc_core::get_instance()->authentication->get_user();
+            var_dump($user);
+
+            $persons = $this->get_persons($ldapuser, $user->person);
+
+            if (count($persons) == 0)
+            {
+                $person = $this->create_person($ldapuser, $tokens);
+                if ($person)
+                {
+                    $user->set_person($person);
+                    $user->update();
+                }
+            }
+            var_dump($user);
+            die;
             return true;
         }
         // Otherwise we need to create the necessary Midgard account
@@ -61,6 +79,9 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
         return midgardmvc_core_services_authentication_sessionauth::create_login_session($tokens, $clientip);
     }
 
+    /**
+     * Creates an account
+     */
     private function create_account(array $ldapuser, array $tokens)
     {
         $user = null;
@@ -69,26 +90,7 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
         $transaction = new midgard_transaction();
         $transaction->begin();
 
-        $storage = new midgard_query_storage('midgard_person');
-        $q = new midgard_query_select($storage);
-
-        $qc = new midgard_query_constraint_group('AND');
-
-        $qc->add_constraint(new midgard_query_constraint(
-            new midgard_query_property('firstname'),
-            '=',
-            new midgard_query_value($ldapuser['firstname'])
-        ));
-        $qc->add_constraint(new midgard_query_constraint(
-            new midgard_query_property('lastname'),
-            '=',
-            new midgard_query_value($ldapuser['lastname'])
-        ));
-
-        $q->set_constraint($qc);
-        $q->execute();
-        //$q->toggle_readonly(false);
-        $persons = $q->list_objects();
+        $persons = $this->get_persons();
 
         if (count($persons) == 0)
         {
@@ -157,9 +159,8 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
         return true;
     }
 
-
     /**
-     * Create and returns a user object
+     * Creates and returns a person object
      */
     private function create_person($ldapuser = null, $tokens = null)
     {
@@ -253,5 +254,51 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
         );
 
         return null;
+    }
+
+    /**
+     * Returns all person object that match the given ldapuser details
+     */
+    private function get_persons($ldapuser = null, $person_guid = null)
+    {
+        $retval = false;
+
+        if (is_array($ldapuser)
+            && array_key_exists('firstname', $ldapuser)
+            && array_key_exists('lastname', $ldapuser))
+        {
+            $storage = new midgard_query_storage('midgard_person');
+            $q = new midgard_query_select($storage);
+
+            $qc = new midgard_query_constraint_group('AND');
+
+            $qc->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('firstname'),
+                '=',
+                new midgard_query_value($ldapuser['firstname'])
+            ));
+            $qc->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('lastname'),
+                '=',
+                new midgard_query_value($ldapuser['lastname'])
+            ));
+
+            if ($person_guid)
+            {
+                $qc->add_constraint(new midgard_query_constraint(
+                    new midgard_query_property('guid'),
+                    '=',
+                    new midgard_query_value($person_guid)
+                ));
+            }
+
+            $q->set_constraint($qc);
+            $q->execute();
+
+            //$q->toggle_readonly(false);
+            $retval = $q->list_objects();
+        }
+
+        return $retval;
     }
 }
