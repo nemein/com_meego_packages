@@ -48,7 +48,6 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
             // check if the logged in user has a person object
             // if not, then create it and assign the new person to the user object
             $user = midgardmvc_core::get_instance()->authentication->get_user();
-            var_dump($user);
 
             $persons = $this->get_persons($ldapuser, $user->person);
 
@@ -61,8 +60,7 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
                     $user->update();
                 }
             }
-            var_dump($user);
-            die;
+
             return true;
         }
         // Otherwise we need to create the necessary Midgard account
