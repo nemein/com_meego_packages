@@ -65,6 +65,9 @@ latest:
     wetabos:
         version: 1.0
         ux: wetab
+    ce:
+        version: mw
+        ux: shared
 
 # map of os names used in the DB
 # Their pretty names could be used in the UI
@@ -78,6 +81,8 @@ os_map:
         name: MeeGo
     wetabos:
         name: WeTab
+    ce:
+        name: Nemo
 
 # Listing all UXes an OS may have
 os_ux:
@@ -87,7 +92,7 @@ os_ux:
         # The preferred download scheme http (for ypm files) or apps
         download: apps
     meego:
-        meegoce: Nemo
+        #meegoce: Nemo
         netbook: Netbook
         handset: Handset
         # unused UXes
@@ -97,6 +102,8 @@ os_ux:
         #   ivi: In Vehicle
     wetabos:
         wetab: WeTab
+    ce:
+        shared: Nemo
 
 # Each UX should have a default arch to provide a simple download link
 ux_arch_map:
@@ -105,6 +112,7 @@ ux_arch_map:
     wetab: i586
     harmattan: armv7el
     meegoce: armv7el
+    shared: armv7el
 
 # Allowed types of repositories from where packages can be imported
 os_groups:
@@ -123,8 +131,8 @@ top_projects:
     MeeGo:1.2:Harmattan:Apps:
         description: Some description
         staging: MeeGo:1.2:Harmattan:Apps:Testing
-    home:pycage:
-        description: initial wetab imports
+    CE:Apps:
+        description: Nemo CE Apps
         staging:
 
 # list of base categories as name: description pairs
@@ -168,6 +176,7 @@ sql_package_filters:
     - %-debug
     - %-debuginfo
     - %-dbg
+    - %debugsource%
     # libs are not apps
     - %-lib
     - %-libs
@@ -175,6 +184,9 @@ sql_package_filters:
     - %-doc%
     # runtime
     - %-runtime%
+    # certain libs
+    - libapiextractor0-10
+    - libgenrunner0-6
 
 # the maximum rate that can be given to a package
 maxrate: 5
