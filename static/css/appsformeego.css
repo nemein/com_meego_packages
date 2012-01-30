@@ -357,16 +357,21 @@ ul.userexp  li.harmattan a:hover {
 background: url(/midgardmvc-static/com_meego_packages/images/device-harmattan.png) no-repeat bottom;
 }
 
-ul.userexp  li.meegoce {
+ul.userexp  li.meegoce,
+ul.userexp  li.shared {
 /*height: 300px;*/
 padding: 0px 0px 0px 0px;
 }
 ul.userexp  li.meegoce a,
+ul.userexp  li.shared a,
 #popup_ver .cat-image.meegoce,
-div.category .cat-image.meegoce {
+#popup_ver .cat-image.shared,
+div.category .cat-image.meegoce,
+div.category .cat-image.shared {
 background: url(/midgardmvc-static/com_meego_packages/images/device-meegoce.png) no-repeat top;
 }
-ul.userexp  li.meegoce a:hover {
+ul.userexp  li.meegoce a:hover,
+ul.userexp  li.shared a:hover {
 background: url(/midgardmvc-static/com_meego_packages/images/device-meegoce.png) no-repeat bottom;
 }
 
