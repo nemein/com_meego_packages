@@ -207,14 +207,60 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
     }
 
     /**
+     * Checks if an account is avaialable
+     *
+     * @return array with user information (username, firstname, lastname, email, emloyeenumber)
+     *               or null if the account does not exist
+     */
+    public function ldap_check($tokens = null)
+    {
+        $userinfo = null;
+
+        if (! array_key_exists('login', $tokens))
+        {
+            return $userinfo;
+        }
+
+        $ds = ldap_connect($this->server);
+
+        if (! $ds)
+        {
+            midgardmvc_core::get_instance()->context->get_request()->set_data_item(
+                'midgardmvc_core_services_authentication_message',
+                midgardmvc_core::get_instance()->i18n->get('ldap authentication failed: no connection to server', 'midgardmvc_core')
+            );
+
+            return null;
+        }
+
+        ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+        $userinfo = parent::ldap_search($ds, $tokens['login']);
+
+        if (   $userinfo
+            && array_key_exists('password', $tokens))
+        {
+            // the user exists in LDAP, let's try the password too (by binding)
+            if (! @ldap_bind($ds, "cn={$tokens['login']},{$this->dn}", $tokens['password']))
+            {
+                // auth failed, let's null the userinfo array
+                $userinfo = null;
+            }
+        }
+
+        ldap_close($ds);
+
+        return $userinfo;
+    }
+
+    /**
      * Performs an LDAP bind; ie. authenticates
      *
      * @return Array with username (uid), firstname (cn) and email (mail) coming from LDAP
      */
     public function ldap_authenticate(array $tokens)
     {
-        if (   !isset($tokens['login'])
-            || !isset($tokens['password']))
+        if (   ! isset($tokens['login'])
+            || ! isset($tokens['password']))
         {
             midgardmvc_core::get_instance()->context->get_request()->set_data_item(
                 'midgardmvc_core_services_authentication_message',
@@ -225,7 +271,7 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
         }
 
         $ds = ldap_connect($this->server);
-        if (!$ds)
+        if (! $ds)
         {
             midgardmvc_core::get_instance()->context->get_request()->set_data_item(
                 'midgardmvc_core_services_authentication_message',
