@@ -229,7 +229,11 @@ div.list div.element div.title,
 div.list div.element div.version,
 div.list div.element div.posts,
 div.list div.element div.action,
-div.list div.element div.projectname {
+div.list div.element div.projectname,
+div.list div.element div.size,
+div.list div.element div.roles,
+div.list div.element div.submitted,
+div.list div.element div.type {
 display: inline-block;
 margin: 0 0 0.1em 0;
 }
@@ -262,6 +266,20 @@ width: 17em;
 
 div.list div.header .version,
 div.list div.element .version {
+width: 10em;
+}
+
+div.list div.header .submitted,
+div.list div.element .submitted {
+width: 17em;
+}
+
+div.list div.header .size,
+div.list div.element .size,
+div.list div.header .type,
+div.list div.element .type,
+div.list div.header .roles,
+div.list div.element .roles {
 width: 10em;
 }
 

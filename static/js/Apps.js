@@ -56,7 +56,6 @@ Apps = (function ()
         }
     };
 
-
     /**
     * Fetches an i18n string from the server and caches it
     * @param string ID

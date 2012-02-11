@@ -60,6 +60,7 @@ class com_meego_packages_controllers_package
             }
 
             $package->repositoryobject = $repositories[$package->repository];
+            $package->projectobject = new com_meego_project($package->repositoryobject->project);
 
             $package->localurl = $this->mvc->dispatcher->generate_url
             (
@@ -68,22 +69,19 @@ class com_meego_packages_controllers_package
                 (
                     'package' => $package->name,
                     'version' => $package->version,
-                    'project' => $args['project'],
+                    'project' => $package->projectobject->name,
                     'repository' => $repositories[$package->repository]->name,
                     'arch' => $repositories[$package->repository]->arch
                 ),
                 $this->request
             );
 
-            // get the name of the project the repository belongs to
-            $project = new com_meego_project($repository->project);
-
             $package->repositoryobject->localurl = $this->mvc->dispatcher->generate_url
             (
                 'repository',
                 array
                 (
-                    'project' => $project->name,
+                    'project' => $package->projectobject->name,
                     'repository' => $repositories[$package->repository]->name,
                     'arch' => $repositories[$package->repository]->arch
                 ),
@@ -1261,8 +1259,15 @@ class com_meego_packages_controllers_package
         $this->data['forms'] = $forms['forms'];
         $this->data['previous_page'] = $forms['previous_page'];
         $this->data['next_page'] = $forms['next_page'];
-        $this->data['items_shown'] = $forms['items_shown'];
-        $this->data['total_apps'] = $forms['total'];
+
+        if (isset($forms['items_shown']))
+        {
+            $this->data['items_shown'] = $forms['items_shown'];
+        }
+        if (isset($forms['total']))
+        {
+            $this->data['total_apps'] = $forms['total'];
+        }
     }
 
     /**

@@ -48,6 +48,7 @@ class com_meego_packages_injector
 
         $route = $request->get_route();
 
+        //echo "route id: " . $route->id . "\n"; ob_flush();
         if ($route->id == "apps_index")
         {
             $route->template_aliases['topbar'] = 'cmp-welcome-text';
@@ -86,7 +87,7 @@ class com_meego_packages_injector
         $matched = $route->get_matched();
 
         if ( ! $matched
-            && $route_id = 'search')
+            && $route->id = 'search')
         {
             // if we have a search we may be lucky and get a nicely set matched array
             $matched = $this->request->get_query();
@@ -211,10 +212,12 @@ class com_meego_packages_injector
 
                 // if we are not serving a staging_ route then
                 // check if the repo's project has a staging project configured
-                if (   substr($route->id, 0, 8) != 'staging_'
+                if (   $route->id == "basecategories_os_version_ux"
+                    && substr($route->id, 0, 8) != 'staging_'
                     && $repository->repoos == $os
                     && $this->mvc->configuration->top_projects[$repository->projectname]['staging'])
                 {
+                    //echo "call count of apps\n"; ob_flush();
                     $cnt = com_meego_packages_controllers_application::count_number_of_apps($repository->repoos, $repository->repoosversion, 0, $matched['ux'], 'staging');
 
                     if ($cnt)

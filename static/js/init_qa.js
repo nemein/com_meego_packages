@@ -68,7 +68,7 @@ jQuery(document).ready(function()
             }
         });
     });
-    // View submitted QA forms
+    // View submitted QA forms on the app page
     jQuery('div.app_forms div.list div.forms div.element a').live('click', function(event) {
         event.preventDefault();
 
@@ -103,5 +103,10 @@ jQuery(document).ready(function()
                 });
             }
         }
+    });
+    // View submitted QA forms on the app history page
+    jQuery('div.app_page.history div.element div.type span.qadetails').live('click', function(event) {
+        apps.log.call(apps, 'Request QA details on history page for guid: ' + jQuery(this).attr('rel'));
+        jQuery(this).parentsUntil('div.element').parent().find('div.app_qa_history:first').toggle();
     });
 });

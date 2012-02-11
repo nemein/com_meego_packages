@@ -235,6 +235,8 @@ class com_meego_packages_controllers_application
      */
     public function get_applications(array $args, $counter = false, $filter_type = 'top')
     {
+//$sumdt = 0;
+//$t1 = microtime(true);
         $cnt = 0;
 
         $retval = array();
@@ -343,167 +345,148 @@ class com_meego_packages_controllers_application
             return false;
         }
 
-        // enable for testing, if you need large packages array for paging
-        //$_package = array_pop($packages);
-        //$packages = array_fill(0, 90, $_package);
-        //$localpackages = $packages;
-        //$apps_counter = count($localpackages);
-
-        // real:
         $localpackages = $packages;
 
         $apps_counter = self::count_unique_apps($packages);
         $this->data['total_apps'] = $apps_counter;
 
-        // do the paging
-        // unfortunately we can't implement this using SQL constraint
-        // because we have a title filter feature that uses regexps
-        // and Midgard does not support REGEXP or RLIKE operators
-        // so it is easier to do the paging on the ready result set
-        // total number of packages (well apps in this context)
-        $current_page = 1;
-
-        if (   array_key_exists('page', $_GET)
-            && is_numeric($_GET['page'])
-            && $_GET['page'] > 0)
+        if (! $counter)
         {
-            $current_page = $_GET['page'];
-        }
+            // do the paging
+            // unfortunately we can't implement this using SQL constraint
+            // because we have a title filter feature that uses regexps
+            // and Midgard does not support REGEXP or RLIKE operators
+            // so it is easier to do the paging on the ready result set
+            // total number of packages (well apps in this context)
+            $current_page = 1;
 
-        $limit = $this->mvc->configuration->rows_per_page * $this->mvc->configuration->items_per_row;
-
-        $this->data['highest_page_number'] = ceil($apps_counter / $limit);
-
-        if ($apps_counter > 4 * $limit)
-        {
-            if (($current_page - 1) * $limit > $apps_counter)
+            if (   array_key_exists('page', $_GET)
+                && is_numeric($_GET['page'])
+                && $_GET['page'] > 0)
             {
-                $current_page = $this->data['highest_page_number'];
+                $current_page = $_GET['page'];
             }
 
-            if ($current_page > 4)
+            $limit = $this->mvc->configuration->rows_per_page * $this->mvc->configuration->items_per_row;
+
+            $this->data['highest_page_number'] = ceil($apps_counter / $limit);
+
+            if ($apps_counter > $limit)
             {
-                for ($i = $current_page - 3; $i <= $current_page; $i++)
+                if (($current_page - 1) * $limit > $apps_counter)
+                {
+                    $current_page = $this->data['highest_page_number'];
+                }
+
+                for ($i = 1; $i <= ceil($apps_counter / $limit); $i++)
                 {
                     $this->data['pages'][] =$i;
                 }
             }
-            else
+
+            if (   $current_page > 0
+                && $apps_counter > $limit)
             {
-                for ($i = 1; $i <= 4; $i++)
+                // we cut the result set according to paging request
+                $offset = ($current_page - 1) * $limit;
+
+                if ($offset > $apps_counter)
                 {
-                    $this->data['pages'][] = $i;
+                    $offset = $apps_counter - $limit;
                 }
-            }
-        }
 
-        if (   $current_page > 0
-            && $apps_counter > $limit)
-        {
-            // we cut the result set according to paging request
-            $offset = ($current_page - 1) * $limit;
-
-            if ($offset > $apps_counter)
-            {
-                $offset = $apps_counter - $limit;
-            }
-
-            if (($current_page - 1) > 0)
-            {
-                $this->data['previous_page'] = '?page=' . ($current_page - 1);
-            }
-
-            if ($current_page * $limit < $apps_counter)
-            {
-                $this->data['next_page'] = '?page=' . ($current_page + 1);
-            }
-
-            // make sure we have enough unique apps for set_data()
-            $cnt = $limit;
-            do
-            {
-                $localpackages = array_slice($packages, $offset, $cnt, true);
-            }
-            while (   self::count_unique_apps($localpackages) < $limit
-                   && ($offset + $cnt++) <= count($packages));
-
-            //
-            if ($current_page == 1)
-            {
-                if ($limit > $apps_counter)
+                if (($current_page - 1) > 0)
                 {
-                    $this->data['items_shown'] = '1 - ' . $apps_counter;
+                    $this->data['previous_page'] = '?page=' . ($current_page - 1);
+                }
+
+                if (($current_page * $limit) < $apps_counter)
+                {
+                    $this->data['next_page'] = '?page=' . ($current_page + 1);
+                }
+
+                // make sure we have enough unique apps for set_data()
+                $cnt = $limit;
+                do
+                {
+                    $localpackages = array_slice($packages, $offset, $cnt, true);
+                }
+                while (   self::count_unique_apps($localpackages) < $limit
+                       && ($offset + $cnt++) <= count($packages));
+
+                //
+                if ($current_page == 1)
+                {
+                    if ($limit > $apps_counter)
+                    {
+                        $this->data['items_shown'] = '1 - ' . $apps_counter;
+                    }
+                    else
+                    {
+                        $this->data['items_shown'] = '1 - ' . $limit;
+                    }
+                }
+                elseif ($current_page * $limit <= $apps_counter)
+                {
+                    $this->data['items_shown'] = (($current_page - 1) * $limit) + 1 . ' - ' .  $current_page * $limit;
                 }
                 else
                 {
-                    $this->data['items_shown'] = '1 - ' . $limit;
+                    $this->data['items_shown'] = (($current_page - 1) * $limit) + 1 . ' - ' .  ((($current_page - 1) * $limit) + count($localpackages));
                 }
             }
-            elseif ($current_page * $limit <= $apps_counter)
+
+            // populate package details
+            self::set_data($localpackages, $filter_type);
+
+            // let's prepare the rows for the template
+            $per_row = $this->mvc->configuration->items_per_row;
+            for ($i = 1; $i <= ceil(count($this->data['packages']) / $per_row); $i++)
             {
-                $this->data['items_shown'] = (($current_page - 1) * $limit) + 1 . ' - ' .  $current_page * $limit;
+                $this->data['rows'][] = array_slice($this->data['packages'], ($i - 1) * $per_row, $per_row, true);
             }
-            else
+
+            $this->data['can_post'] = false;
+
+            // if an exact application is shown
+            if (   $this->data['packagename']
+                && count($this->data['packages']))
             {
-                $this->data['items_shown'] = (($current_page - 1) * $limit) + 1 . ' - ' .  ((($current_page - 1) * $limit) + count($localpackages));
+                // enable commenting and check if user has rated yet
+                if ($this->isuser)
+                {
+                    $this->data['can_post'] = true;
+                    $this->data['can_rate'] = self::can_rate($this->data['packages'][$this->data['packagename']]['packageguid']);
+
+                    self::enable_commenting($filter_type);
+                }
+            }
+
+            $this->data['profile_prefix'] = $this->mvc->configuration->user_profile_prefix;
+
+            // if have no apps then return a 404
+            // may not even get here since we return already well above
+            if (! count($this->data['packages']))
+            {
+                // what if we just redirect?
+                $url = '..';
+                $this->mvc->head->relocate($url);
+
+                if ($this->data['packagename'])
+                {
+                    $error_msg = $this->mvc->i18n->get('no_such_package');
+                }
+                else
+                {
+                    $error_msg = $this->mvc->i18n->get('no_available_packages');
+                }
+
+                // oops, there are no packages for this base category..
+                throw new midgardmvc_exception_notfound($error_msg);
             }
         }
 
-        // this will fill in providers, variants and statistics for each package
-        // by filtering out those projects that are not top_projects (see configuration)
-        // and variant names that don't fit the package filter criteria (see configuration)
-        self::set_data($localpackages, $filter_type);
-
-        // enable for testing, if you need large package array for the template
-        // $this->data['packages'] = array_fill(0, 12, array_pop($this->data['packages']));
-
-        // let's prepare the rows for the template
-        $per_row = $this->mvc->configuration->items_per_row;
-        for ($i = 1; $i <= ceil(count($this->data['packages']) / $per_row); $i++)
-        {
-            $this->data['rows'][] = array_slice($this->data['packages'], ($i - 1) * $per_row, $per_row, true);
-        }
-
-        $this->data['can_post'] = false;
-
-        // if an exact application is shown
-        if (   $this->data['packagename']
-            && count($this->data['packages']))
-        {
-            // enable commenting and check if user has rated yet
-            if ($this->isuser)
-            {
-                $this->data['can_post'] = true;
-                $this->data['can_rate'] = self::can_rate($this->data['packages'][$this->data['packagename']]['packageguid']);
-
-                self::enable_commenting($filter_type);
-            }
-        }
-
-        $this->data['profile_prefix'] = $this->mvc->configuration->user_profile_prefix;
-
-        // if have no apps then return a 404
-        // may not even get here since we return already well above
-        if (   ! count($this->data['packages'])
-            && ! $counter)
-        {
-            // what if we just redirect?
-            $url = '..';
-            $this->mvc->head->relocate($url);
-
-            if ($this->data['packagename'])
-            {
-                $error_msg = $this->mvc->i18n->get('no_such_package');
-            }
-            else
-            {
-                $error_msg = $this->mvc->i18n->get('no_available_packages');
-            }
-
-            // oops, there are no packages for this base category..
-            throw new midgardmvc_exception_notfound($error_msg);
-        }
-
+//$dt = microtime(true) - $t1; $sumdt += $dt; echo "time: " . $dt . "\n"; echo "sumdt: " . $sumdt . "\n"; ob_flush();
         // we return this counter as it is used by count_number_of_apps()
         return $apps_counter;
     }
@@ -523,6 +506,7 @@ class com_meego_packages_controllers_application
      */
     public function count_number_of_apps($os = '', $os_version = '', $basecategory = '', $ux = '', $filter_type = 'top')
     {
+        //echo "called count_num_of_apps\n"; ob_flush();
         $counter = self::get_applications(
             array(
                 'os' => $os,
@@ -859,6 +843,7 @@ class com_meego_packages_controllers_application
             {
                 case 'mix':
                     $repoproject_filter = self::get_repoproject_filter('mix');
+                    $q->add_order(new midgard_query_property('packageversion'), SORT_ASC);
                     break;
                 case 'staging':
                     $repoproject_filter = self::get_repoproject_filter('staging');
@@ -1010,24 +995,43 @@ class com_meego_packages_controllers_application
      *
      * @param array of com_meeg_package_details objects
      * @param string filter type: 'top' or 'staging': settings URL will depend on it
+     * @param boolean if true then return info about older packages too
+     *
+     * @return array
      *
      */
-    public function set_data(array $packages, $filter_type = 'top')
+    public function set_data(array $packages, $filter_type = 'top', $history = false)
     {
-        $older = array();
-        $latest = array('os' => '', 'version' => '', 'size' => 'n/a', 'lastupdate' => 'n/a', 'variants' => array());
+        $all = array();
+
+        // a flag for tricky situations caused by additional hand imports
+        $remember = false;
+        // store guid for promoted apps (ie. apps that passed qa)
+        $promotedtoguid = '';
+        $promotedfromguid = '';
+
+        $default_latest = array('packagescore' => '', 'packagename' => '', 'packageguid' => '', 'promotedfromguid' => '', 'promotedtoguid' => '', 'os' => '', 'version' => '', 'size' => 'n/a', 'promoted' => 'n/a', 'released' => 'n/a', 'lastupdate' => 'n/a', 'variants' => array(), 'iconurl' => '');
+        $latest = $default_latest;
 
         $matched = $this->request->get_route()->get_matched();
 
         // this index will be used to grab the download URL of the appropriate arch variant of the package
         $index = 0;
-        if (array_key_exists($matched['ux'], $this->mvc->configuration->ux_arch_map))
+        if (   isset($matched['ux'])
+            && array_key_exists($matched['ux'], $this->mvc->configuration->ux_arch_map))
         {
             $index = $this->mvc->configuration->ux_arch_map[$matched['ux']];
         }
 
         foreach ($packages as $package)
         {
+            if ($package->packagename != $latest['packagename'])
+            {
+                // processing a different package, so reset some internal arrays
+                $all = array();
+                $latest = $default_latest;
+            }
+
             if (! isset($this->data['packages'][$package->packagename]['name']))
             {
                 // set the guid
@@ -1067,9 +1071,9 @@ class com_meego_packages_controllers_application
                     $this->data['packages'][$package->packagename]['ratings'] = array();
                 }
 
-                $ratings = self::prepare_ratings($package->packagename);
+                $ratings = self::prepare_ratings($package->packagename, $history);
                 $this->data['packages'][$package->packagename]['ratings'] = $ratings['ratings'];
-                $this->data['packages'][$package->packagename]['is_there_comment'] = $ratings['comment'];
+                $this->data['packages'][$package->packagename]['is_there_comment'] = ($history) ? $history : $ratings['comment'];
 
                 // set a summary
                 $this->data['packages'][$package->packagename]['summary'] = $package->packagesummary;
@@ -1148,73 +1152,218 @@ class com_meego_packages_controllers_application
 
             $this->data['ux'] = $package->ux;
 
-            // provide a link to visit the page of a certain package variant
+            // provide a link to visit the app page
             $package->localurl = $this->mvc->dispatcher->generate_url
             (
-                'package_instance',
+                'apps_by_name',
                 array
                 (
-                    'package' => $package->packagename,
-                    'version' => $package->packageversion,
-                    'project' => $package->repoprojectname,
-                    'repository' => $package->reponame,
-                    'arch' => $package->repoarch
+                    'os' => $package->repoos,
+                    'version' => $package->repoosversion,
+                    'ux' => $package->repoosux,
+                    'basecategory' => $package->basecategoryname,
+                    'packagename' => $package->packagename
                 ),
                 $this->request
             );
 
-            // set the latest version of the package
-            // and also maintain an array with older versions (could be used in some templates)
-            if (! array_key_exists($package->packageversion, $older))
-            {
-                $older[$package->packageversion] = array('version' => '', 'providers' => array());
-            }
+            // provide a link to visit the app page
+            $this->data['packages'][$package->packagename]['historyurl'] = $this->mvc->dispatcher->generate_url
+            (
+                'history',
+                array
+                (
+                    'os' => $package->repoos,
+                    'version' => $package->repoosversion,
+                    'ux' => $package->repoosux,
+                    'packagename' => $package->packagename
+                ),
+                $this->request
+            );
 
-            if (! array_key_exists($package->repoprojectname, $older[$package->packageversion]['providers']))
-            {
-                $older[$package->packageversion]['providers'][$package->repoprojectname] = array('projectname' => '', 'variants' => array());
-            }
+            $variant_info = array(
+                'ux' => $package->repoosux,
+                'repoos' => $package->repoos,
+                'repoarch' => $package->repoarch,
+                'packageid' => $package->packageid,
+                'packageinstallfileurl' => $package->packageinstallfileurl
+            );
 
-            if ($latest['version'] < $package->packageversion)
+            //echo "current latest: " . $latest['packagename'] . ':' . $latest['version'] . ' vs package: ' . $package->packagename . ':' . $package->packageversion . "\n";
+
+            if ($latest['version'] <= $package->packageversion)
             {
-                if (count($latest['variants']))
+                $qarelease = $this->mvc->i18n->get('label_app_type_qarelease');
+                $promoted = $this->mvc->i18n->get('label_app_type_promoted');
+                $staging = $this->mvc->i18n->get('label_app_type_staging');
+
+                //echo $package->packagename . ':' . $package->packageversion . ' from ' . $package->repoprojectname . " will be set as latest\n";
+                //echo "latest score: " . $latest['packagescore'] . ', curtent package score: ' . $package->packagescore . "\n";
+
+                if ($latest['packageguid'])
                 {
-                    // merge current latest to older
-                    $older[$package->packageversion]['providers'][$package->repoprojectname]['variants'] = array_merge($older[$package->packageversion]['providers'][$package->repoprojectname]['variants'], $latest['variants']);
-                    $latest['variants'] = array();
+                    if ($latest['version'] == $package->packageversion)
+                    {
+                        if (   $latest['repoid'] == $package->repoid
+                            && (int) $latest['packagescore'] > $package->packagescore)
+                        {
+                            $remember = $latest;
+                            //echo $package->packageversion . ' (score: ' . $remember['packagescore'] . ') from ' . $package->reponame .' repo id: ' . $package->repoid . " is already the latest, maybe it was reimported by hand for some reason\n";
+                        }
+                        else
+                        {
+                            //echo $package->packageversion . " is already the latest, this is probably from an other project; check if it was ever promoted\n";
+                            $predecessors = self::get_predecessors($package->packageguid, 3);
+
+                            if (count($predecessors))
+                            {
+                                foreach($predecessors as $key => $guid)
+                                {
+                                    //echo "compare: " . $guid . ' vs ' . $latest['packageguid'] . "\n";
+                                    if (   $guid == $latest['packageguid']
+                                        || (   isset($remember)
+                                            && $guid == $remember['packageguid']
+                                            && $remember['packagescore'] > 0
+                                            && $remember['packagescore'] > $package->packagescore))
+                                    {
+                                        //echo "this version: " . $package->packageversion . ' was promoted on ' . $package->packagecreated->format('Y-m-d h:i e') . "\n";
+                                        $promotedfromguid = $guid;
+                                        if ($remember)
+                                        {
+                                            //echo "update history backwards";
+                                            $all[$remember['released']]['promotedtoguid'] = $remember['packageguid'];
+                                            $all[$remember['released']]['type'] = $promoted;
+                                            $remember = false;
+                                        }
+                                        else
+                                        {
+                                            $promotedtoguid = $package->packageguid;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    $all[$latest['released']] = array(
+                        'size' => $latest['size'],
+                        'repoid' => $latest['repoid'],
+                        'version' => $latest['version'],
+                        'variants' => $latest['variants'],
+                        'released' => $latest['released'],
+                        'packageid' => $latest['packageid'],
+                        'packageguid' => $latest['packageguid'],
+                        'packagescore' => $latest['packagescore'],
+                        'hidden' => $latest['hidden'],
+                        'publishers' => $latest['publishers'],
+                        'localurl' => (isset($latest['localurl'])) ? $latest['localurl'] : false
+                    );
+
+                    if ($latest['promotedfromguid'])
+                    {
+                        $latest['type'] = $qarelease;
+                        $all[$latest['released']]['promotedfromguid'] = $latest['promotedfromguid'];
+                    }
+                    else if ($promotedtoguid)
+                    {
+                        $latest['type'] = $promoted;
+                        $all[$latest['released']]['promotedtoguid'] = $promotedtoguid;
+                        $promotedtoguid = '';
+                    }
+                    else
+                    {
+                        $latest['type'] = $staging;
+                    }
+
+                    $all[$latest['released']]['type'] = $latest['type'];
+
+                    $latest = $default_latest;
                 }
-                // add the variant that has the same UX as requested
-                $latest['variants'][$package->repoarch] = $package;
-                $latest['version'] = $package->packageversion;
-                $latest['lastupdate'] = $package->packagerevised->format('Y-m-d');
-                $latest['size'] = ($package->packagesize) ?  (int) ($package->packagesize / 1024) . ' kb' : 'n/a';
+
                 $latest['ux'] = $package->ux;
-            }
-            elseif ($latest['version'] == $package->packageversion)
-            {
-                // same version, but probably different arch
-                $latest['variants'][$package->repoarch] = $package;
+                $latest['size'] = ($package->packagesize) ?  (int) ($package->packagesize / 1024) . ' kb' : 'n/a';
+                $latest['publishers'] = self::get_roles($package->packageguid, 'downloader');
+                $latest['repoid'] = $package->repoid;
+                $latest['hidden'] = $package->packagehidden;
+                $latest['version'] = $package->packageversion;
+                $latest['released'] = $package->packagecreated->format('Y-m-d H:i');
+                // @todo: this might not be needed
+                $latest['variants'][$package->repoarch] = $variant_info;
+                $latest['packageid'] = $package->packageid;
+                $latest['lastupdate'] = $package->packagerevised->format('Y-m-d H:i');
+                $latest['packageguid'] = $package->packageguid;
+                $latest['packagename'] = $package->packagename;
+                $latest['packagescore'] = $package->packagescore;
+
+                if ($promotedfromguid)
+                {
+                    $latest['promotedfromguid'] = $promotedfromguid;
+                    if (! $latest['hidden'])
+                    {
+                        $latest['localurl'] = $package->localurl;
+                    }
+                    $promotedfromguid = '';
+                }
+                else if ($promotedtoguid)
+                {
+                    $latest['promotedtoguid'] = $promotedtoguid;
+                    $promotedtoguid = '';
+                }
+                else
+                {
+                    if (! $latest['hidden'])
+                    {
+                        $latest['localurl'] = '/staging' . $package->localurl;
+                    }
+                }
             }
             elseif ($latest['version'] > $package->packageversion)
             {
-                // this package clearly goes to older
-                $older[$package->packageversion]['version'] = $package->packageversion;
-                $older[$package->packageversion]['providers'][$package->repoprojectname]['projectname'] = $package->repoprojectname;
-                $older[$package->packageversion]['providers'][$package->repoprojectname]['variants'][] = $package;
+                // this should not happen if the packages are ordered by version
+                // anyway this package should go to all
+                //echo $package->packageversion . ' from ' . $package->repoprojectname . ' goes to all' . "\n";
+                $all[$package->packagecreated->format('Y-m-d H:i')] = $package->packageguid;
             }
+
+            // add the latest to the all array
+            $all[$latest['released']] = array(
+                'size' => $latest['size'],
+                'repoid' => $latest['repoid'],
+                'version' => $latest['version'],
+                'variants' => $latest['variants'],
+                'released' => $latest['released'],
+                'packageid' => $latest['packageid'],
+                'packageguid' => $latest['packageguid'],
+                'packagescore' => $latest['packagescore'],
+                'hidden' => $latest['hidden'],
+                'publishers' => $latest['publishers'],
+                'localurl' => (isset($latest['localurl'])) ? $latest['localurl'] : false
+            );
+            if ($latest['promotedfromguid'])
+            {
+                $all[$latest['released']]['type'] = $qarelease;
+                $all[$latest['released']]['promotedfromguid'] = $latest['promotedfromguid'];
+            }
+            else
+            {
+                $all[$latest['released']]['type'] = $staging;
+            }
+
+            //echo "\n\n";
+            //ob_flush();
 
             // set the default download url for the package
             if (     array_key_exists($index, $latest['variants'])
                 && ! $this->data['packages'][$package->packagename]['defaultdownloadurl'])
             {
                 // index was set at the beginning of this method
-                $this->data['packages'][$package->packagename]['defaultdownloadurl'] = $latest['variants'][$index]->packageinstallfileurl;
+                $this->data['packages'][$package->packagename]['defaultdownloadurl'] = $latest['variants'][$index]['packageinstallfileurl'];
 
                 // set a different downloadurl in case the configured download schema for this OS is 'apps'
-                if (   array_key_exists('download', $this->mvc->configuration->os_ux[$latest['variants'][$index]->repoos])
-                    && $this->mvc->configuration->os_ux[$latest['variants'][$index]->repoos]['download'] == 'apps')
+                if (   array_key_exists('download', $this->mvc->configuration->os_ux[$latest['variants'][$index]['repoos']])
+                    && $this->mvc->configuration->os_ux[$latest['variants'][$index]['repoos']]['download'] == 'apps')
                 {
-                    $this->data['packages'][$package->packagename]['defaultdownloadurl'] = 'apps://' . $latest['variants'][$index]->packageid;
+                    $this->data['packages'][$package->packagename]['defaultdownloadurl'] = 'apps://' . $latest['variants'][$index]['packageid'];
                 }
             }
 
@@ -1229,14 +1378,8 @@ class com_meego_packages_controllers_application
                 $this->data['packages'][$package->packagename]['latest'] = $latest;
             }
 
-            if (array_key_exists($latest['version'], $older))
-            {
-                // always remove the latest from the older array
-                unset($older[$latest['version']]);
-            }
-
             // always keep it up-to-date
-            $this->data['packages'][$package->packagename]['older'] = $older;
+            $this->data['packages'][$package->packagename]['all'] = $all;
 
             switch($filter_type)
             {
@@ -1269,7 +1412,7 @@ class com_meego_packages_controllers_application
             }
 
             // get the workflows for this package
-            // todo: this will get workflows for older versions too!
+            // todo: this will get workflows for all versions
             if (! array_key_exists('workflows', $this->data['packages'][$package->packagename]))
             {
                 $this->data['packages'][$package->packagename]['workflows'] = array();
@@ -1317,9 +1460,26 @@ class com_meego_packages_controllers_application
             unset($this->data['packages'][$package->packagename]['latest']['variants'][$index]);
         }
 
+/*
+        if (   isset($package)
+            && array_key_exists($package->packagename, $this->data['packages']))
+        {
+            $latestversion = $this->data['packages'][$package->packagename]['latest']['version'];
+            if (array_key_exists($latestversion, $this->data['packages'][$package->packagename]['all']))
+            {
+                // always remove the latest from the all array
+                unset($this->data['packages'][$package->packagename]['all'][$latestversion]);
+            }
+        }
+*/
         // and we don't need this either
         unset($latest);
-    }
+
+        if (isset($this->data['packages']))
+        {
+            return $this->data['packages'];
+        }
+   }
 
     /**
      * Adds a form to page if commenting is enabled
@@ -1424,9 +1584,11 @@ class com_meego_packages_controllers_application
      * Gathers ratings and appends them to data
      *
      * @param string title of the application
+     * @param boolean flag to override show_ratings_without_comments configuration
+     *
      * @return array of ratings together with their comments
      */
-    public function prepare_ratings($application_name = null)
+    public function prepare_ratings($application_name = null, $flag = false)
     {
         // the array to be returned
         // the comment flag is set to tru when the 1st comment found
@@ -1459,7 +1621,8 @@ class com_meego_packages_controllers_application
                 $rating->show = true;
 
                 if (   ! $rating->commentid
-                    && ! $this->mvc->configuration->show_ratings_without_comments)
+                    && ! $this->mvc->configuration->show_ratings_without_comments
+                    && ! $flag)
                 {
                     $rating->show = false;
                     array_push($retval, $rating);
@@ -1570,19 +1733,39 @@ class com_meego_packages_controllers_application
      * @param guid of a package
      * @return array
      */
-    public function get_roles($package_guid)
+    public function get_roles($package_guid, $filter = null)
     {
         $retval = array();
 
         $storage = new midgard_query_storage('com_meego_package_role');
         $q = new midgard_query_select($storage);
 
-        $q->set_constraint(new midgard_query_constraint (
+        $qc = new midgard_query_constraint_group('AND');
+
+        $qc->add_constraint(new midgard_query_constraint (
             new midgard_query_property('package'),
             '=',
             new midgard_query_value($package_guid)
         ));
 
+        if ($filter)
+        {
+            $qc->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('role'),
+                '=',
+                new midgard_query_value($filter)
+            ));
+        }
+        else
+        {
+            $qc->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('id'),
+                '>',
+                new midgard_query_value(0)
+            ));
+        }
+
+        $q->set_constraint($qc);
         $q->execute();
 
         $roles = $q->list_objects();
@@ -1723,6 +1906,161 @@ class com_meego_packages_controllers_application
     }
 
 
+    /**
+     * Tries to find a package that was the "predecessor" of the given package
+     * in terms of QA. In other words:
+     * if an has already been promoted, then which package instance got the
+     * QA votes. This is needed for showing a proper app history.
+     *
+     * @param guid com_meego_package guid
+     * @param integer a metadata_score (packagescore) threshold above which we
+     *                look for a package instance
+     * @return string comma separated list of guids that may have been the
+     *                "predecessor" of the given package
+     */
+    public function get_predecessors($packageguid, $qa_threshold)
+    {
+        $retval = null;
+        $staging = null;
 
+        $storage = new midgard_query_storage('com_meego_package_details');
+        $q = new midgard_query_select($storage);
+
+        $q->set_constraint(new midgard_query_constraint (
+            new midgard_query_property('packageguid'),
+            '=',
+            new midgard_query_value($packageguid)
+        ));
+
+        $q->execute();
+        $packages = $q->list_objects();
+
+        if (! count($packages)) {
+            return $retval;
+        }
+        $package = $packages[0];
+
+        $project = $package->repoprojectname;
+        // check if the project of this package has a staging repo
+        if (array_key_exists($project, $this->mvc->configuration->top_projects))
+        {
+            if (! array_key_exists('staging', $this->mvc->configuration->top_projects[$project]))
+            {
+                return null;
+            }
+            $staging = $this->mvc->configuration->top_projects[$project]['staging'];
+        }
+
+        $qc = new midgard_query_constraint_group('AND');
+        $qc->add_constraint(new midgard_query_constraint (
+            new midgard_query_property('packagename'),
+            '=',
+            new midgard_query_value($package->packagename)
+        ));
+        $qc->add_constraint(new midgard_query_constraint (
+            new midgard_query_property('packageversion'),
+            '=',
+            new midgard_query_value($package->packageversion)
+        ));
+        $qc->add_constraint(new midgard_query_constraint (
+            new midgard_query_property('repoprojectname'),
+            '=',
+            new midgard_query_value($staging)
+        ));
+        $qc->add_constraint(new midgard_query_constraint (
+            new midgard_query_property('packagescore'),
+            '>',
+            new midgard_query_value($qa_threshold)
+        ));
+
+        $q->set_constraint($qc);
+        $q->execute();
+
+        $packages = $q->list_objects();
+
+        if (count($packages))
+        {
+            foreach ($packages as $package)
+            {
+                $retval[] = $package->packageguid;
+            }
+        }
+
+        return $retval;
+    }
+
+    /**
+     * Get staging applications that are in repos of staging projects for a base category but
+     * only if they belong to a certain ux and to a top project that is configurable
+     *
+     * @param array of args (os, version, ux, basecategory, packagename)
+     */
+    public function get_history(array $args)
+    {
+        $this->data['packagename'] = $args['packagename'];
+        $mix = self::get_filtered_applications($args['os'], $args['version'], 0, 0, $args['ux'], $args['packagename'], 'mix', null);
+        $apps = self::set_data($mix, 'mix', true);
+        $latest = $apps[$args['packagename']]['latest'];
+
+        $apps[$args['packagename']]['passedqa'] = array();
+        $apps[$args['packagename']]['promoted'] = array();
+        $apps[$args['packagename']]['staging'] = array();
+
+        if ($latest['promotedfromguid'])
+        {
+            // the latest version is actually promoted
+            $apps[$args['packagename']]['passedqa'] = $latest;
+        }
+        else
+        {
+            $apps[$args['packagename']]['staging'] = $latest;
+        }
+
+        foreach ($apps[$args['packagename']]['all'] as $key => $instance)
+        {
+            if (! $instance['hidden'])
+            {
+                if (isset($instance['promotedfromguid']))
+                {
+                    if (   ! $apps[$args['packagename']]['passedqa']
+                        || $apps[$args['packagename']]['passedqa']['version'] < $instance['version'])
+                    {
+                        $instance['localurl'] = $apps[$args['packagename']]['localurl'];
+                        $apps[$args['packagename']]['passedqa'] = $instance;
+                    }
+                }
+                else if (isset($instance['promotedtoguid']))
+                {
+                    if (   ! $apps[$args['packagename']]['promoted']
+                        || $apps[$args['packagename']]['promoted']['version'] < $instance['version'])
+                    {
+                        $apps[$args['packagename']]['promoted'] = $instance;
+                    }
+                }
+                else
+                {
+                    if (   ! $apps[$args['packagename']]['staging']
+                        || $apps[$args['packagename']]['staging']['version'] < $instance['version'])
+                    {
+                        $instance['localurl'] = 'staging/' . $apps[$args['packagename']]['localurl'];
+                        $apps[$args['packagename']]['staging'] = $instance;
+                    }
+                }
+            }
+        }
+
+        krsort($apps[$args['packagename']]['all']);
+
+        $i = 0;
+        foreach($apps[$args['packagename']]['all'] as $key => $item) {
+            (++$i % 2 == 0) ? $apps[$args['packagename']]['all'][$key]['rowclass'] = 'even' : $apps[$args['packagename']]['all'][$key]['rowclass'] = 'odd';
+        }
+
+
+//var_dump($apps[$args['packagename']]['all']);
+//die;
+
+        $this->data['packages'] = $apps;
+    }
 
 }

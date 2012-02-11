@@ -33,6 +33,10 @@ line-height: 1;
 font-weight: normal;
 }
 
+.underline {
+text-decoration: underline;
+}
+
 a:link,
 a:visited {
 text-decoration: none;
@@ -764,16 +768,26 @@ max-height: 182px;
 overflow: hidden;
 }
 
+.history .app_image {
+float: left;
+margin-right: 2em;
+max-height: none;
+overflow: visible;
+}
+
 .app_download {
 width: 100%;
 margin: 15px 0px 15px 0px;
 }
 
 .app_notes {
-width: 100%;
 font-size: 12px;
 color: #6b6b6b;
 line-height: 18px;
+}
+
+.app_page.left .app_notes {
+width: 100%;
 }
 
 .app_title {
@@ -785,7 +799,7 @@ text-transform: uppercase;
 padding-bottom: 5px;
 }
 
-.app_category{
+.app_category {
 float: left;
 clear: both;
 font-family: DIN-Bold;
@@ -793,6 +807,10 @@ font-size: 16px;
 color: #4792A5;
 text-transform: uppercase;
 padding-bottom: 5px;
+}
+
+.app_category a {
+color: #4792A5;
 }
 
 .app_poll {
@@ -856,6 +874,12 @@ padding-bottom: 5px;
 
 .app_login_write a {
 color: #84C1E4;
+}
+
+div.app_page.history .app_h2 {
+clear: both;
+float: none;
+width: 240px;
 }
 
 .app_h2 {
@@ -922,6 +946,7 @@ height: 58px;
 .app_comment_block_more {
 float: left;
 color:#77549c;
+max-width: 135px;
 }
 
 .app_comment_date {
@@ -1259,6 +1284,10 @@ margin-bottom: 4px;
 font-weight: bold;
 }
 
+.history .app_notes div.basic_info .label {
+border: none;
+}
+
 .app_notes div.variants {
 margin: 0 0 10px 0;
 }
@@ -1318,5 +1347,33 @@ margin:  10px;
 overflow: hidden;
 }
 
+div.element div.app_qa_history {
+display: none;
+}
 
+a.app_qa_history_btn {
+background: url("/midgardmvc-static/com_meego_packages/images/app_history.png") no-repeat scroll 0 0 transparent;
+cursor: pointer;
+height: 38px;
+width: 174px;
+display: block;
+}
 
+div.history div.list {
+margin-top: 20px;
+margin-left: 10px;
+margin-bottom: 20px;
+}
+
+div.app_page.history div.title_block {
+clear: both;
+height: 50px;
+width: 100%;
+}
+
+div.app_page.history div.title_block span {
+float: left;
+margin-top: 10px;
+width: 300px;
+height: 70px;
+}

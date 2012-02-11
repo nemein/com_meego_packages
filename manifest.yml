@@ -300,6 +300,13 @@ routes:
         template_aliases:
             content: cmp-admin-index-posted-forms
 
+    package_posted_forms_stripped:
+        path: /package/{$package}/posts
+        controller: com_meego_packages_controllers_package
+        action: posted_forms_index
+        template_aliases:
+            content: cmp-admin-index-posted-forms-stripped
+
     package_posted_form_instance:
         path: /package/forms/post/{$forminstance}
         controller: com_meego_packages_controllers_package
@@ -332,11 +339,11 @@ routes:
         root_only: true
         template_aliases:
             root: midgardmvc-show-json
-
-    archive:
-        path: /archive/{$packagename}
-        controller: com_meego_packages_controllers_applications
-        action: archive
+    # page that provides a full overview of the given package (all comments, ratings, QA etc)
+    history:
+        path: /history/{$os}/{$string:version}/{$ux}/{$packagename}
+        controller: com_meego_packages_controllers_application
+        action: history
         template_aliases:
-            content: cmp-show-application
+            content: cmp-show-application-history
 

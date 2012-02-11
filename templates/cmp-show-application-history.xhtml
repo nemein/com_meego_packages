@@ -1,0 +1,97 @@
+<div tal:condition="true: current_component/packages/$packagename" class="app_page history" tal:define="packagename current_component/packagename; package com_meego_packages/packages/$packagename">
+
+    <div class="title_block">
+        <div class="app_image">
+            <img tal:condition="true: package/iconurl" tal:attributes="src package/iconurl"/>
+            <img tal:condition="not: package/iconurl" src="/midgardmvc-static/com_meego_packages/images/app_image.png"/>
+        </div>
+        <span>
+            <div class="app_title">${package/title}</div>
+            <div class="app_category">${package/basecategoryname}</div>
+        </span>
+    </div>
+
+    <div class="app_h2" i18n:translate="'title_app_history'">Application History</div>
+
+    <div class="app_notes list" tal:condition="true: package/all">
+        <div class="header">
+            <div class="version" i18n:translate="'label_app_version'">Version</div>
+            <div class="type" i18n:translate="'label_app_type'">Type</div>
+            <div class="submitted" i18n:translate="'label_app_upload_date'">Date</div>
+            <div class="size" i18n:translate="'label_app_download_size'">Size</div>
+            <div class="roles" i18n:translate="'label_roles_downloader'">Publisher(s)</div>
+        </div>
+        <tal:block tal:repeat="instance package/all">
+            <div tal:attributes="class php:'element ' . instance['rowclass']">
+                <div class="version">
+                    <tal:block tal:condition="true: instance/localurl">
+                        <a tal:attributes="href instance/localurl">
+                        ${instance/version}&nbsp;<tal:block i18n:translate="'label_app_details'">Details</tal:block>
+                        </a>
+                    </tal:block>
+                    <tal:block tal:condition="not: instance/localurl">
+                        ${instance/version}
+                    </tal:block>
+                </div>
+                <div class="type">
+                    ${instance/type}
+                    <tal:block tal:condition="true: instance/promotedtoguid">
+                    &nbsp;
+                    <span class="qadetails" i18n:translate="'label_qa_details'" tal:attributes="rel instance/promotedtoguid">
+                        Details
+                    </span>
+                    </tal:block>
+                </div>
+                <div class="submitted">${instance/released}</div>
+                <div class="size">${instance/size}</div>
+                <div class="roles" tal:repeat="role instance/publishers">
+                <tal:block tal:repeat="user role/users">
+                    <a tal:attributes="href user/profile">${user/login}</a>&nbsp;&nbsp;
+                </tal:block>
+                </div>
+                <tal:block tal:condition="true: instance/promotedtoguid">
+                    <div class="app_qa_history">
+                        <tal:block tal:content="structure php:midgardmvc.templating.dynamic_load('com_meego_packages', 'package_posted_forms_stripped', array('package' => instance['packageguid']))"></tal:block>
+                    </div>
+                </tal:block>
+            </div>
+        </tal:block>
+    </div>
+
+
+    <div class="app_comment">
+
+        <div class="app_comment_title app_h2" tal:condition="true: package/is_there_comment" i18n:translate="'label_user_comments_ratings'">User comments and ratings</div>
+
+        <div class="clear"></div>
+
+        <div class="app_comment_main" tal:condition="true: package/ratings">
+            <tal:block tal:repeat="rating package/ratings">
+                <div tal:condition="true: rating/show" class="app_comment_block">
+                    <div class="app_comment_block_user">
+                        <div class="app_comment_block_pic">
+                            <a tal:condition="true: rating/avatar" tal:attributes="href rating/avatarurl">
+                                <img tal:attributes="src rating/avatar" />
+                            </a>
+                            <img tal:condition="not: rating/avatar" src="/midgardmvc-static/com_meego_packages/images/no_image.jpg" />
+                        </div>
+                        <div class="app_comment_block_more">
+                            <div class="app_comment_name">${rating/authorfirstname} ${rating/authorlastname}</div>
+                            <div class="app_comment_date">${rating/date}</div>
+                            <div class="app_comment_poll">
+                                <div tal:condition="exists: rating/stars" tal:content="structure rating/stars">Stars</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="app_comment_block_comment">
+                        <div class="app_comment_package_version" i18n:translate="'label_ux_version'">
+                            <tal:block i18n:name="version">${rating/version}</tal:block>
+                        </div>
+                       <tal:block tal:content="php: str_replace('\r', '', rating.comment)"></tal:block>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </tal:block>
+        </div>
+    </div>
+</div>

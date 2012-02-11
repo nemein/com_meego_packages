@@ -1,0 +1,17 @@
+<div class="forms" tal:condition="true: com_meego_packages/forms" tal:repeat="form com_meego_packages/forms">
+    <div class="header">
+        <div class="title" i18n:translate="'label_form_title'">Form Title</div>
+        <div class="version" i18n:translate="'label_form_submitter'">Submitter</div>
+        <div class="posts" i18n:translate="'label_form_result'">Result</div>
+    </div>
+
+    <div tal:attributes="class php:'element ' . post.rawclass" tal:repeat="post form/posts">
+        <div class="title">
+            <a tal:attributes="href post/localurl" tal:content="post/formtitle">form title</a>
+        </div>
+        <div class="version" tal:content="post/submitter">submitter</div>
+        <div class="posts">
+            <a class="qalink" tal:condition="true:post/localurl" tal:attributes="href post/localurl" i18n:domain="com_meego_packages" i18n:translate="'label_show_posted_form'">See posted form</a>
+        </div>
+    </div>
+</div>

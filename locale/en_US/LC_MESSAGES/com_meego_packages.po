@@ -82,6 +82,9 @@ msgstr "Rating"
 msgid "label_user_comments"
 msgstr "User Comments"
 
+msgid "label_user_comments_ratings"
+msgstr "User Comments and Ratings"
+
 msgid "label_user_tests"
 msgstr "User Tests"
 
@@ -334,8 +337,23 @@ msgstr "Release date"
 msgid "label_app_update"
 msgstr "Last update"
 
+msgid "label_app_upload_date"
+msgstr "Upload date"
+
 msgid "label_app_download_size"
 msgstr "Download size"
+
+msgid "label_app_type"
+msgstr "Type"
+
+msgid "label_app_type_staging"
+msgstr "Staging"
+
+msgid "label_app_type_promoted"
+msgstr "Promoted"
+
+msgid "label_app_type_qarelease"
+msgstr "QA Release"
 
 msgid "feedback_no_open_workflows"
 msgstr "There are no open workflows at the moment."
@@ -375,6 +393,9 @@ msgstr "Search Results"
 
 msgid "label_no_search_results"
 msgstr "No results found for ${query}"
+
+msgid "label_roles"
+msgstr "Team"
 
 msgid "label_role_downloader"
 msgstr "Publisher"
@@ -418,3 +439,29 @@ msgstr "See form"
 msgid "label_hide_posted_form"
 msgstr "Hide form"
 
+msgid "title_app_history"
+msgstr "Application Timeline"
+
+msgid "title_app_history_with_name"
+msgstr "History of ${name}"
+
+msgid "title_latest_promoted_version"
+msgstr "Latest Promoted Version"
+
+msgid "title_latest_staging_version"
+msgstr "Latest Staging Version"
+
+msgid "title_latest_passed_qa_version"
+msgstr "Latest Release"
+
+msgid "title_all_versions"
+msgstr "All Version(s)"
+
+msgid "title_other_versions"
+msgstr "Other Version(s)"
+
+msgid "label_app_details"
+msgstr "[Details]"
+
+msgid "label_qa_details"
+msgstr "[Details]"
