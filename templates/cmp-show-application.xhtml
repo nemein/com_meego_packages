@@ -64,12 +64,14 @@
                         <div tal:condition="true: package/workflows" class="workflow_bar">
                             <div tal:repeat="workflow package/workflows" tal:attributes="class workflow/css; post workflow/url; redirect redirect_link"></div>
                         </div>
+
+                        <a tal:attributes="href package/historyurl" class="app_qa_history_btn"></a>
                     </div>
                 </div>
 
                 <div class="app_page_right">
                     <div class="app_title">${package/title}</div>
-                    <div class="app_category">${package/basecategoryname}</div>
+                    <div class="app_category"><a href="..">${package/basecategoryname}</a></div>
                     <div class="app_poll">
                         <a tal:condition="true: current_component/can_post" href="#" onclick="popup_comment()">
                             <span class="stars" tal:content="structure package/stars">Stars</span>
