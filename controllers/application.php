@@ -235,8 +235,6 @@ class com_meego_packages_controllers_application
      */
     public function get_applications(array $args, $counter = false, $filter_type = 'top')
     {
-//$sumdt = 0;
-//$t1 = microtime(true);
         $cnt = 0;
 
         $retval = array();
@@ -486,7 +484,6 @@ class com_meego_packages_controllers_application
             }
         }
 
-//$dt = microtime(true) - $t1; $sumdt += $dt; echo "time: " . $dt . "\n"; echo "sumdt: " . $sumdt . "\n"; ob_flush();
         // we return this counter as it is used by count_number_of_apps()
         return $apps_counter;
     }
@@ -1532,7 +1529,7 @@ class com_meego_packages_controllers_application
             $this->data['packageguid'] = $variant['packageguid'];
         }
 
-        if (! array_key_exists('packageguid', $this->data['packages'][$this->data['packagename']]))
+        if (! array_key_exists('packageguid', $this->data))
         {
             $this->data['packageguid'] = $this->data['packages'][$this->data['packagename']]['packageguid'];
         }
@@ -2054,7 +2051,8 @@ class com_meego_packages_controllers_application
         krsort($apps[$args['packagename']]['all']);
 
         $i = 0;
-        foreach($apps[$args['packagename']]['all'] as $key => $item) {
+        foreach($apps[$args['packagename']]['all'] as $key => $item)
+        {
             (++$i % 2 == 0) ? $apps[$args['packagename']]['all'][$key]['rowclass'] = 'even' : $apps[$args['packagename']]['all'][$key]['rowclass'] = 'odd';
         }
 
