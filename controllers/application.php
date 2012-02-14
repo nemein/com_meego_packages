@@ -1186,6 +1186,7 @@ class com_meego_packages_controllers_application
                 'repoos' => $package->repoos,
                 'repoarch' => $package->repoarch,
                 'packageid' => $package->packageid,
+                'packageguid' => $package->packageguid,
                 'packageinstallfileurl' => $package->packageinstallfileurl
             );
 
@@ -1519,24 +1520,25 @@ class com_meego_packages_controllers_application
             // set all variants so user can choose
             foreach ($this->data['packages'][$this->data['packagename']]['latest']['variants'] as $variant)
             {
-                $this->data['architectures'][$variant->repoarch] = array
+                $this->data['architectures'][$variant['repoarch']] = array
                 (
-                    'name' => $variant->repoarch,
-                    'packageguid' => $variant->packageguid
+                    'name' => $variant['repoarch'],
+                    'packageguid' => $variant['packageguid']
                 );
             }
 
             // get the 1st variant and set packageguid variable, in case we don't offer choosing a variant
             $variant = reset($this->data['packages'][$this->data['packagename']]['latest']['variants']);
-            $this->data['packageguid'] = $variant->packageguid;
+            $this->data['packageguid'] = $variant['packageguid'];
         }
 
-        if (! array_key_exists('packageguid', $this->data))
+        if (! array_key_exists('packageguid', $this->data['packages'][$this->data['packagename']]))
         {
             $this->data['packageguid'] = $this->data['packages'][$this->data['packagename']]['packageguid'];
         }
 
-        if (array_key_exists('packageguid', $this->data))
+        if (   array_key_exists('packageguid', $this->data)
+            && $this->data['packageguid'])
         {
             $this->data['postaction'] = $this->mvc->dispatcher->generate_url
             (
@@ -2055,10 +2057,6 @@ class com_meego_packages_controllers_application
         foreach($apps[$args['packagename']]['all'] as $key => $item) {
             (++$i % 2 == 0) ? $apps[$args['packagename']]['all'][$key]['rowclass'] = 'even' : $apps[$args['packagename']]['all'][$key]['rowclass'] = 'odd';
         }
-
-
-//var_dump($apps[$args['packagename']]['all']);
-//die;
 
         $this->data['packages'] = $apps;
     }

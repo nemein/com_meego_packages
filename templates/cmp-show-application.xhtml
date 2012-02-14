@@ -53,7 +53,7 @@
                             <ul>
                                 <li tal:repeat="variant package/latest/variants">
                                     <div class="variant">
-                                        <a tal:attributes="href variant/packageinstallfileurl; class php: variant.ux . ' ' . variant.repoarch" i18n:domain="com_meego_packages" i18n:attributes="title tip_install" i18n:translate="'command_install'">
+                                        <a tal:attributes="href variant/packageinstallfileurl; class php: variant['ux'] . ' ' . variant['repoarch']" i18n:domain="com_meego_packages" i18n:attributes="title tip_install" i18n:translate="'command_install'">
                                             <tal:block i18n:name="arch">${variant/repoarch}</tal:block>
                                         </a>
                                     </div>
