@@ -1293,7 +1293,13 @@ class com_meego_packages_controllers_package
             }
         }
 
-        $this->data['title'] = $form->title . " submitted by " . $formcreator->login;
+        $login = 'n/a';
+        if ($formcreator)
+        {
+            $login = $formcreator->login;
+        }
+
+        $this->data['title'] = $form->title . " submitted by " . $login;
         $this->data['form'] = $form_to_return;
 
         unset ($form_to_return);
