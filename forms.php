@@ -58,6 +58,7 @@ class com_meego_packages_forms
                     $this->request
                 );
 
+                $post->submitter = "n/a";
                 // get the login name for the submitter
                 $user = com_meego_packages_utils::get_user_by_person_guid($post->submitterguid);
 
@@ -73,7 +74,6 @@ class com_meego_packages_forms
                 $retval['forms'][$post->formtitle]['posts'][$post->forminstanceguid] = $post;
             }
         }
-
         return $retval;
     }
 
