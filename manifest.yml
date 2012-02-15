@@ -20,7 +20,6 @@ routes:
         path: /
         controller: com_meego_packages_controllers_application
         action: redirect
-
     # lists latest UXes
     apps_index:
         path: /applications
@@ -36,7 +35,6 @@ routes:
         action: applications
         template_aliases:
             content: cmp-show-applications-list
-#       action: redirect
 
     # redirect if only os and version are given
     apps_os_version:
@@ -45,7 +43,6 @@ routes:
         action: applications
         template_aliases:
             content: cmp-show-applications-list
-#        action: redirect
 
     # try to show apps list if no basecatgory is given
     apps_os_version_ux:
@@ -220,13 +217,6 @@ routes:
         template_aliases:
             content: cmp-show-repository-latest
 
-    search:
-        path: /search
-        controller: com_meego_packages_controllers_search
-        action: search
-        template_aliases:
-            content: cmp-show-applications-list
-
     # base categories are defined by admins
     # base categories have one or more package categories mapped to them
     packages_by_basecategory:
@@ -339,6 +329,12 @@ routes:
         root_only: true
         template_aliases:
             root: midgardmvc-show-json
+    search:
+        path: /search
+        controller: com_meego_packages_controllers_search
+        action: search
+        template_aliases:
+            content: cmp-show-applications-list
     # page that provides a full overview of the given package (all comments, ratings, QA etc)
     history:
         path: /history/{$os}/{$string:version}/{$ux}/{$packagename}
@@ -346,4 +342,3 @@ routes:
         action: history
         template_aliases:
             content: cmp-show-application-history
-
