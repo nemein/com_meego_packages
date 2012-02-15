@@ -58,7 +58,7 @@ class com_meego_packages_injector
             $route->template_aliases['topbar'] = 'cmp-menubar';
         }
 
-        // login link with redirct specified
+        // login link with redirect specified
         $request->set_data_item('redirect_link', $this->mvc->context->get_request(0)->get_path());
         // placeholder for a link to list staging apps
         $request->set_data_item('staging_link', false);
@@ -87,7 +87,7 @@ class com_meego_packages_injector
         $matched = $route->get_matched();
 
         if ( ! $matched
-            && $route->id = 'search')
+            && $route->id == 'search')
         {
             // if we have a search we may be lucky and get a nicely set matched array
             $matched = $this->request->get_query();
