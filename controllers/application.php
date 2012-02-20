@@ -1651,6 +1651,7 @@ class com_meego_packages_controllers_application
 
                     if ($rating->authorguid)
                     {
+                        $rating->user = 'n/a';
                         $username = null;
 
                         // get the midgard user name from rating->authorguid
@@ -1662,6 +1663,7 @@ class com_meego_packages_controllers_application
                             // get avatar and url to user profile page only if the user is not the midgard admin
                             try
                             {
+                                $rating->user = $user->login;
                                 $rating->avatar = com_meego_packages_utils::get_avatar($user->login);
                                 $rating->avatarurl = $this->mvc->configuration->user_profile_prefix . $user->login;
                             }
