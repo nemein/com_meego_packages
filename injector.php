@@ -48,7 +48,6 @@ class com_meego_packages_injector
 
         $route = $request->get_route();
 
-        //echo "route id: " . $route->id . "\n"; ob_flush();
         if ($route->id == "apps_index")
         {
             $route->template_aliases['topbar'] = 'cmp-welcome-text';
