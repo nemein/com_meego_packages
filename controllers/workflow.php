@@ -36,7 +36,7 @@ class com_meego_packages_controllers_workflow
      */
     public function post_start_package_instance(array $args)
     {
-        $this->mvc->log('Posted start QA', 'info');
+        $this->mvc->log(__CLASS__, 'Posted start QA', 'info');
 
         $this->package = $this->load_package_instance($args);
 
@@ -98,7 +98,7 @@ class com_meego_packages_controllers_workflow
             );
         }
 
-        $this->mvc->log('Posted start QA finished', 'info');
+        $this->mvc->log(__CLASS__, 'Posted start QA finished', 'info');
 
         // Workflow completed, redirect to package instance
         midgardmvc_core::get_instance()->head->relocate($redirect_link);
@@ -163,7 +163,7 @@ class com_meego_packages_controllers_workflow
         $route = $request->get_route();
         $route->template_aliases['root'] = 'cmp-html-snippet';
 
-        $this->mvc->log('QA resume start', 'info');
+        $this->mvc->log(__CLASS__, 'QA resume start', 'info');
 
         $this->get_resume_package_instance($args);
 
@@ -210,7 +210,7 @@ class com_meego_packages_controllers_workflow
             $route->template_aliases['root'] = 'midgardmvc-show-json';
         }
 
-        $this->mvc->log('QA resume finished', 'info');
+        $this->mvc->log(__CLASS__, 'QA resume finished', 'info');
     }
 
     /**
