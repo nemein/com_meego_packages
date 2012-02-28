@@ -35,6 +35,7 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
 
         if (! $ldapuser)
         {
+            // we could also return an error message here
             return false;
         }
 
@@ -43,12 +44,26 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
         $tokens['authtype'] = 'LDAP';
 
         // If user is already in DB we can just log in
-        if (midgardmvc_core_services_authentication_sessionauth::create_login_session($tokens, $clientip))
+        // catch: this will create a person object
+        $session = midgardmvc_core_services_authentication_sessionauth::create_login_session($tokens, $clientip);
+
+        if ($session)
         {
             // check if the logged in user has a person object
             // if not, then create it and assign the new person to the user object
             $user = midgardmvc_core::get_instance()->authentication->get_user();
 
+            if ($user)
+            {
+                $person = new midgard_person($user->person);
+
+                if ($person)
+                {
+                    return true;
+                }
+            }
+
+            // @todo: verify if we ever get here actually because we should not
             $persons = $this->get_persons($ldapuser, $user->person);
 
             if (count($persons) == 0)
@@ -60,9 +75,9 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
                     $user->update();
                 }
             }
-
             return true;
         }
+
         // Otherwise we need to create the necessary Midgard account
         if (! $this->create_account($ldapuser, $tokens))
         {
@@ -88,7 +103,7 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
         $transaction = new midgard_transaction();
         $transaction->begin();
 
-        $persons = $this->get_persons();
+        $persons = $this->get_persons($ldapuser);
 
         if (count($persons) == 0)
         {
@@ -283,15 +298,29 @@ class com_meego_packages_services_authentication_ldap extends midgardmvc_core_se
 
         ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
 
-        if (@ldap_bind($ds, "cn={$tokens['login']},{$this->dn}", $tokens['password']))
+        try
         {
-            // Valid account
-            $userinfo = parent::ldap_search($ds, $tokens['login']);
-            ldap_close($ds);
-            return $userinfo;
+            $userinfo = @ldap_bind($ds, "cn={$tokens['login']},{$this->dn}", $tokens['password']);
+            if ($userinfo)
+            {
+                // Valid account
+                $userinfo = parent::ldap_search($ds, $tokens['login']);
+                ldap_close($ds);
+                return $userinfo;
+            }
+            else
+            {
+                // we probably have invalid credentials, so no user info must be supplied
+                // at the end of the code we will return null anyway.
+            }
+        }
+        catch(Exception $e)
+        {
+            die('How on earth do we get here:' . $e->getMessage());
         }
 
         ldap_close($ds);
+
         midgardmvc_core::get_instance()->context->get_request()->set_data_item(
             'midgardmvc_core_services_authentication_message',
             midgardmvc_core::get_instance()->i18n->get('ldap authentication failed: login and password don\'t match', 'midgardmvc_core')
