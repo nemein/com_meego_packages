@@ -630,7 +630,7 @@ class com_meego_packages_controllers_application
      */
     public function get_filtered_applications($os = null, $os_version = null, $packagecategory_id = 0, $basecategory_id = 0, $ux_name = false, $package_name = false, $filter_type = 'top', $freetext_search = null)
     {
-        $this->mvc->log(__CLASS__, "Get filtered apps: " . $os . ', ' . $os_version . ', ' . $packagecategory_id . ', ' . $ux_name . ', ' . $package_name . ', ' . $filter_type, 'info');
+        #$this->mvc->log(__CLASS__, "Get filtered apps: " . $os . ', ' . $os_version . ', ' . $packagecategory_id . ', ' . $ux_name . ', ' . $package_name . ', ' . $filter_type, 'info');
 
         $apps = null;
         $packages = array();
