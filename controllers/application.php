@@ -1014,6 +1014,10 @@ class com_meego_packages_controllers_application
 
         // this index will be used to grab the download URL of the appropriate arch variant of the package
         $index = 0;
+
+        // this method is called from other classes too
+        $this->isuser = $this->mvc->authentication->is_user();
+
         if (   isset($matched['ux'])
             && array_key_exists($matched['ux'], $this->mvc->configuration->ux_arch_map))
         {
@@ -2001,6 +2005,7 @@ class com_meego_packages_controllers_application
         $this->data['packagename'] = $args['packagename'];
         $mix = self::get_filtered_applications($args['os'], $args['version'], 0, 0, $args['ux'], $args['packagename'], 'mix', null);
         $apps = self::set_data($mix, 'mix', true);
+
         $latest = $apps[$args['packagename']]['latest'];
 
         $apps[$args['packagename']]['passedqa'] = array();
@@ -2059,6 +2064,6 @@ class com_meego_packages_controllers_application
         }
 
         $this->data['packages'] = $apps;
-    }
+   }
 
 }
