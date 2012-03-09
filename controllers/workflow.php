@@ -38,11 +38,11 @@ class com_meego_packages_controllers_workflow
     {
         $this->mvc->log(__CLASS__, 'Posted start QA', 'info');
 
-        $this->package = $this->load_package_instance($args);
+        $this->package = self::load_package_instance($args);
 
         if (! $this->package->metadata->hidden)
         {
-            $workflow_class = $this->load_workflow($args);
+            $workflow_class = self::load_workflow($args);
 
             $this->mvc->component->load_library('Workflow');
 
@@ -113,12 +113,12 @@ class com_meego_packages_controllers_workflow
         $route = $request->get_route();
         $route->template_aliases['root'] = 'cmp-html-snippet';
 
-        $this->package = $this->load_package_instance($args);
+        $this->package = self::load_package_instance($args);
 
         // populate the package for the template
         $this->data['package'] = $this->package;
 
-        $workflow_class = $this->load_workflow($args);
+        $workflow_class = self::load_workflow($args);
 
         $this->mvc->component->load_library('Workflow');
 
@@ -142,9 +142,9 @@ class com_meego_packages_controllers_workflow
             switch (get_class($variable_information['condition']))
             {
                 case 'midgardmvc_ui_forms_workflow_condition_instance':
-                    $form_for_variable = $this->get_form($this->execution);
+                    $form_for_variable = self::get_form($this->execution);
 
-                    if (!is_null($form_for_variable))
+                    if ( ! is_null($form_for_variable) )
                     {
                         $this->data['forms'][$variable] = $form_for_variable;
                     }
@@ -165,7 +165,7 @@ class com_meego_packages_controllers_workflow
 
         $this->mvc->log(__CLASS__, 'QA resume start', 'info');
 
-        $this->get_resume_package_instance($args);
+        self::get_resume_package_instance($args);
 
         if (empty($this->data['forms']))
         {
@@ -216,7 +216,7 @@ class com_meego_packages_controllers_workflow
     /**
      *
      */
-    private function get_form(ezcWorkflowExecution $execution)
+    public function get_form(ezcWorkflowExecution $execution)
     {
         $list_of_variables = $execution->getVariables();
 
