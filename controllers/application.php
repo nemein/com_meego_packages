@@ -1420,39 +1420,12 @@ class com_meego_packages_controllers_application
                 $this->data['packages'][$package->packagename]['workflows'] = array();
             }
 
-            $object = new com_meego_package($package->packageguid);
+            // get workflows, if any
+            $workflows = self::get_workflows($package);
 
-            if (! $object->metadata->hidden)
+            if (is_array($workflows))
             {
-                $list_of_workflows = midgardmvc_helper_workflow_utils::get_workflows_for_object($object);
-
-                foreach ($list_of_workflows as $workflow => $workflow_data)
-                {
-                    if (! $this->isuser)
-                    {
-                        $workflow_data['css'] .= ' login';
-                    }
-
-                    $this->data['packages'][$package->packagename]['workflows'][] = array
-                    (
-                        'label' => $workflow_data['label'],
-                        'url' => $this->mvc->dispatcher->generate_url
-                        (
-                            'package_instance_workflow_start',
-                            array
-                            (
-                                'package' => $package->packagename,
-                                'version' => $package->packageversion,
-                                'project' => $package->repoprojectname,
-                                'repository' => $package->reponame,
-                                'arch' => $package->repoarch,
-                                'workflow' => $workflow,
-                            ),
-                            'com_meego_packages'
-                        ),
-                        'css' => $workflow_data['css']
-                    );
-                }
+                $this->data['packages'][$package->packagename]['workflows'] = $workflows;
             }
         } //foreach
 
@@ -1988,6 +1961,57 @@ class com_meego_packages_controllers_application
             foreach ($packages as $package)
             {
                 $retval[] = $package->packageguid;
+            }
+        }
+
+        return $retval;
+    }
+
+    /**
+     * Returns all possible workflows assigned to the given package
+     * @param object com_meego_package_details object
+     * @return null or an array with workflow URLs and CSS data
+     */
+    public function get_workflows($package)
+    {
+        $retval = null;
+
+        // this method is called from other classes too
+        $this->isuser = $this->mvc->authentication->is_user();
+
+        if (   is_object($package)
+            && ! $package->packagehidden)
+        {
+            $object = new com_meego_package($package->packageguid);
+            $list_of_workflows = midgardmvc_helper_workflow_utils::get_workflows_for_object($object);
+
+            foreach ($list_of_workflows as $workflow => $workflow_data)
+            {
+                if (! $this->isuser)
+                {
+                    $workflow_data['css'] .= ' login';
+                }
+
+                $retval[] = array
+                (
+                    'name' => $workflow,
+                    'label' => $workflow_data['label'],
+                    'url' => $this->mvc->dispatcher->generate_url
+                    (
+                        'package_instance_workflow_start',
+                        array
+                        (
+                            'package' => $package->packagename,
+                            'version' => $package->packageversion,
+                            'project' => $package->repoprojectname,
+                            'repository' => $package->reponame,
+                            'arch' => $package->repoarch,
+                            'workflow' => $workflow,
+                        ),
+                        'com_meego_packages'
+                    ),
+                    'css' => $workflow_data['css']
+                );
             }
         }
 
