@@ -2030,64 +2030,67 @@ class com_meego_packages_controllers_application
         $mix = self::get_filtered_applications($args['os'], $args['version'], 0, 0, $args['ux'], $args['packagename'], 'mix', null);
         $apps = self::set_data($mix, 'mix', true);
 
-        $latest = $apps[$args['packagename']]['latest'];
-
-        $apps[$args['packagename']]['passedqa'] = array();
-        $apps[$args['packagename']]['promoted'] = array();
-        $apps[$args['packagename']]['staging'] = array();
-
-        if ($latest['promotedfromguid'])
+        if (isset($apps[$args['packagename']]['all']))
         {
-            // the latest version is actually promoted
-            $apps[$args['packagename']]['passedqa'] = $latest;
-        }
-        else
-        {
-            $apps[$args['packagename']]['staging'] = $latest;
-        }
+            $latest = $apps[$args['packagename']]['latest'];
 
-        foreach ($apps[$args['packagename']]['all'] as $key => $instance)
-        {
-            if (! $instance['hidden'])
+            $apps[$args['packagename']]['passedqa'] = array();
+            $apps[$args['packagename']]['promoted'] = array();
+            $apps[$args['packagename']]['staging'] = array();
+
+            if ($latest['promotedfromguid'])
             {
-                if (isset($instance['promotedfromguid']))
+                // the latest version is actually promoted
+                $apps[$args['packagename']]['passedqa'] = $latest;
+            }
+            else
+            {
+                $apps[$args['packagename']]['staging'] = $latest;
+            }
+
+            foreach ($apps[$args['packagename']]['all'] as $key => $instance)
+            {
+                if (! $instance['hidden'])
                 {
-                    if (   ! $apps[$args['packagename']]['passedqa']
-                        || $apps[$args['packagename']]['passedqa']['version'] < $instance['version'])
+                    if (isset($instance['promotedfromguid']))
                     {
-                        $instance['localurl'] = $apps[$args['packagename']]['localurl'];
-                        $apps[$args['packagename']]['passedqa'] = $instance;
+                        if (   ! $apps[$args['packagename']]['passedqa']
+                            || $apps[$args['packagename']]['passedqa']['version'] < $instance['version'])
+                        {
+                            $instance['localurl'] = $apps[$args['packagename']]['localurl'];
+                            $apps[$args['packagename']]['passedqa'] = $instance;
+                        }
                     }
-                }
-                else if (isset($instance['promotedtoguid']))
-                {
-                    if (   ! $apps[$args['packagename']]['promoted']
-                        || $apps[$args['packagename']]['promoted']['version'] < $instance['version'])
+                    else if (isset($instance['promotedtoguid']))
                     {
-                        $apps[$args['packagename']]['promoted'] = $instance;
+                        if (   ! $apps[$args['packagename']]['promoted']
+                            || $apps[$args['packagename']]['promoted']['version'] < $instance['version'])
+                        {
+                            $apps[$args['packagename']]['promoted'] = $instance;
+                        }
                     }
-                }
-                else
-                {
-                    if (   ! $apps[$args['packagename']]['staging']
-                        || $apps[$args['packagename']]['staging']['version'] < $instance['version'])
+                    else
                     {
-                        $instance['localurl'] = 'staging/' . $apps[$args['packagename']]['localurl'];
-                        $apps[$args['packagename']]['staging'] = $instance;
+                        if (   ! $apps[$args['packagename']]['staging']
+                            || $apps[$args['packagename']]['staging']['version'] < $instance['version'])
+                        {
+                            $instance['localurl'] = 'staging/' . $apps[$args['packagename']]['localurl'];
+                            $apps[$args['packagename']]['staging'] = $instance;
+                        }
                     }
                 }
             }
+
+            krsort($apps[$args['packagename']]['all']);
+
+            $i = 0;
+            foreach($apps[$args['packagename']]['all'] as $key => $item)
+            {
+                (++$i % 2 == 0) ? $apps[$args['packagename']]['all'][$key]['rowclass'] = 'even' : $apps[$args['packagename']]['all'][$key]['rowclass'] = 'odd';
+            }
+
+            $this->data['packages'] = $apps;
         }
-
-        krsort($apps[$args['packagename']]['all']);
-
-        $i = 0;
-        foreach($apps[$args['packagename']]['all'] as $key => $item)
-        {
-            (++$i % 2 == 0) ? $apps[$args['packagename']]['all'][$key]['rowclass'] = 'even' : $apps[$args['packagename']]['all'][$key]['rowclass'] = 'odd';
-        }
-
-        $this->data['packages'] = $apps;
    }
 
 }
