@@ -167,8 +167,6 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
      */
     public function start(midgard_object $object, array $args = null)
     {
-echo "review start\n";
-ob_flush();
         if (! midgardmvc_core::get_instance()->authentication->is_user())
         {
             return false;
@@ -187,8 +185,6 @@ ob_flush();
             $values['execution'] = $execution->guid;
             return $values;
         }
-echo "review start end\n";
-ob_flush();
         return $values;
     }
 
