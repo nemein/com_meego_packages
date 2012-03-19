@@ -1969,6 +1969,7 @@ class com_meego_packages_controllers_application
 
     /**
      * Returns all possible workflows assigned to the given package
+     *
      * @param object com_meego_package_details object
      * @return null or an array with workflow URLs and CSS data
      */
@@ -2019,8 +2020,7 @@ class com_meego_packages_controllers_application
     }
 
     /**
-     * Get staging applications that are in repos of staging projects for a base category but
-     * only if they belong to a certain ux and to a top project that is configurable
+     * Get the full history of an app
      *
      * @param array of args (os, version, ux, basecategory, packagename)
      */
@@ -2093,4 +2093,62 @@ class com_meego_packages_controllers_application
         }
    }
 
+    /**
+     * Get a lightweight history of an app
+     *
+     * @param array of args (os, version, ux, basecategory, packagename)
+     */
+    public function get_lightweight_history(array $args)
+    {
+        $ux = null;
+        $history = array();
+
+        if ($args['ux'] != '')
+        {
+            $ux = $args['ux'];
+        }
+
+        // collect all ids of this app having the same os and ux
+        $storage = new midgard_query_storage('com_meego_package_details');
+        $q = new midgard_query_select($storage);
+
+        $qc = new midgard_query_constraint_group('AND');
+
+        $qc->add_constraint(new midgard_query_constraint (
+            new midgard_query_property('packagename'),
+            '=',
+            new midgard_query_value($args['packagename'])
+        ));
+        $qc->add_constraint(new midgard_query_constraint (
+            new midgard_query_property('repoos'),
+            '=',
+            new midgard_query_value($args['os'])
+        ));
+
+        if ($ux)
+        {
+            $qc->add_constraint(new midgard_query_constraint (
+                new midgard_query_property('repoosux'),
+                '=',
+                new midgard_query_value($ux)
+            ));
+        }
+
+        $q->set_constraint($qc);
+
+        $q->add_order(new midgard_query_property('packageid', $storage), SORT_ASC);
+        $q->execute();
+
+        $packages = $q->list_objects();
+
+        foreach ($packages as $package)
+        {
+            if (end($history) != $package->packageid)
+            {
+                $history[] = $package->packageid;
+            }
+        }
+
+        return $history;
+   }
 }
