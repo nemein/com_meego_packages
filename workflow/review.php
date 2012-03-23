@@ -172,7 +172,32 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
             return false;
         }
 
+        $user = midgardmvc_core::get_instance()->authentication->get_user();
+
         $workflow = $this->get();
+
+        $storage = new midgard_query_storage('midgardmvc_helper_workflow_execution');
+        $q = new midgard_query_select($storage);
+
+        $q->set_constraint(new midgard_query_constraint(
+            new midgard_query_property('metadata.creator'),
+            '=',
+            new midgard_query_value($user->person)
+        ));
+
+        $q->execute();
+
+        $execs = $q->list_objects();
+
+        foreach ($execs as $exec)
+        {
+            $variables = unserialize($exec->variables);
+            if ($variables['package_instance'] == $object->guid)
+            {
+                midgardmvc_core::get_instance()->log(__CLASS__, 'Re-use unfinished workflow execution (' . $exec->id . ')', 'info');
+                return self::resume($exec->guid, $variables);
+            }
+        }
 
         $execution = new midgardmvc_helper_workflow_execution_interactive($workflow);
         $execution->setVariable('package_instance', $object->guid);
@@ -199,11 +224,14 @@ class com_meego_packages_workflow_review implements midgardmvc_helper_workflow_d
         $execution->resume($args);
 
         $values = array();
-        if (!$execution->hasEnded())
+
+        if (! $execution->hasEnded())
         {
+            $values = $args;
             $values['execution'] = $execution->guid;
             return $values;
         }
+
         return $values;
     }
 }
