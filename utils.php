@@ -183,5 +183,70 @@ class com_meego_packages_utils
             $this->data['i18n'] = midgardmvc_core::get_instance()->i18n->get($args['id']);
         }
     }
+
+    /**
+     * Returns the stripped down form on a workflow
+     *
+     * @param object com_meego_package_details object
+     */
+    public function get_stripped_forms_for_package($package = null)
+    {
+        $retval = array();
+        $object = new com_meego_package($package->packageguid);
+        $workflows = midgardmvc_helper_workflow_utils::get_workflows_for_object($object);
+
+        if (is_array($workflows))
+        {
+            $this->mvc->component->load_library('Workflow');
+
+            foreach ($workflows as $name => $workflow_data)
+            {
+                $args = array(
+                    'package' => $package->packagename,
+                    'version' => $package->packageversion,
+                    'project' => $package->repoprojectname,
+                    'repository' => $package->reponame,
+                    'arch' => $package->repoarch,
+                    'workflow' => $name
+                );
+
+                $workflow_definition = new $workflow_data['provider'];
+
+                $values = $workflow_definition->start($object);
+                $workflow = $workflow_definition->get();
+
+                if (isset($values['review_form']))
+                {
+                    $form = new midgardmvc_ui_forms_form($values['review_form']);
+                    $fields = midgardmvc_ui_forms_generator::list_fields($form);
+                    foreach ($fields as $field)
+                    {
+                        $retval[$name][$field->title]['widget'] = $field->widget;
+                        $retval[$name][$field->title]['options'] = $field->options;
+                    }
+                }
+                else if (isset($values['execution']))
+                {
+                    $args['execution'] = $values['execution'];
+
+                    $execution = new midgardmvc_helper_workflow_execution_interactive($workflow, $args['execution']);
+                    $variables = $execution->getVariables();
+
+                    if (isset($variables['review_form']))
+                    {
+                        $form = new midgardmvc_ui_forms_form($variables['review_form']);
+                        $fields = midgardmvc_ui_forms_generator::list_fields($form);
+                        foreach ($fields as $field)
+                        {
+                            $retval[$name][$field->title]['widget'] = $field->widget;
+                            $retval[$name][$field->title]['options'] = $field->options;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $retval;
+    }
 }
 ?>
