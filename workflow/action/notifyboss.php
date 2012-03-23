@@ -52,6 +52,7 @@ class com_meego_packages_workflow_action_notifyboss implements ezcWorkflowServic
             }
             fclose($handle);
         }
+
         return;
     }
 
