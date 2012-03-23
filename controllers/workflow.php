@@ -214,7 +214,7 @@ class com_meego_packages_controllers_workflow
     }
 
     /**
-     *
+     * Gets a rendered HTML form
      */
     public function get_form(ezcWorkflowExecution $execution)
     {
