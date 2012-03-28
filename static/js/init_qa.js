@@ -38,7 +38,7 @@ jQuery(document).ready(function()
         });
     });
     // Posting the QA form
-    jQuery('input.midgardmvc_helper_forms_form_save').live('click', function(event) {
+    jQuery('div.workflow form input.midgardmvc_helper_forms_form_save').live('click', function(event) {
         event.preventDefault();
         self = jQuery(event.currentTarget);
         execution = jQuery('div.qa_form input[name="execution"]').val();
