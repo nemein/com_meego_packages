@@ -3,6 +3,7 @@ class com_meego_packages_controllers_application
 {
     var $mvc = null;
     var $isuser = false;
+    var $isadmin = false;
     var $request = null;
 
     public function __construct(midgardmvc_core_request $request)
@@ -11,6 +12,11 @@ class com_meego_packages_controllers_application
 
         $this->mvc = midgardmvc_core::get_instance();
         $this->isuser = $this->mvc->authentication->is_user();
+
+        if ($this->isuser)
+        {
+            $this->isadmin = $this->mvc->authentication->get_user()->is_admin();
+        }
 
         $this->mvc->i18n->set_translation_domain('com_meego_packages');
 
@@ -1571,6 +1577,9 @@ class com_meego_packages_controllers_application
         // this will help the template to display some headinhs only if needed
         $retval = array('ratings' => array(), 'comment' => false);
 
+        // relocate url after editing or deleting a comment by admins
+        $relocate = 'relocate=' . $this->mvc->context->get_request(0)->get_path();
+
         $storage = new midgard_query_storage('com_meego_package_ratings');
         $q = new midgard_query_select($storage);
 
@@ -1585,7 +1594,6 @@ class com_meego_packages_controllers_application
         );
 
         $q->add_order(new midgard_query_property('posted', $storage), SORT_DESC);
-
         $q->execute();
 
         $ratings = $q->list_objects();
@@ -1613,6 +1621,45 @@ class com_meego_packages_controllers_application
                     if ($rating->commentid)
                     {
                         $retval['comment'] = true;
+
+                        if ($this->isadmin)
+                        {
+                            try
+                            {
+                                $_comment = new com_meego_comments_comment($rating->commentid);
+                            }
+                            catch (Exception $e)
+                            {
+                                // the comment object was probably deleted, not a big deal
+                            }
+
+                            if (isset($_comment))
+                            {
+                                $rating->edit_comment_url = $this->mvc->dispatcher->generate_url
+                                (
+                                    'comment_update',
+                                    array
+                                    (
+                                        'comment' => $_comment->guid
+                                    ),
+                                    'com_meego_comments'
+                                );
+                                $rating->edit_comment_url .= '?' . $relocate;
+
+                                $rating->delete_comment_url = $this->mvc->dispatcher->generate_url
+                                (
+                                    'comment_delete',
+                                    array
+                                    (
+                                        'comment' => $_comment->guid
+                                    ),
+                                    'com_meego_comments'
+                                );
+                                $rating->delete_comment_url .= '?' . $relocate;
+
+                                unset($_comment);
+                            }
+                        }
                     }
 
                     if ($rating->rating)

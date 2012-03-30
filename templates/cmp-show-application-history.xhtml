@@ -89,6 +89,16 @@
                         </div>
                        <tal:block tal:content="php: str_replace('\r', '', rating.comment)"></tal:block>
                     </div>
+                    <tal:block tal:condition="true: admin">
+                    <ul class="admin" tal:condition="true: rating/commentid">
+                        <li tal:condition="exists: rating/edit_comment_url">
+                            <a tal:attributes="href rating/edit_comment_url" i18n:translate="'label_edit_comment'">Edit comment</a>
+                        </li>
+                        <li tal:condition="exists: rating/delete_comment_url">
+                            <a tal:attributes="href rating/delete_comment_url" i18n:translate="'label_delete_comment'">Delete comment</a>
+                        </li>
+                    </ul>
+                    </tal:block>
                     <div class="clear"></div>
                 </div>
             </tal:block>

@@ -1377,3 +1377,33 @@ margin-top: 10px;
 width: 300px;
 height: 70px;
 }
+
+textarea.content {
+width: 450px;
+height: 100px;
+}
+
+input.midgardmvc_helper_forms_form_delete {
+background: url("/midgardmvc-static/com_meego_packages/images/delete.png") no-repeat scroll 0 0 transparent;
+border: 0 none;
+cursor: pointer;
+display: inline-block;
+font-size: 0;
+height: 38px;
+margin: 0;
+width: 131px;
+}
+
+ul.admin {
+float: right;
+background-color: beige;
+padding: 10px;
+margin: 0;
+border-radius: 8px 8px 8px 8px;
+-webkit-border-radius: 8px;
+}
+
+ul.admin li {
+list-style: none;
+margin: 0 0 1em 0;
+}
