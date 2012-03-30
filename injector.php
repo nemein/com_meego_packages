@@ -4,11 +4,14 @@ class com_meego_packages_injector
     var $mvc = null;
     var $request = null;
     var $part = 'applications';
+    var $connected = false;
 
-    public function __construct()
+    /**
+     * Sets language, connectes signal handlers
+     */
+    private function get_connected()
     {
         $this->mvc = midgardmvc_core::get_instance();
-
         $this->mvc->i18n->set_translation_domain('com_meego_packages');
 
         $default_language = $this->mvc->configuration->default_language;
@@ -19,6 +22,15 @@ class com_meego_packages_injector
         }
 
         $this->mvc->i18n->set_language($default_language, false);
+
+        $request = $this->mvc->dispatcher->get_request();
+
+        // midgard_object_class::connect_default('midgard_attachment', 'action_loaded_hook', array('com_meego_packages_injector', 'register_download'), array($request));
+
+        // Default title for Packages pages, override in controllers when possible
+        $this->mvc->head->set_title($this->mvc->i18n->get('title_apps'));
+
+        $this->connected = true;
     }
 
     /**
@@ -26,11 +38,10 @@ class com_meego_packages_injector
      */
     public function inject_process(midgardmvc_core_request $request)
     {
+        $this->mvc = midgardmvc_core::get_instance();
+
         // We inject the template to provide MeeGo styling
         $request->add_component_to_chain($this->mvc->component->get('com_meego_packages'), true);
-
-        // Default title for Packages pages, override in controllers when possible
-        $this->mvc->head->set_title($this->mvc->i18n->get('title_apps'));
     }
 
     /**
@@ -38,6 +49,13 @@ class com_meego_packages_injector
      */
     public function inject_template(midgardmvc_core_request $request)
     {
+        $this->mvc = midgardmvc_core::get_instance();
+
+        if (! $this->connected)
+        {
+            self::get_connected();
+        }
+
         if (! $this->mvc->configuration->exists('default'))
         {
             // workaround to avoid an exception while templating
@@ -46,7 +64,7 @@ class com_meego_packages_injector
 
         $this->request = $request;
 
-        $route = $request->get_route();
+        $route = $this->request->get_route();
 
         if ($route->id == "apps_index")
         {
@@ -410,6 +428,22 @@ class com_meego_packages_injector
                     'href' => MIDGARDMVC_STATIC_URL . '/com_meego_packages/css/jquery.slide-gallery.css'
                 )
             );
+        }
+    }
+
+    /**
+     * A signal handler for attachment download
+     */
+    public function register_download($object = null, $request = null)
+    {
+        if (   $request
+            && $object->mimetype == 'text/x-suse-ymp')
+        {
+            if ($request->argv[0] == 'mgd:attachment')
+            {
+                echo $object->guid . ':' . end($request->argv) . "\n";
+                ob_flush();
+            }
         }
     }
 }
