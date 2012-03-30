@@ -465,3 +465,9 @@ msgstr "[Details]"
 
 msgid "label_qa_details"
 msgstr "[Details]"
+
+msgid "label_edit_comment"
+msgstr "Edit comment"
+
+msgid "label_delete_comment"
+msgstr "Delete comment"
