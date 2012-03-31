@@ -1580,6 +1580,14 @@ class com_meego_packages_controllers_application
         // relocate url after editing or deleting a comment by admins
         $relocate = 'relocate=' . $this->mvc->context->get_request(0)->get_path();
 
+        $this->isadmin = false;
+        $this->isuser = $this->mvc->authentication->is_user();
+
+        if ($this->isuser)
+        {
+            $this->isadmin = $this->mvc->authentication->get_user()->is_admin();
+        }
+
         $storage = new midgard_query_storage('com_meego_package_ratings');
         $q = new midgard_query_select($storage);
 
