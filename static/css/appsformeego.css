@@ -484,6 +484,15 @@ article .content-heading img {
 padding: 0px 10px 0px 0px;
 }
 
+article .content-heading .getclient {
+float: right;
+text-align: right;
+}
+
+article .content-heading .getclient img {
+padding: 0;
+}
+
 article .main_list {
 /*
 padding: 20px 0px 15px 0px;

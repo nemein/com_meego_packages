@@ -16,6 +16,12 @@
                     ${matched/basecategory}
                 </span>
                 <span tal:condition="php: ! array_key_exists('basecategory', matched) || ! matched['basecategory']" i18n:translate="'label_available_applications'"></span>
+
+                <div class="getclient" tal:condition="true: matched/appsclient">
+                    <a tal:attributes="href matched/appsclient">
+                        <img src="/midgardmvc-static/com_meego_packages/images/download_client.png"/>
+                    </a>
+                </div>
             </div>
 
             <div class="main_list" tal:condition="not: current_component/rows">
