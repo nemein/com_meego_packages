@@ -1416,3 +1416,10 @@ ul.admin li {
 list-style: none;
 margin: 0 0 1em 0;
 }
+
+div.login li.activities span {
+display: inline-block;
+width: 34px;
+height: 13px;
+background: url("/midgardmvc-static/com_meego_packages/images/beta.png") no-repeat scroll 0 0 transparent;
+}
