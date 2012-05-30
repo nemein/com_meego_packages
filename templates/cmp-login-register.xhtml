@@ -10,6 +10,7 @@
                     <ul tal:condition="php:midgardmvc_core::get_instance().authentication.is_user()">
                         <tal:block tal:define="user php:midgardmvc_core::get_instance().authentication.get_user(); username php:user.login">
                         <li><a href="http://meego.com/user/me" title="" tal:content="username"></a></li>
+                        <li class="activities"><span class="beta"></span><a href="/account/activities" i18n:domain="midgardmvc_account" i18n:translate="'label_activities'"></a></li>
                         <tal:block tal:condition="true: admin">
                             <li><a href="/repositories">Repositories</a></li>
                             <li><a href="/basecategories/admin">Categories</a></li>
