@@ -393,7 +393,7 @@ class com_meego_packages_injector
                 'href' => MIDGARDMVC_STATIC_URL . '/com_meego_packages/css/packages.css'
             )
         );
-        midgardmvc_core::get_instance()->head->add_link
+        $this->mvc->head->add_link
         (
             array
             (
@@ -402,7 +402,7 @@ class com_meego_packages_injector
                 'href' => MIDGARDMVC_STATIC_URL . '/eu_urho_widgets/js/jquery.rating/jquery.rating.css'
             )
         );
-        midgardmvc_core::get_instance()->head->add_link
+        $this->mvc->head->add_link
         (
             array
             (
