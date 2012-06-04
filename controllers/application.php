@@ -1160,33 +1160,9 @@ class com_meego_packages_controllers_application
             $this->data['ux'] = $package->ux;
 
             // provide a link to visit the app page
-            $package->localurl = $this->mvc->dispatcher->generate_url
-            (
-                'apps_by_name',
-                array
-                (
-                    'os' => $package->repoos,
-                    'version' => $package->repoosversion,
-                    'ux' => $package->repoosux,
-                    'basecategory' => $package->basecategoryname,
-                    'packagename' => $package->packagename
-                ),
-                $this->request
-            );
-
-            // provide a link to visit the app page
-            $this->data['packages'][$package->packagename]['historyurl'] = $this->mvc->dispatcher->generate_url
-            (
-                'history',
-                array
-                (
-                    'os' => $package->repoos,
-                    'version' => $package->repoosversion,
-                    'ux' => $package->repoosux,
-                    'packagename' => $package->packagename
-                ),
-                $this->request
-            );
+            $package->localurl = self::get_localurl($package);
+            // provide a link to visit the app's full history
+            $this->data['packages'][$package->packagename]['historyurl'] = self::get_historyurl($package);
 
             $variant_info = array(
                 'ux' => $package->repoosux,
@@ -2206,4 +2182,57 @@ class com_meego_packages_controllers_application
 
         return $history;
    }
+
+   /**
+    * Returns the local url of a given com_meego_package_details object
+    * @param object
+    * @return string local url
+    */
+    public function get_localurl(com_meego_package_details $package)
+    {
+        $retval = null;
+        if ($package)
+        {
+            $retval = midgardmvc_core::get_instance()->dispatcher->generate_url
+            (
+                'apps_by_name',
+                array
+                (
+                    'os' => $package->repoos,
+                    'version' => $package->repoosversion,
+                    'ux' => $package->repoosux,
+                    'basecategory' => $package->basecategoryname,
+                    'packagename' => $package->packagename
+                ),
+                '/'
+            );
+        }
+        return $retval;
+    }
+
+   /**
+    * Returns the history url of a given com_meego_package_details object
+    * @param object
+    * @return string history url
+    */
+    public function get_historyurl(com_meego_package_details $package)
+    {
+        $retval = null;
+        if ($package)
+        {
+            $retval = midgardmvc_core::get_instance()->dispatcher->generate_url
+            (
+                'history',
+                array
+                (
+                    'os' => $package->repoos,
+                    'version' => $package->repoosversion,
+                    'ux' => $package->repoosux,
+                    'packagename' => $package->packagename
+                ),
+                '/'
+            );
+        }
+        return $retval;
+    }
 }
