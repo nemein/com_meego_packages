@@ -14,6 +14,8 @@ requires:
         - {type: github, user: nemein, repository: com_meego_ratings_caching, branch: master}
     com_meego_comments:
         - {type: github, user: nemein, repository: com_meego_comments, branch: master}
+    midgardmvc_account:
+        - {type: github, user: feri, repository: midgardmvc_account, branch: master}
 
 routes:
     index:
