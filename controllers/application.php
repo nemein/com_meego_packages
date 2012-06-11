@@ -314,7 +314,6 @@ class com_meego_packages_controllers_application
             $freetext_search = $args['search'];
         }
 
-
         if (   array_key_exists('basecategory', $args)
             && $args['basecategory'])
         {
