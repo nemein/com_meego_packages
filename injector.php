@@ -25,10 +25,15 @@ class com_meego_packages_injector
 
         $request = $this->mvc->dispatcher->get_request();
 
-        // midgard_object_class::connect_default('midgard_attachment', 'action_loaded_hook', array('com_meego_packages_injector', 'register_download'), array($request));
+        //midgard_object_class::connect_default('midgard_attachment', 'action_loaded_hook', array('com_meego_packages_injector', 'register_download'), array($request));
+        midgard_object_class::connect_default('com_meego_ratings_rating', 'action_created', array('com_meego_packages_injector', 'register_rate_comment'), array($request));
+        midgard_object_class::connect_default('midgardmvc_ui_forms_form_instance', 'action_created', array('com_meego_packages_injector', 'register_qa_post'), array($request));
 
         // Default title for Packages pages, override in controllers when possible
         $this->mvc->head->set_title($this->mvc->i18n->get('title_apps'));
+
+        $_mc = midgard_connection::get_instance();
+        $res = $_mc->enable_replication(false);
 
         $this->connected = true;
     }
@@ -445,6 +450,46 @@ class com_meego_packages_injector
                 ob_flush();
             }
         }
+    }
+
+    /**
+     * Signal handler for creating an activity object from new comment or rating
+     * object creation
+     */
+    public function register_rate_comment($object = null, $request = null)
+    {
+        if ($object->rating > 0)
+        {
+            $verb = 'rate';
+            $summary = 'The user rated';
+
+            if ($object->comment > 0)
+            {
+                $verb .= ', comment';
+                $summary .= ' and commented';
+            }
+        }
+        else if ($object->comment > 0)
+        {
+            $verb = 'comment';
+            $summary = 'The user commented';
+        }
+        if ($summary)
+        {
+            $summary .= ' an application.';
+        }
+
+        $res = midgardmvc_account_controllers_activity::create_activity($object->metadata->creator, $verb, $object->to, $summary, 'Apps', $object->metadata->created);
+    }
+
+    /**
+     * Signal handler for creating an activity object from new QA post
+     */
+    public function register_qa_post($object = null, $request = null)
+    {
+        $verb = 'review';
+        $summary = 'The user has reviewed an application.';
+        $res = midgardmvc_account_controllers_activity::create_activity($object->metadata->creator, $verb, $object->relatedobject, $summary, 'Apps', $object->metadata->created);
     }
 }
 ?>
